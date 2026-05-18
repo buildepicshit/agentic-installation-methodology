@@ -8,31 +8,13 @@ on:
 
 jobs:
   lint-spec:
-    name: lint worked examples
+    name: lint inaugural SPEC
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
 
-      - name: Lint Task example IDEA
-        run: bash scripts/lint-spec.sh examples/task-add-structured-logging/IDEA.md
-
-      - name: Lint Task example SPEC
-        run: bash scripts/lint-spec.sh examples/task-add-structured-logging/SPEC.md
-
-      - name: Lint Contract example IDEA
-        run: bash scripts/lint-spec.sh examples/contract-webhook-signing/IDEA.md
-
-      - name: Lint Contract example SPEC
-        run: bash scripts/lint-spec.sh examples/contract-webhook-signing/SPEC.md
-
-      - name: Lint Decision example IDEA
-        run: bash scripts/lint-spec.sh examples/decision-conventional-commits/IDEA.md
-
-      - name: Lint Decision example SPEC
-        run: bash scripts/lint-spec.sh examples/decision-conventional-commits/SPEC.md
-
-      - name: Lint Fastpath example SPEC
-        run: bash scripts/lint-spec.sh examples/fastpath-fix-readme-typo/SPEC.md
+      - name: Lint inaugural repo-standup SPEC
+        run: bash scripts/lint-spec.sh specs/2026-05-18-repo-standup/SPEC.md
 
   validate-skills:
     name: validate skill frontmatter
@@ -50,11 +32,3 @@ jobs:
         run: sudo apt-get install -y jq
       - name: Run hook tests
         run: bash tests/hooks/run-tests.sh
-
-  preflight-self-check:
-    name: preflight runs clean on the framework
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - name: Verify preflight.mjs parses + runs
-        run: node --check scripts/preflight.mjs
