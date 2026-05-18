@@ -1,0 +1,35 @@
+# Machine-local
+.env
+.env.*
+*.local
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Editor
+.idea/
+.vscode/
+*.iml
+
+# Language ecosystems
+node_modules/
+__pycache__/
+*.pyc
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Build artefacts
+dist/
+build/
+*.egg-info/
+
+# MCP / agent-local
+.mcp.json
+.claude/settings.local.json
+.agents/
+.claude/
