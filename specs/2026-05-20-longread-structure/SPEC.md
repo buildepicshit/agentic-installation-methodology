@@ -290,6 +290,34 @@ directive favours corpus citations.
 
 ### 6.5 Failure-mode disclosure rule
 
+Per the upstream methodology phase definition
+(`file://../../../bes-fleet-policy/specs/2026-05-17-agentic-installation-methodology/RESEARCH.md`
+§6 Phase 7: "for each phase, document failures /
+abandoned options / preconditions that turned out to be
+studio-specific / ambiguities surfaced / open questions
+per §2.3 the methodology cannot solve"), failure-mode
+disclosure is BOTH **per-chapter local** AND
+**synthesised in chapter 08**:
+
+- **Per-chapter failure notes (REQUIRED for chapters
+  01-07)**: each phase chapter ends with a short
+  failure/open-question section using the §6.5
+  three-element structure for any failure mode surfaced
+  during that phase's execution. If no failure-mode
+  applies, the chapter states "No failure mode
+  surfaced during Phase N execution." explicitly. This
+  is the per-phase honesty contract.
+- **Chapter 08 synthesis**: the cross-phase failure
+  modes catalogued in the research workpad — fastpath
+  zero-adoption, decomposition-phase paper-only across
+  23 SPECs, workpad bootstrap gap, the four owner-
+  blocking ceremony refactor questions — are
+  consolidated in chapter 08 with the same three-
+  element structure. Chapter 08 also synthesises the
+  per-chapter failure notes into the seven open
+  research questions per §6.6 (now mandatory in
+  AC-9).
+
 The four+ failure modes catalogued in the research
 workpad
 (`file://../../../bes-fleet-policy/specs/2026-05-17-agentic-installation-methodology/RESEARCH.md`
