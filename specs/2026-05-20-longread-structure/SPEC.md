@@ -12,6 +12,8 @@ acceptance_commands:
   - bash scripts/lint-spec.sh specs/2026-05-20-longread-structure/SPEC.md
   - test -d longread
   - bash scripts/validate-longread-structure.sh
+release_acceptance_commands:
+  - bash scripts/validate-longread-structure.sh --release-mode
 cites_decision: 2026-05-18-agentic-installation-methodology
 ---
 
@@ -208,21 +210,21 @@ one introduction:
 
 | Chapter | Target words | Maximum words |
 |---|---|---|
-| 00-introduction | 800 | 1 200 |
+| 00-introduction | 800 | 1 100 |
 | 01-phase-0 | 800 | 1 100 |
-| 02-phase-1 | 1 000 | 1 400 |
-| 03-phase-2 | 1 000 | 1 400 |
+| 02-phase-1 | 1 000 | 1 300 |
+| 03-phase-2 | 1 000 | 1 300 |
 | 04-phase-3 | 900 | 1 200 |
-| 05-phase-4 | 1 200 | 1 600 |
-| 06-phase-5 | 1 000 | 1 400 |
-| 07-phase-6 | 800 | 1 100 |
+| 05-phase-4 | 1 200 | 1 500 |
+| 06-phase-5 | 1 000 | 1 300 |
+| 07-phase-6 | 800 | 1 000 |
 | 08-phase-7 | 1 500 | 2 000 |
-| **Total** | **9 000** | **12 400** |
+| **Total** | **9 000** | **11 800** |
 
-The total target lands in the parent Decision's
-8 000–12 000-word band. The maximum row gives ~4%
-margin for chapters that prove longer than estimated
-without breaching the band's upper bound.
+The total target (9 000) and the sum-of-maxima (11 800)
+both land within the parent Decision's 8 000–12 000-word
+band; the maximum row gives margin without breaching the
+upper bound (parent Decision §7).
 
 ### 6.3 Voice contract
 
@@ -246,6 +248,20 @@ posture per parent Decision §7:
   methodology Product B publishes recommends").
 - Acknowledge failure first-person: "we did not solve
   this; we name it as an open question."
+
+**Phase 0 voice exception**: Phase 0 (chapter 01) is a
+maturity rubric — generalized readiness criteria a
+reader applies to their own product, not a studio-
+experiential narration. The Phase 0 chapter MAY use a
+permitted pattern "we used this readiness test"
+followed by the generalized criteria stated in
+descriptive prose (e.g. "The product has been deployed
+enough times…"). Descriptive criteria are not
+third-person methodology-vendor voice in this context;
+they are the rubric itself. First-person framing of the
+rubric's authorship + studio-experiential examples
+remain REQUIRED; the criteria statements themselves
+need not be first-person.
 
 ### 6.4 Citation-from-corpus rule
 
@@ -318,11 +334,13 @@ transparency"). Specifically:
   (`owner://transcript-2026-05-18`) cited where the
   owner-verbatim grounds a methodology choice.
 
-The studio's product names (other BES product repos —
-ACTOCCATUD, Floom, IKTO, etc.) are NOT named in the
-longread; they are irrelevant to the methodology
+The studio's unrelated product repos are NOT named in
+the longread; they are irrelevant to the methodology
 discussion. The studio's identity IS named; specific
-unrelated product repos are not.
+unrelated product repos are not. (This SPEC also
+deliberately does not enumerate those repo names here;
+naming them in the contract that says not to name them
+would be self-defeating.)
 
 ## 7. Pipeline Specification
 
@@ -541,10 +559,10 @@ function check_budgets():
 | AC-3 | `cmd://test -x scripts/validate-longread-structure.sh` exits 0 |
 | AC-4 | For each chapter file in §6.1: `cmd://test -f longread/<filename>` exits 0 |
 | AC-5 | `cmd://bash scripts/validate-longread-structure.sh` exits 0 |
-| AC-6 | Total word count is between 8 000 and 12 000 (release-time tightening of validator's permissive bounds) |
+| AC-6 | `cmd://bash scripts/validate-longread-structure.sh --release-mode` exits 0 (enforces total within 8 000-12 000). This is the **release-time** acceptance command, listed under front-matter `release_acceptance_commands`, run at v1.0 release verification (not at this Contract's verification, since the longread is in-progress at Contract verification time). |
 | AC-7 | Every per-chapter Task SPEC cites this Contract by id |
-| AC-8 | Every methodology primitive in the longread resolves to a corpus entry citation (manual reviewer check during spec-review) |
-| AC-9 | Chapter 08 includes the four+ research §7 failure modes with the §6.5 three-element disclosure structure |
+| AC-8 | Every methodology primitive in the longread resolves to a corpus entry citation. **Mechanical enforcement is deferred to a follow-on Task SPEC for a corpus-citation lint extension**; until that lands, AC-8 is a manual reviewer check during spec-review. The SPEC is honest about this gap — it does not pretend the validator covers AC-8. |
+| AC-9 | Chapter 08 includes the four+ research §7 failure modes with the §6.5 three-element disclosure structure AND lists all seven open research questions from the upstream research workpad §2.3 (the seven open research questions enumerated at `file://../../../bes-fleet-policy/specs/2026-05-17-agentic-installation-methodology/RESEARCH.md` §2.3). Per parent Decision §7 these MUST be published as flagged-open. |
 
 ## 14. Implementation Checklist (Definition of Done)
 
@@ -576,12 +594,14 @@ verification list.)
 - [ ] AC-3: validate-longread-structure.sh executable
 - [ ] AC-4: all 9 chapter files exist
 - [ ] AC-5: validator exits 0
-- [ ] AC-6: total word count within 8 000–12 000
+- [ ] AC-6: release-mode validator exits 0 (total within 8 000–12 000); run at v1.0 release-verification, not at this Contract's verification
 - [ ] AC-7: every per-chapter Task SPEC cites this
       Contract
-- [ ] AC-8: methodology primitives cite corpus
+- [ ] AC-8: methodology primitives cite corpus (manual until corpus-citation lint extension follow-on Task SPEC lands)
 - [ ] AC-9: chapter 08 carries failure-mode
-      disclosures per §6.5
+      disclosures per §6.5 + all seven open research
+      questions from research §2.3 published as
+      flagged-open
 
 ## 16. Rollback Plan
 
