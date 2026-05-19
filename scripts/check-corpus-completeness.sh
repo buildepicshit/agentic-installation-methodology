@@ -31,7 +31,7 @@ CORPUS_DIR="$REPO_ROOT/research/primary-sources"
 INDEX_FILE="$CORPUS_DIR/INDEX.md"
 SPEC_FILE="$REPO_ROOT/specs/2026-05-19-primary-source-research-corpus/SPEC.md"
 
-EXPECTED_VERSION="v1.0"
+EXPECTED_VERSION="v1.1"
 
 fail() {
     printf 'check-corpus-completeness: FAIL — %s\n' "$1" >&2

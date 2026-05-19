@@ -187,9 +187,18 @@ Owner decisions required before implementation:
 | cucumber-gherkin | Cucumber / Gherkin reference | `url://cucumber.io/docs/gherkin/reference/` | Behavioral acceptance primitive; research §5.1 |
 | openapi-3-1 | OpenAPI 3.1 specification | `url://spec.openapis.org/oas/v3.1.0` | API contract primitive; research §5.1 |
 | structurizr-dsl | Structurizr DSL (C4 implementation) | `url://docs.structurizr.com/dsl` | Machine-readable C4; research §5.1 |
+| json-schema | JSON Schema specification (Draft 2020-12) | `url://json-schema.org/specification.html` | Added v1.1 per codex remediation finding 2.3 (`file://../2026-05-19-codex-remediation-amendments/SPEC.md` §7.D). Methodology relevance: Helm values-schema + OpenAPI 3.1 both depend on JSON Schema; the methodology's customization sub-spec validates against JSON Schema; citing those transitively without anchoring the underlying primitive is a citation gap |
+| cyclonedx-sbom | CycloneDX Software Bill of Materials specification | `url://cyclonedx.org/specification/overview/` | Added v1.1 per codex remediation finding 2.3. Methodology relevance: the audit / provenance story (research §4.4 + LeadDev §3 regulated-environments framing) needs a primary SBOM source so the spec-as-distribution manifest can carry verifiable component inventories |
 
-`SOURCE_LIST_VERSION: v1.0` — additions land as follow-on
-Contract SPEC amendments per §17 Open Questions.
+`SOURCE_LIST_VERSION: v1.1` (bumped 2026-05-19 by
+`file://../2026-05-19-codex-remediation-amendments/SPEC.md`
+§7.D) — adds `json-schema` + `cyclonedx-sbom` to v1.0
+baseline. Two further candidates flagged but NOT v1.1
+mandatory (deferred to corpus §17 Q4 v1.2 expansion):
+`dev-container-spec`, `slsa-in-toto`.
+
+Additions land as follow-on Contract SPEC amendments per
+§17 Open Questions.
 
 ### 6.2 Per-source artefact schema
 
