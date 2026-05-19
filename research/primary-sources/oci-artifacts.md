@@ -63,12 +63,26 @@ methodology_relevance: |
   downloaded, verified by hash, trusted through a
   signature, and unpacked into an OCI Runtime Bundle."
 
-- **OCI Artifacts** (`url://github.com/opencontainers/image-spec/blob/main/artifacts-guidance.md`):
-  the artifacts guidance "describing how to use the spec
-  for packaging content other than OCI images" —
-  indicating OCI registries can carry non-runtime
-  payloads (SBOMs, signatures, Helm charts, arbitrary
-  blobs).
+- **OCI Artifacts Guidance** (`url://github.com/opencontainers/image-spec/blob/main/artifacts-guidance.md`,
+  deep-read 2026-05-19 supplementary fetch):
+  - Verbatim: "Content other than OCI container images
+    MAY be packaged using the image manifest."
+  - Verbatim guidance on differentiating images from
+    artifacts: "the `config.mediaType` value should not
+    be a known OCI image config [media type]" and
+    instead use "values specific to the artifact in
+    `layer[*].mediaType`."
+  - Normative posture: the document is **guidance**,
+    not a formal specification; the only explicit
+    RFC 2119 verb is the permissive "MAY" on
+    artifact-via-image-manifest packaging. There is no
+    MUST/SHOULD requirement compelling artifact
+    packaging, only prescriptive guidance about media-
+    type selection.
+  - The historical non-conformant pattern
+    (`application/vnd.oci.image.config.v1+json` for
+    config with artifact-specific layer media types) is
+    explicitly discouraged.
 
 ## 4. Fact-link to methodology
 

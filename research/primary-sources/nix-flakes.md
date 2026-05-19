@@ -92,11 +92,17 @@ implications for the methodology's deployment/ sub-spec:
   are the declared dependencies (the spec's deferral
   contract); outputs are the materialized deployment
   artefacts.
-- The flake.lock content-hash model is the strongest
-  primitive available for "two installs produce the same
-  build outputs" — the methodology's equivalence-classes
-  open question (research §2.3.5) can cite Nix as the
-  current upper bound on equivalence-by-construction.
+- The flake.lock content-hash model is a strong
+  primitive for "two installs produce the same build
+  outputs"; the methodology's equivalence-classes open
+  question (research §2.3.5) can cite Nix as one
+  concrete example of equivalence-by-construction. (The
+  claim that Nix is "the strongest" reproducibility
+  primitive in the field is a comparative
+  `judgment://agent-synthesis`, not licensed by Nix's
+  own documentation; methodology prose should frame Nix
+  as "an example" rather than "the strongest" without
+  separate comparative evidence.)
 - The transitive-lock property — every direct and
   indirect dependency pinned — is the methodology's
   posture for the SPEC bundle's manifest: every cited

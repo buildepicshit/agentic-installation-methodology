@@ -111,9 +111,15 @@ Methodology claims licensed by this entry (cite as
   to 'update spec and verify downstream re-compilation
   is consistent' — the methodology's versioning facet
   must address this directly."
-- methodology-claim: "Hybrid customise-periphery
-  /standardise-core (Willison) is a viable mitigation
-  the methodology endorses for safety-critical paths."
+- methodology-claim: "Hybrid customise-periphery /
+  standardise-core was articulated by Simon Willison in
+  the LeadDev article as a mitigation suggestion
+  (`url://leaddev.com/ai/can-you-trust-the-spec-the-risky-future-of-agent-compiled-software`).
+  Whether the methodology endorses it for safety-
+  critical paths is a separate **methodology
+  judgment** (`judgment://agent-synthesis` requiring
+  owner affirmation), not a claim licensed by Willison
+  or the LeadDev article alone."
 
 ## 6. Open questions surfaced by the primary read
 

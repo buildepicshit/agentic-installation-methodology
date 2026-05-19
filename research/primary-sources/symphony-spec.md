@@ -119,9 +119,14 @@ Methodology claims licensed by this entry (cite as
 `file://research/primary-sources/symphony-spec.md §3`):
 
 - methodology-claim: "Symphony's SPEC.md is the only
-  published in-the-wild example of an operating-model
-  shipped as a versioned SPEC artefact (18 sections,
-  three-profile conformance harness, tiered DoD)."
+  example of an operating-model shipped as a versioned
+  18-section SPEC artefact (with three-profile
+  conformance harness + tiered DoD) **identified by
+  this project's research workpad** at
+  `file://../../../bes-fleet-policy/specs/2026-05-17-agentic-installation-methodology/RESEARCH.md`
+  §3. Symphony's own SPEC.md does not assert global
+  uniqueness; the global-uniqueness claim is research-
+  workpad scoped, not primary-source licensed."
 - methodology-claim: "Symphony's three-profile
   conformance model (Core / Extension / Real-Integration)
   is reusable for the methodology's published SPEC

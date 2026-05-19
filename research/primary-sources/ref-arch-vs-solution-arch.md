@@ -57,19 +57,28 @@ methodology_relevance: |
     — the specific tools, techniques, and controls
     selected based on context.
 
-- **Underlying thesis** (verbatim, paraphrased close
-  to source): "understanding the base patterns that
-  you can't violate, it's like a really big deal."
+- **Underlying thesis** (paraphrased from Cottmeyer, not
+  verbatim): the original article frames the underlying
+  point as understanding the immutable base patterns
+  that organisations cannot violate without losing
+  transformation viability. (See LiminalArc article
+  body; the surrounding quotation in this corpus entry
+  is a near-paraphrase based on the WebFetch summary —
+  treat as paraphrase unless the exact source wording is
+  later confirmed by a follow-on read.)
 
-- **Consulting context**: the distinction "emerged
-  from practical agile transformation work where
-  organizations attempt to implement frameworks like
-  SAFe, LeSS, or Disciplined Agile Delivery." The
-  observation: "blindly deploying methodologies
-  verbatim fails, but understanding immutable
-  patterns beneath various frameworks enables
-  organizations to tailor their approach while
-  maintaining transformation viability."
+- **Consulting context** (paraphrased from Cottmeyer):
+  the distinction emerged from practical agile-
+  transformation work where organisations attempt to
+  implement frameworks like SAFe, LeSS, or Disciplined
+  Agile Delivery. Cottmeyer's observation: blindly
+  deploying methodologies verbatim fails, but
+  understanding the immutable patterns beneath various
+  frameworks enables organisations to tailor their
+  approach while maintaining transformation viability.
+  (Both sentences are paraphrase based on the WebFetch
+  summary, not exact source wording; the canonical
+  article body is at the cited URL.)
 
 ## 4. Fact-link to methodology
 

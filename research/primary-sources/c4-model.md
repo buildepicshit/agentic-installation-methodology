@@ -116,10 +116,14 @@ entry (cite as
 - methodology-claim: "C4 is notation-independent and <!-- lint-ok: no-citation -->
   tooling-independent (per c4model.com homepage
   #diagrams/notation, #tooling)."
-- methodology-claim: "C4 Containers are applications and <!-- lint-ok: no-citation -->
-  data stores, not Docker containers — the terminology
-  is C4's own and predates / is separate from container
-  runtimes."
+- methodology-claim: "C4 Containers are 'applications and
+  data stores' per the abstractions page (`url://c4model.com/abstractions`).
+  Whether the C4 docs explicitly disambiguate from Docker
+  containers in additional pages was NOT verified in
+  this primary read; downstream methodology MUST NOT
+  quote a 'NOT a Docker container' phrasing without
+  fetching `url://c4model.com/diagrams/container` and
+  citing that page directly." <!-- lint-ok: no-citation -->
 - methodology-claim: "Code-level (level 4) diagrams in C4 <!-- lint-ok: no-citation -->
   represent classes, interfaces, objects, functions; the
   methodology's architecture/ sub-spec MAY include
