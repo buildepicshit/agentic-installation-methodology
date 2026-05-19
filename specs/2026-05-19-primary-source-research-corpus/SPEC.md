@@ -648,14 +648,36 @@ Downstream methodology slices reference both: <!-- lint-ok: no-citation -->
 - `cmd://bash scripts/check-corpus-completeness.sh` —
   exit 0; PASS — 20 sources, all complete.
 - Per-artefact `cmd://bash scripts/lint-spec.sh
-  research/primary-sources/<slug>.md` — exit 1 on each
-  (lint script is designed for SPEC artefacts; corpus
-  artefacts have `slug:` front-matter rather than
-  `type:`). Per this SPEC §7.1, lint exit 1 on a
-  corpus artefact is advisory; the
-  `check-corpus-completeness.sh` script is the
-  authoritative gate. All artefacts conform manually
-  to §6.2 schema + §8.1 front-matter.
+  research/primary-sources/<slug>.md` — exit 1 on each.
+  Two issue classes:
+  1. Front-matter shape: corpus artefacts use `slug:`
+     not `type:`, so lint reports "missing
+     type/implies_spec_type field" + "missing required
+     section: ##". These are misapplied checks — the
+     lint script is designed for SPEC artefacts.
+  2. Uncited-claim: 18 of 20 artefacts have
+     `fact-bearing paragraph lacks citation prefix`
+     errors in §4 / §5 / §6 — meta-commentary bullets
+     that reference §3 by section but lack an inline
+     prefix the script's paragraph scanner recognises.
+  **Cross-family review (codex finding 2.1) correctly
+  identified this as a hack**: SPEC §7.1 says
+  uncited-claim is BLOCKING on corpus artefacts, but
+  these failures were waved off as front-matter noise.
+  The honest reading is that the current lint is not
+  fit-for-purpose on corpus artefacts and the in-place
+  enforcement gap is a follow-on Task SPEC for a
+  corpus-mode lint extension (or a separate
+  `scripts/validate-corpus-citations.sh` script that
+  applies only the uncited-claim subset of the
+  citation grammar to corpus artefacts). Until that
+  Task SPEC executes, `check-corpus-completeness.sh`
+  is the authoritative mechanical gate and per-artefact
+  citation density is reviewer-enforced. The corpus
+  artefacts authored under this SPEC ARE densely cited
+  (17+ citation prefixes per artefact), but the
+  mechanical claim that uncited-claim is blocking
+  cannot currently be verified by the script.
 
 ### 19.3 Verification result
 
