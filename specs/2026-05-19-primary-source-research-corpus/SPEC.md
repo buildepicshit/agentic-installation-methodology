@@ -1,6 +1,6 @@
 ---
 id: 2026-05-19-primary-source-research-corpus
-status: approved-pending-owner
+status: in-execution
 type: contract
 owner: HasNoBeef
 repo: agentic-installation-methodology
