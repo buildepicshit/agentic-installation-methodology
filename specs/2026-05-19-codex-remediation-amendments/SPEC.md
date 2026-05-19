@@ -123,10 +123,13 @@ Active authority:
   `file://../../reviews/codex-2026-05-19/02-corpus.md`,
   `file://../../reviews/codex-2026-05-19/03-v2-repack.md`,
   `file://../../reviews/codex-2026-05-19/04-longread.md`.
-- Parent Decision SPEC §16 Reversal Plan triggers <!-- lint-ok: no-citation -->
+- Parent Decision SPEC §10 Reversal Plan triggers <!-- lint-ok: no-citation -->
   ("External cross-family validation pass surfaces a
   structural flaw") authorising amendment of the parent
-  Decision via this follow-on Contract.
+  Decision via this follow-on Contract. (Section number
+  corrected from §16 to §10 per codex Round-2 advisory
+  finding; §10 is the actual Reversal Plan in the parent
+  SPEC's section numbering.)
 
 Stale, superseded, or evidence-only sources: none specific
 to this Contract.

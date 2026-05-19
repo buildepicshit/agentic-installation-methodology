@@ -7,14 +7,19 @@ fetched_on: 2026-05-19
 fetch_outcome: "primary-read-complete"
 fetch_evidence: "fetched openai/symphony main SPEC.md; 18-section structure + §17 Conformance Profiles + §18 DoD verbatim"
 methodology_relevance: |
-  Symphony's SPEC.md is the only in-the-wild example of
-  "operating-model-as-SPEC" — research §3 named it the
-  source of 14 transferable building blocks for the
-  methodology. This corpus entry anchors the 18-section
-  structure, the three-profile conformance model, and the
-  tiered Definition-of-Done so the methodology can cite
-  Symphony precisely when prescribing the SPEC bundle's
-  shape and conformance harness.
+  Symphony's SPEC.md is the only example of
+  "operating-model-as-SPEC" identified by this project's
+  research workpad — research §3 named it the source of
+  14 transferable building blocks for the methodology.
+  (Note: the "only" framing is project-research-scoped,
+  not a globally-licensed uniqueness claim — fixed per
+  codex Round-2 finding 2.6 PARTIAL: Symphony's own
+  SPEC.md does not assert global uniqueness.) This corpus
+  entry anchors the 18-section structure, the three-
+  profile conformance model, and the tiered
+  Definition-of-Done so the methodology can cite Symphony
+  precisely when prescribing the SPEC bundle's shape and
+  conformance harness.
 ---
 
 # OpenAI Symphony SPEC.md

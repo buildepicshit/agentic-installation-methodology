@@ -83,12 +83,21 @@ implications:
 
 - The methodology's manifest schema (per codex
   remediation 3.5) gains a `provenance` field that
-  carries SBOM references; CycloneDX is the canonical
-  format for those references.
+  carries SBOM references; CycloneDX is a primary SBOM
+  option for those references. (SPDX is the other major
+  format and warrants comparison; see §6 — the
+  "canonical" framing was reduced to "primary option"
+  per codex Round-2 finding on cyclonedx overreach.)
 - The LeadDev critique
   (`url://github.com/buildepicshit/agentic-installation-methodology/blob/main/research/primary-sources/leaddev-agent-compiled.md`
-  §3) raised regulated-environments compliance as a risk
-  surface; CycloneDX directly addresses it.
+  §3) raised regulated-environments compliance as a
+  risk surface; CycloneDX is one primary SBOM option
+  relevant to that compliance gap. ("Directly addresses"
+  was reduced to "relevant to" per codex Round-2 finding
+  on cyclonedx overreach — full compliance requires more
+  than an SBOM format; SPDX comparison + NTIA element
+  mapping + VEX vulnerability handling are companion
+  pieces.)
 - The three encoding formats (JSON / XML / Protobuf)
   let the methodology recommend JSON as default while
   acknowledging adopter environments may use XML for

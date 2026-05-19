@@ -132,8 +132,9 @@ Methodology claims licensed by this entry (cite as
   methodology's analogue for the customization +
   deployment sub-specs."
 - methodology-claim: "Cottmeyer's empirical
-  observation — 'blindly deploying methodologies
-  verbatim fails' — is the methodology's case for
+  observation (paraphrased: blindly deploying
+  methodologies verbatim fails) — is the methodology's
+  case for <!-- "blindly deploying" is paraphrase per §3, not verbatim source quote (codex Round-2 finding 2.8) -->
   non-prescriptive SPECs: prescription erodes the
   installer's authority to tailor."
 

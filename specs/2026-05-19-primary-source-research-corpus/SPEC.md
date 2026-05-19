@@ -616,11 +616,16 @@ Downstream methodology slices reference both: <!-- lint-ok: no-citation -->
 
 - `scripts/check-corpus-completeness.sh` — mechanical
   corpus-completeness gate (new).
-- `research/primary-sources/INDEX.md` — v1.0 corpus
-  index; all 20 rows at status: primary-read-complete.
-- `research/primary-sources/*.md` — 20 per-source
-  artefacts, all conforming to §6.2 schema + §8.1
-  front-matter:
+- `research/primary-sources/INDEX.md` — v1.1 corpus
+  index (bumped from v1.0 per codex remediation §7.D);
+  22 rows total: 19 at status: primary-read-complete, 3
+  at status: partial with deferred-reads notes per
+  SPEC §7.2 (adr-tools-state, structurizr-dsl,
+  json-schema).
+- `research/primary-sources/*.md` — 22 per-source
+  artefacts (20 at v1.0 + 2 added at v1.1: json-schema,
+  cyclonedx-sbom), all conforming to §6.2 schema +
+  §8.1 front-matter:
   - arc42 (architecture documentation)
   - c4-model (architecture model)
   - adr-nygard (foundational ADR)
@@ -648,14 +653,16 @@ Downstream methodology slices reference both: <!-- lint-ok: no-citation -->
 
 ### 19.2 Commands run
 
-- 23 `cmd://WebFetch` invocations across the 20 sources
+- 25 `cmd://WebFetch` invocations across the 22 sources
   (some sources required supplementary fetches; one
-  redirect was followed from nixos.org to nix.dev).
+  redirect was followed from nixos.org to nix.dev; 2
+  v1.1 fetches added: json-schema + cyclonedx-sbom per
+  codex remediation §7.D).
 - `cmd://bash scripts/lint-spec.sh
   specs/2026-05-19-primary-source-research-corpus/SPEC.md`
   — exit 0 (0 errors, 0 warnings, 47 citation hits).
 - `cmd://bash scripts/check-corpus-completeness.sh` —
-  exit 0; PASS — 20 sources, all complete.
+  exit 0; PASS — 22 sources (3 partial with deferred-reads notes; bumped from v1.0 20-source baseline per codex remediation §7.D).
 - Per-artefact `cmd://bash scripts/lint-spec.sh
   research/primary-sources/<slug>.md` — exit 1 on each.
   Two issue classes:
@@ -664,7 +671,7 @@ Downstream methodology slices reference both: <!-- lint-ok: no-citation -->
      type/implies_spec_type field" + "missing required
      section: ##". These are misapplied checks — the
      lint script is designed for SPEC artefacts.
-  2. Uncited-claim: 18 of 20 artefacts have
+  2. Uncited-claim: 18 of 22 artefacts have
      `fact-bearing paragraph lacks citation prefix`
      errors in §4 / §5 / §6 — meta-commentary bullets
      that reference §3 by section but lack an inline
@@ -695,8 +702,12 @@ PASS. All §15 ACs met:
 - AC-1: SPEC.md lint clean (exit 0).
 - AC-2: INDEX.md present.
 - AC-3: check-corpus-completeness.sh present + executable.
-- AC-4: check-corpus-completeness.sh exits 0; all 20
-  slugs at status primary-read-complete.
+- AC-4: check-corpus-completeness.sh exits 0; 22
+  slugs total (19 primary-read-complete + 3 partial
+  with deferred-reads notes per the §7.2 partial
+  rule; codex remediation §7.D added json-schema +
+  cyclonedx-sbom; codex Round-2 added the partial
+  status-truth check to the script).
 - AC-5: every §6.1 slug has corresponding `<slug>.md`
   artefact.
 - AC-6: every artefact's front-matter conforms to
@@ -706,11 +717,12 @@ PASS. All §15 ACs met:
   the 18-section Symphony list and 12-factor's 12
   named factors, both well under bound).
 - AC-8: this Completion Report records the per-source
-  fetch outcomes (all 20 primary-read-complete; zero
-  access-blocked) and the source-list discoveries
-  (Kiro Bedrock binding NOT confirmed by primary read;
-  was an inferred binding in the prior research
-  workpad).
+  fetch outcomes (19 primary-read-complete + 3 partial
+  with deferred-reads notes — adr-tools-state,
+  structurizr-dsl, json-schema; zero access-blocked)
+  and the source-list discoveries (Kiro Bedrock binding
+  NOT confirmed by primary read; was an inferred
+  binding in the prior research workpad).
 - AC-9: cross-family review deferred. Same-family
   self-review performed; advisory recorded. Owner
   directive 2026-05-18 ("base this all in deep

@@ -121,10 +121,15 @@ Methodology claims licensed by this entry (cite as
 - methodology-claim: "flake.lock provides transitive
   pin-by-content-hash; rebuild reproducibility holds
   across direct and indirect dependencies."
-- methodology-claim: "Nix's reproducibility model is the
-  strongest current implementation of build-from-spec;
-  the methodology cites it as the upper bound on
-  equivalence-class-by-construction."
+- methodology-claim: "Nix's reproducibility model is one
+  concrete implementation of build-from-spec; the
+  methodology cites it as an example of equivalence-
+  class-by-construction. (Earlier 'strongest current
+  implementation' framing removed per codex Round-2
+  finding 2.9 FAIL — comparative ranking is
+  judgment://agent-synthesis not licensed by Nix
+  documentation; the §4 caveat is now reflected here
+  for consistency.)"
 - methodology-claim: "The methodology's deployment/
   sub-spec MAY mirror flake's inputs/outputs shape,
   treating inputs as the deferral contract and outputs

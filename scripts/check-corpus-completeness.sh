@@ -85,6 +85,16 @@ for row in "${rows[@]}"; do
         issues+=("slug '$slug' in INDEX has no matching file at research/primary-sources/$slug.md")
     fi
 
+    # 6b. Partial-status artefact MUST document what was NOT deep-read.
+    # Per SPEC §7.2, partial is acceptable iff the artefact §6 records
+    # the deferred-reads note (codex Round-2 finding: previously the
+    # script silently accepted partial and printed "all complete").
+    if [ "$status" = "partial" ] && [ -f "$CORPUS_DIR/$slug.md" ]; then
+        if ! grep -qiE 'not deep-read|deep-read.*deferred|deferred to|sub-page.* NOT|reserved for v1\.|reserved for follow-on' "$CORPUS_DIR/$slug.md"; then
+            issues+=("slug '$slug' is partial but artefact has no deferred-reads note in §6 (per SPEC §7.2 partial requires explicit disclosure of what was not deep-read)")
+        fi
+    fi
+
     # 7. Access-blocked must record an alternative or unreachability note in §6.
     if [ "$status" = "access-blocked" ] && [ -f "$CORPUS_DIR/$slug.md" ]; then
         if ! grep -qiE 'alternative|unreachable|fallback' "$CORPUS_DIR/$slug.md"; then
@@ -112,5 +122,16 @@ if [ ${#issues[@]} -gt 0 ]; then
 fi
 
 n_rows=${#index_slugs[@]}
-printf 'check-corpus-completeness: PASS — %d sources, all complete\n' "$n_rows"
+# Count partials for honest PASS reporting (codex Round-2 finding).
+n_partial=0
+for slug in "${!index_status[@]}"; do
+    if [ "${index_status[$slug]}" = "partial" ]; then
+        n_partial=$((n_partial + 1))
+    fi
+done
+if [ $n_partial -gt 0 ]; then
+    printf 'check-corpus-completeness: PASS — %d sources (%d partial with deferred-reads notes)\n' "$n_rows" "$n_partial"
+else
+    printf 'check-corpus-completeness: PASS — %d sources, all primary-read-complete\n' "$n_rows"
+fi
 exit 0

@@ -27,8 +27,9 @@ methodology_relevance: |
   Foundation).
 - Companion: Artifacts Guidance at
   `url://github.com/opencontainers/image-spec/blob/main/artifacts-guidance.md`
-  (referenced from main spec; not deep-read in this
-  pass).
+  (deep-read 2026-05-19 supplementary fetch per codex
+  remediation finding 2.4; verbatim quotes incorporated in
+  §3).
 
 ## 2. Fetch trace
 
@@ -140,7 +141,14 @@ Methodology claims licensed by this entry (cite as
   MAY recommend this exact stack but should anchor each
   primitive separately rather than as a Helm-specific
   recipe.
-- The Artifacts Guidance doc itself was not deep-read on
-  this pass; if methodology proposes specific media-type
-  conventions for SPEC bundle artefacts, fetch the
-  guidance for the type-naming conventions.
+- The Artifacts Guidance doc was deep-read on the
+  2026-05-19 supplementary fetch (§3 last bullet
+  block). The remaining open question is media-type
+  naming for SPEC bundle artefacts specifically — the
+  guidance permits non-OCI config media types but does
+  not catalogue community conventions for
+  methodology / spec-bundle artefacts. Methodology
+  proposing specific media-type strings (e.g.
+  `application/vnd.agentic-installation.spec-bundle+json`)
+  needs an IANA-style convention proposal, not a
+  further fetch of OCI guidance.
