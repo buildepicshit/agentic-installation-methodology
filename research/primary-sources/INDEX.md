@@ -12,16 +12,16 @@ the bijection and the completeness state.
 
 | Slug | Status | Fetched on | Methodology summary |
 |---|---|---|---|
-| arc42 | pending | — | Architecture documentation template; methodology §3 building block; comparison point for §8 Crosscutting Concepts |
-| c4-model | pending | — | C4 model for software architecture (Container/Component/Code levels); Structurizr DSL implementation |
-| adr-nygard | pending | — | Nygard's original Architecture Decision Records post (2011); the decisions facet primitive |
+| arc42 | primary-read-complete | 2026-05-19 | Architecture documentation template; 12-section structure (Introduction/Goals → Glossary); §9 Architecture Decisions is first-class |
+| c4-model | primary-read-complete | 2026-05-19 | Four-level hierarchical model: Software Systems → Containers → Components → Code; notation- and tooling-independent |
+| adr-nygard | primary-read-complete | 2026-05-19 | 2011 foundational ADR post; five-section template (Title/Context/Decision/Consequences/Status); lightweight thesis |
 | adr-tools-state | pending | — | State of ADR practice: adr-tools, MADR, Y-statements; cross-check Nygard against current usage |
-| diataxis | pending | — | Documentation taxonomy: tutorials / how-to / reference / explanation; comparison for methodology packaging |
-| 12-factor | pending | — | 12-factor app manifesto; Config knob primitive; conformance overlay reference |
-| helm-values-schema | pending | — | Helm values.schema.json + JSON Schema; customization-affordance grammar closest in practice |
-| nix-flakes | pending | — | Nix flake schema + RFC 49; strongest reproducible-from-spec primitive |
-| oci-artifacts | pending | — | OCI Image Spec + Artifact spec; spec-as-distribution packaging primitive |
-| sigstore-cosign | pending | — | Sigstore architecture + cosign; signing model for spec-as-distribution artefacts |
+| diataxis | primary-read-complete | 2026-05-19 | Four-mode documentation taxonomy on two axes (action-vs-cognition × study-vs-work): tutorials / how-to / reference / explanation |
+| 12-factor | primary-read-complete | 2026-05-19 | 12-factor SaaS methodology; 12 named factors; Factor III "Store config in the environment" |
+| helm-values-schema | primary-read-complete | 2026-05-19 | Chart.yaml + values.yaml + values.schema.json (JSON Schema); validation at install/upgrade/lint/template |
+| nix-flakes | primary-read-complete | 2026-05-19 | flake.nix (inputs/outputs) + flake.lock (transitive content-hash pin); strongest reproducibility primitive |
+| oci-artifacts | primary-read-complete | 2026-05-19 | manifest + descriptor + layers; Artifacts Guidance extends spec to non-image payloads (SBOMs, signatures, SPEC bundles) |
+| sigstore-cosign | primary-read-complete | 2026-05-19 | Fulcio (CA) + Rekor (transparency log) + cosign (client); keyless OIDC-rooted signing |
 | symphony-spec | pending | — | OpenAI Symphony SPEC.md; in-the-wild operating-model-as-SPEC; 14 transferable building blocks |
 | spec-kit | pending | — | GitHub Spec Kit; closest spec-as-authoring tool |
 | kiro | pending | — | Kiro spec-driven IDE; Bedrock-tethered AI coding environment |
