@@ -60,7 +60,7 @@ fi
 
 declare -A index_slugs
 declare -A index_status
-declare -a issues
+issues=()
 
 valid_statuses="primary-read-complete partial access-blocked superseded pending"
 
