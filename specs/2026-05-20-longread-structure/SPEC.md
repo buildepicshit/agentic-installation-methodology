@@ -1,6 +1,6 @@
 ---
 id: 2026-05-20-longread-structure
-status: approved-pending-owner
+status: in-execution
 type: contract
 owner: HasNoBeef
 repo: agentic-installation-methodology
