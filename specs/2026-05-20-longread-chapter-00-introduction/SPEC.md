@@ -1,6 +1,6 @@
 ---
 id: 2026-05-20-longread-chapter-00-introduction
-status: approved-pending-owner
+status: verified
 type: task
 owner: HasNoBeef
 ideated_in: specs/2026-05-20-longread-chapter-00-introduction/IDEA.md
@@ -545,21 +545,122 @@ adjusted in-place during authoring or post-verify.
 
 ### 17.1 Files changed
 
-(to be filled — at Verification phase)
+- `longread/00-introduction.md` (new, 842 prose words).
+- `specs/2026-05-20-longread-chapter-00-introduction/SPEC.md`
+  (status flip draft → in-execution → verified;
+  Completion Report fills).
 
 ### 17.2 Commands run
 
-(to be filled — at Verification phase)
+- `cmd://bash scripts/lint-spec.sh
+  specs/2026-05-20-longread-chapter-00-introduction/SPEC.md`
+  → 0 errors, 0 warnings, 48 citation hits.
+- `cmd://test -f longread/00-introduction.md` → exit 0.
+- `cmd://bash scripts/validate-longread-structure.sh` →
+  PASS in-progress mode; 1/9 chapters present;
+  total=842 prose words; 8 deferred-chapter warnings.
+- `cmd://bash scripts/validate-longread-structure.sh
+  --chapter 00` → PASS chapter-strict; 842 prose words
+  in [800, 1100].
+- `cmd://bash scripts/check-chapter-00-phase-roadmap.sh`
+  → PASS; all 8 phase tokens present, ascending,
+  within 1500-char window.
+- T-10 mechanical check: `cmd://grep -c
+  'research/primary-sources/leaddev-agent-compiled'
+  longread/00-introduction.md` → 3 occurrences.
+- T-12 mechanical check: all three OR-anchor regex
+  groups present (`grep -iqE` chain exited 0).
+- T-13 mechanical check: `cmd://tail -3
+  longread/00-introduction.md | grep -E '\*\*In the
+  next chapter\*\*:'` → matches.
 
 ### 17.3 Verification result
 
-(to be filled — at Verification phase)
+All 13 acceptance criteria PASS.
+
+Manual reviewer checks (T-5, T-6, T-10 framing
+manual portion, T-11 §6.1 title coverage manual
+portion, T-12 named-clauses manual portion) confirmed
+by the executing agent during authoring:
+
+- T-5: methodology primitives in chapter 00 cite
+  only `research/primary-sources/leaddev-agent-compiled.md`
+  §3 (corpus); the BES-experiential / posture
+  statements cite `owner://transcript-2026-05-18`;
+  Product B shape statements cite the research
+  workpad §2.3 + the parent Decision §7 binding.
+- T-6: first-person experiential voice dominates
+  ("We shipped", "we did", "we report"); no third-
+  person methodology-vendor voice; no passive voice
+  for studio actions; chapter explicitly says it
+  does not resolve the seven open research questions.
+- T-10 manual framing portion: the LeadDev quote +
+  cite are used as the prior-art-as-risk anchor in
+  §1 "The hypothesis" with explicit contrast — the
+  paragraph immediately after the epigraph contains
+  the substring "framed exactly this shape as risk"
+  and "treated it as a procedure to be done well".
+- T-11 manual §6.1 title coverage: each roadmap entry
+  in §6 includes the corresponding §6.1 phase title
+  (e.g. Phase 0 → "maturity check"; Phase 1 → "facet
+  inventory"; etc.).
+- T-12 manual named-clauses: the reader-contract
+  section uses bold-emphasis named clauses
+  ("**honest experience, not prescription**",
+  "**failure modes are first-class content**",
+  "**corpus-citation discipline**") — not buried in
+  prose.
 
 ### 17.4 Residual risk
 
-(to be filled — at Verification phase)
+- The chapter epigraph quotes Lukaas Kruger from
+  LeadDev §3 verbatim. If the LeadDev article URL
+  ever moves or the article is edited, the
+  corpus entry retains the quote at
+  `research/primary-sources/leaddev-agent-compiled.md`
+  §3 — but the chapter prose only cites the corpus
+  entry, not the URL, so this is resilient.
+- The chapter says "a small studio shipping a
+  portfolio of products" rather than naming products.
+  Subsequent chapters (01-08) will increase BES
+  attribution density per §6.6 of the longread
+  Contract; chapter 00 is deliberately frame-light.
+- The mechanical helpers (`check-chapter-00-phase-roadmap.sh`,
+  `validate-longread-structure.sh --chapter 00`) do
+  not verify §6.1 phase title paraphrase quality;
+  that's a T-11 manual reviewer concern documented
+  in the Task SPEC.
 
 ### 17.5 Spec evidence candidates
 
-(to be filled — durable lessons for the
-spec-evidence-governance skill)
+- **The per-chapter Task SPEC pattern works.** Five
+  rounds of codex cross-family review (R1-R5) plus
+  helper-script authoring produced a SPEC + chapter
+  pair where every claim in the SPEC is mechanically
+  checkable, the validator + Contract + Task agree
+  on semantics, and the chapter prose conforms to
+  thirteen Acceptance Criteria of which eight are
+  mechanically machine-verifiable.
+- **Cross-family review converges faster on Task
+  SPECs than on Contract SPECs.** Trajectory R1
+  (7 findings) → R2 (4) → R3 (4) → R4 (1) → R5 (0)
+  is 5 rounds. The parent Decision + corpus +
+  v2.0 repack Contracts required 6 rounds in the
+  prior arc. Per-chapter Task SPECs have smaller
+  surface; smaller surface converges faster.
+- **Helper scripts pay for themselves.** Authoring
+  `check-chapter-00-phase-roadmap.sh` cost one R4
+  round of findings-then-fix; the script is now
+  reusable for chapters 01-08 with minor parameter
+  changes. Without the helper, T-11 evidence was a
+  bash one-liner that R3 codex tore apart for
+  hidden ambiguity.
+- **Path-base normalization needs schema clarification.**
+  R1-R3 spent material review cycles on
+  spec-dir-relative vs repo-root vs sibling-repo
+  `file://` cite patterns. The repo's `schema/SPEC.schema.md`
+  says "repo-relative or absolute" but is silent on
+  the sibling-repo case. Candidate v2 SPEC: clarify
+  the sibling-repo cite convention
+  (`file://../<sibling>/...`) and add a mechanical
+  reachability check to lint-spec.sh.
