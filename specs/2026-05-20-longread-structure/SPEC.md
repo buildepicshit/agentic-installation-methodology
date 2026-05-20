@@ -41,7 +41,7 @@ when, and only when, they appear in all capitals.
 ## 1. Problem Statement
 
 The parent Decision SPEC at
-`file://../../../bes-fleet-policy/specs/2026-05-18-agentic-installation-methodology/SPEC.md`
+`file://../bes-fleet-policy/specs/2026-05-18-agentic-installation-methodology/SPEC.md`
 §7 binds Product B to ship a paired (longread + SPEC
 bundle) release. The SPEC bundle's structural contract
 landed at v2.0 of the sibling Product A repo. The
@@ -65,9 +65,9 @@ Goals:
 
 - Define the longread's eight-chapter structure mapping
   to the methodology's Phase 0 + Phases 1–7
-  (`file://../2026-05-19-primary-source-research-corpus/SPEC.md`
+  (`file://specs/2026-05-19-primary-source-research-corpus/SPEC.md`
   §3.7 phase enumeration; original phase definitions in
-  `file://../../../bes-fleet-policy/specs/2026-05-17-agentic-installation-methodology/RESEARCH.md`
+  `file://../bes-fleet-policy/specs/2026-05-17-agentic-installation-methodology/RESEARCH.md`
   §6).
 - Set per-chapter word budget (target + maximum) so
   total longread length lands in the 8 000–12 000 word
@@ -77,7 +77,7 @@ Goals:
 - Set the citation-from-corpus rule: every methodology
   primitive cited in the longread MUST resolve to a
   primary-source corpus entry at
-  `file://../../research/primary-sources/<slug>.md §3`,
+  `research/primary-sources/<slug>.md §3`,
   not to agent memory or prior summaries.
 - Set the failure-mode disclosure expectation: every
   chapter that touches a known failure mode (research §7)
@@ -96,7 +96,7 @@ Non-goals:
 - Defining the SPEC bundle's content layout (slice 4
   covers that; this SPEC governs longread only).
 - Resolving the seven open research questions
-  (`file://../../../bes-fleet-policy/specs/2026-05-17-agentic-installation-methodology/RESEARCH.md`
+  (`file://../bes-fleet-policy/specs/2026-05-17-agentic-installation-methodology/RESEARCH.md`
   §2.3). The longread DISCLOSES them as open; it does
   not resolve them.
 - Choosing publication channel(s) for the longread
@@ -138,25 +138,25 @@ Active authority:
   all in deep research, not make up bullshit"); binds
   the longread's posture and depth.
 - Parent Decision SPEC at
-  `file://../../../bes-fleet-policy/specs/2026-05-18-agentic-installation-methodology/SPEC.md`
+  `file://../bes-fleet-policy/specs/2026-05-18-agentic-installation-methodology/SPEC.md`
   §7 — binds longread shape (8–12K words; first-person;
   BES case-study density; failure modes first-class)
   and phase structure (Phase 0 + Phases 1–7).
 - Verified primary-source corpus at
-  `file://../2026-05-19-primary-source-research-corpus/SPEC.md`
+  `file://specs/2026-05-19-primary-source-research-corpus/SPEC.md`
   (status: verified) + the 20 artefacts at
-  `file://../../research/primary-sources/<slug>.md` —
+  `research/primary-sources/<slug>.md` —
   the citable evidence base every chapter draws from.
 - Dispositioned research workpad at
-  `file://../../../bes-fleet-policy/specs/2026-05-17-agentic-installation-methodology/RESEARCH.md`
+  `file://../bes-fleet-policy/specs/2026-05-17-agentic-installation-methodology/RESEARCH.md`
   §6 (phase definitions) + §7 (BES case-study data) +
   §8 (posture) + §2.3 (seven open research questions).
-- `file://../../schema/SPEC.schema.md` — citation
+- `file://schema/SPEC.schema.md` — citation
   grammar, RFC 2119 scoping, front-matter conventions.
 
 Stale, superseded, or evidence-only sources:
 
-- `file://../../../bes-fleet-policy/specs/2026-05-17-decomposition-methodology-publication/RESEARCH.md`
+- `file://../bes-fleet-policy/specs/2026-05-17-decomposition-methodology-publication/RESEARCH.md`
   — superseded research workpad; evidence only.
 
 Owner decisions required before implementation:
@@ -182,7 +182,7 @@ Owner decisions required before implementation:
   does not yet exist; it is authored under this Contract.
 - The primary-source corpus at `research/primary-sources/`
   is verified (slice 1.5,
-  `file://../2026-05-19-primary-source-research-corpus/SPEC.md`
+  `file://specs/2026-05-19-primary-source-research-corpus/SPEC.md`
   §17 Acceptance Criteria all checked). The longread
   cites the corpus exclusively for methodology primitives.
 
@@ -238,7 +238,7 @@ posture per parent Decision §7:
   rolls-royce / honesty directives anchor methodology
   choices.
 - Use direct quotation of corpus entries
-  (`file://research/primary-sources/<slug>.md §3`) where
+  (`research/primary-sources/<slug>.md §3`) where
   a primary-source claim is cited.
 - Avoid passive voice for studio actions (NOT "the
   framework was extracted from"; YES "we extracted the
@@ -271,7 +271,7 @@ Structurizr, Diátaxis, 12-factor, Spec Kit, Kiro,
 OpenSpec, Oracle Agent Spec, Cottmeyer's
 reference-architecture distinction, LeadDev critique)
 MUST cite the corresponding corpus entry at
-`file://research/primary-sources/<slug>.md §3`, NOT
+`research/primary-sources/<slug>.md §3`, NOT
 agent memory, NOT prior summaries, NOT direct external
 URLs as the primary anchor.
 
@@ -291,7 +291,7 @@ directive favours corpus citations.
 ### 6.5 Failure-mode disclosure rule
 
 Per the upstream methodology phase definition
-(`file://../../../bes-fleet-policy/specs/2026-05-17-agentic-installation-methodology/RESEARCH.md`
+(`file://../bes-fleet-policy/specs/2026-05-17-agentic-installation-methodology/RESEARCH.md`
 §6 Phase 7: "for each phase, document failures /
 abandoned options / preconditions that turned out to be
 studio-specific / ambiguities surfaced / open questions
@@ -320,7 +320,7 @@ disclosure is BOTH **per-chapter local** AND
 
 The four+ failure modes catalogued in the research
 workpad
-(`file://../../../bes-fleet-policy/specs/2026-05-17-agentic-installation-methodology/RESEARCH.md`
+(`file://../bes-fleet-policy/specs/2026-05-17-agentic-installation-methodology/RESEARCH.md`
 §7) are first-class content in chapter 08:
 
 - Fastpath zero-adoption (research §7 sub-bullet a).
@@ -391,7 +391,7 @@ this Contract by id):
 
 Chapters 01–08 author against the Phase definitions in
 the research workpad
-(`file://../../../bes-fleet-policy/specs/2026-05-17-agentic-installation-methodology/RESEARCH.md`
+(`file://../bes-fleet-policy/specs/2026-05-17-agentic-installation-methodology/RESEARCH.md`
 §6); chapter 00 frames + chapter 08 closes.
 
 Per parent Decision §7 ordering guidance: "earlier-
@@ -474,27 +474,51 @@ presence + word counts.
 
 ### 8.2 validate-longread-structure.sh contract
 
-The script:
+The script supports three modes: `in-progress` (default,
+no flag), `release` (`--release-mode`), and
+`chapter-strict` (`--chapter NN` where `NN` is a chapter
+file prefix like `00`). It does the following:
 
-1. Verifies `longread/` exists at repo root.
-2. Verifies each of the nine expected files exists at
-   `longread/<expected-name>.md`.
-3. For each file, counts words (excluding code fences,
-   YAML blocks, and citation prefix tokens) and
-   verifies word count is between 50 (lower placeholder
-   bound) and the chapter's §6.2 maximum.
-4. Computes total word count; verifies total is
-   between 5 000 (lower bound; allows for chapters in
-   placeholder state) and 13 000 (~5% over the §6.2
-   maximum to allow margin).
+1. Verifies `longread/` exists at repo root. A missing
+   directory is an error in both modes.
+2. Iterates the nine expected files at
+   `longread/<expected-name>.md`. Per mode:
+   - `in-progress`: missing chapter files are printed
+     as warnings to stderr; they do not contribute to
+     the error count or change exit status. This
+     enables per-chapter Task SPECs (Slices 3.1-3.9)
+     to PASS validate-longread when only the chapter
+     they author is present.
+   - `release`: missing chapter files are errors.
+3. For each chapter file that exists, the script
+   counts prose words (excluding code fences, YAML
+   blocks, and citation prefix tokens) and verifies
+   the count is between 50 (per-chapter placeholder
+   lower bound) and the chapter's §6.2 maximum. Both
+   modes apply this rule.
+4. Computes total prose words across existing chapter
+   files. Per mode:
+   - `in-progress`: verifies total is ≥ 450 (`9 * 50`
+     permissive floor against an empty `longread/`).
+   - `release`: verifies total is in `[8 000, 12 000]`
+     per parent Decision §7 word band.
 5. Exits 0 on full pass; exit 1 with diagnostics
-   otherwise.
+   otherwise. In `in-progress` mode, deferred-chapter
+   warnings are printed alongside the PASS line on the
+   exit-0 path.
 
-The script is permissive on lower bound (50 words per
-chapter) so it can run as the longread is being
-populated chapter-by-chapter; final validation
-re-runs with tightened bounds before the v1.0 release
-tag.
+Rationale for the three-mode design: per-chapter Task
+SPECs author one chapter at a time. `in-progress` mode
+PASSes when only the slice-authored chapter is present
+(missing chapters are warnings). `chapter-strict` mode
+enforces both bounds `[§6.2-target, §6.2-max]` for one
+named chapter, ignoring the others — per-chapter Task
+SPECs (Slices 3.1-3.9) include
+`bash scripts/validate-longread-structure.sh --chapter NN`
+in their acceptance_commands to mechanically enforce
+the lower bound. `release` mode runs at v1.0
+publication and requires all nine chapters present +
+total in `[8 000, 12 000]`.
 
 ## 9. Reference Algorithms
 
@@ -518,22 +542,33 @@ word count focused on prose (not URL slugs).
 ### 9.2 Per-file budget check (pseudocode)
 
 ```
-function check_budgets():
+function check_budgets(release_mode):
   errors = []
+  warnings = []
+  total = 0
+  existing_count = 0
   for file, (target, max_words) in CHAPTER_BUDGETS.items():
     if not exists(f"longread/{file}"):
-      errors.append(f"missing chapter file: {file}")
+      if release_mode:
+        errors.append(f"missing chapter file: {file}")
+      else:
+        warnings.append(f"deferred: {file}")
       continue
+    existing_count += 1
     count = count_words(f"longread/{file}")
+    total += count
     if count < 50:
       errors.append(f"{file}: {count} words below placeholder bound 50")
     if count > max_words:
       errors.append(f"{file}: {count} words exceeds maximum {max_words}")
-  total = sum(count_words(f"longread/{f}") for f in EXISTING_FILES)
-  if total < 5000:
-    errors.append(f"total {total} below release bound 5000")
-  if total > 13000:
-    errors.append(f"total {total} exceeds maximum 13000")
+  if release_mode:
+    if total < 8000:
+      errors.append(f"release: total {total} below release floor 8000")
+    if total > 12000:
+      errors.append(f"release: total {total} exceeds maximum 12000")
+  else:
+    if total < 450:
+      errors.append(f"in-progress: total {total} below permissive floor 450")
   if errors:
     emit_diagnostics()
     exit 1
@@ -546,7 +581,7 @@ function check_budgets():
 |---|---|---|
 | `chapter-file-missing` | A required `longread/NN-...md` is absent | Author the chapter via the per-chapter Task SPEC; re-run validator |
 | `word-budget-exceeded` | A chapter exceeds its §6.2 maximum | Author tightens prose OR the §6.2 table is amended via a follow-on Contract SPEC amendment |
-| `citation-not-from-corpus` | The chapter cites an external URL or agent memory for a methodology primitive that has a corpus entry | Reviewer rejects; author rewrites the citation to point at `file://research/primary-sources/<slug>.md §3` |
+| `citation-not-from-corpus` | The chapter cites an external URL or agent memory for a methodology primitive that has a corpus entry | Reviewer rejects; author rewrites the citation to point at `research/primary-sources/<slug>.md §3` |
 | `voice-third-person-drift` | A chapter section slips into third-person methodology-vendor voice | Reviewer flags during per-chapter spec-review; author rewrites to first-person experiential |
 | `failure-mode-buried` | Chapter 08 (or any chapter touching a known failure mode) discusses it without applying the §6.5 three-element disclosure structure | Reviewer rejects; author re-discloses with what-happened / what-we-did / what-pattern-generalizes structure |
 | `bes-redaction-drift` | The longread sanitizes or anonymizes BES against §6.6 ("fully named") | Reviewer rejects; author restores direct BES naming |
@@ -585,20 +620,26 @@ function check_budgets():
 | AC-1 | `cmd://bash scripts/lint-spec.sh specs/2026-05-20-longread-structure/SPEC.md` exits 0 |
 | AC-2 | `cmd://test -d longread` exits 0 |
 | AC-3 | `cmd://test -x scripts/validate-longread-structure.sh` exits 0 |
-| AC-4 | For each chapter file in §6.1: `cmd://test -f longread/<filename>` exits 0 |
+| AC-4 | For each chapter file in §6.1: `cmd://test -f longread/<filename>` exits 0. **Release-time only**: per-chapter Task SPECs (Slices 3.1-3.9) only author one chapter at a time, so AC-4 is verified at v1.0 release-verification, run under `release_acceptance_commands` (`bash scripts/validate-longread-structure.sh --release-mode` enforces all-files-present). At this Contract's verification time (when validator + directory + first chapter exist), AC-4 is satisfied for the chapter present; the others are deferred-chapter warnings per §8.2 in-progress mode. |
 | AC-5 | `cmd://bash scripts/validate-longread-structure.sh` exits 0 |
 | AC-6 | `cmd://bash scripts/validate-longread-structure.sh --release-mode` exits 0 (enforces total within 8 000-12 000). This is the **release-time** acceptance command, listed under front-matter `release_acceptance_commands`, run at v1.0 release verification (not at this Contract's verification, since the longread is in-progress at Contract verification time). |
 | AC-7 | Every per-chapter Task SPEC cites this Contract by id |
 | AC-8 | Every methodology primitive in the longread resolves to a corpus entry citation. **Mechanical enforcement is deferred to a follow-on Task SPEC for a corpus-citation lint extension**; until that lands, AC-8 is a manual reviewer check during spec-review. The SPEC is honest about this gap — it does not pretend the validator covers AC-8. |
-| AC-9 | Chapter 08 includes the four+ research §7 failure modes with the §6.5 three-element disclosure structure AND lists all seven open research questions from the upstream research workpad §2.3 (the seven open research questions enumerated at `file://../../../bes-fleet-policy/specs/2026-05-17-agentic-installation-methodology/RESEARCH.md` §2.3). Per parent Decision §7 these MUST be published as flagged-open. |
+| AC-9 | Chapter 08 includes the four+ research §7 failure modes with the §6.5 three-element disclosure structure AND lists all seven open research questions from the upstream research workpad §2.3 (the seven open research questions enumerated at `file://../bes-fleet-policy/specs/2026-05-17-agentic-installation-methodology/RESEARCH.md` §2.3). Per parent Decision §7 these MUST be published as flagged-open. |
 
 ## 14. Implementation Checklist (Definition of Done)
 
 - [ ] DoD-1: `scripts/validate-longread-structure.sh`
       authored + executable.
 - [ ] DoD-2: `longread/` directory exists at repo root.
-- [ ] DoD-3: All nine chapter files exist at the
-      expected paths per §6.1.
+- [ ] DoD-3: At v1.0 release-verification, all nine
+      chapter files exist at the expected paths per
+      §6.1. At this Contract's verification (when only
+      the first per-chapter Task SPEC has executed),
+      DoD-3 is satisfied for the authored chapter and
+      the remaining chapters are deferred per §8.2
+      in-progress mode (printed as warnings, not
+      errors).
 - [ ] DoD-4: Each chapter's word count is within its
       §6.2 budget at release time.
 - [ ] DoD-5: Total word count lands within 8 000–
@@ -620,7 +661,11 @@ verification list.)
 - [ ] AC-1: SPEC lint clean
 - [ ] AC-2: longread directory exists
 - [ ] AC-3: validate-longread-structure.sh executable
-- [ ] AC-4: all 9 chapter files exist
+- [ ] AC-4: at release-time, all 9 chapter files
+      exist (run under `release_acceptance_commands`);
+      at this Contract's verification, only the chapters
+      authored by completed per-chapter Task SPECs need
+      exist, with remaining chapters deferred per §8.2
 - [ ] AC-5: validator exits 0
 - [ ] AC-6: release-mode validator exits 0 (total within 8 000–12 000); run at v1.0 release-verification, not at this Contract's verification
 - [ ] AC-7: every per-chapter Task SPEC cites this
@@ -687,7 +732,7 @@ chapters already authored.
 
 This is a greenfield artefact; nothing migrates. The
 research workpad
-(`file://../../../bes-fleet-policy/specs/2026-05-17-agentic-installation-methodology/RESEARCH.md`)
+(`file://../bes-fleet-policy/specs/2026-05-17-agentic-installation-methodology/RESEARCH.md`)
 is the upstream synthesis (the hypothesis space); the
 longread is the published synthesis (the methodology
 as procedure). The workpad is evidence-only;

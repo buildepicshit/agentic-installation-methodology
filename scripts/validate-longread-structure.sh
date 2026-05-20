@@ -31,20 +31,65 @@ REPO_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
 LONGREAD_DIR="$REPO_ROOT/longread"
 
 RELEASE_MODE=0
-if [ "${1:-}" = "--release-mode" ]; then
-    RELEASE_MODE=1
-fi
+CHAPTER_STRICT=""
+while [ $# -gt 0 ]; do
+    case "$1" in
+        --release-mode) RELEASE_MODE=1 ;;
+        --chapter)
+            shift
+            CHAPTER_STRICT="${1:-}"
+            if [ -z "$CHAPTER_STRICT" ]; then
+                printf 'validate-longread-structure: --chapter requires a chapter prefix (e.g. 00)\n' >&2
+                exit 2
+            fi
+            ;;
+        --help|-h)
+            cat <<'EOF'
+validate-longread-structure.sh — enforce longread Contract §8.2/§9.2
 
-# Per-chapter (target_words max_words) per SPEC §6.2.
+Modes:
+  (default)            in-progress: missing chapters are warnings;
+                       per-chapter [50, §6.2-max]; total floor 450
+  --release-mode       all chapters required; per-chapter
+                       [50, §6.2-max]; total in [8000, 12000]
+  --chapter NN         chapter-strict: enforces [§6.2-target,
+                       §6.2-max] for chapter NN; other chapters
+                       not checked
+EOF
+            exit 0
+            ;;
+        *)
+            printf 'validate-longread-structure: unknown arg %s\n' "$1" >&2
+            exit 2
+            ;;
+    esac
+    shift
+done
+
+# Per-chapter (target_words max_words) per SPEC §6.2 of the
+# longread Contract
+# (file://specs/2026-05-20-longread-structure/SPEC.md §6.2).
+# Target total: 9 000. Maximum total: 11 800.
+declare -A CHAPTER_TARGET=(
+    [00-introduction.md]=800
+    [01-phase-0-maturity-check.md]=800
+    [02-phase-1-facet-inventory.md]=1000
+    [03-phase-2-parameterization-surface.md]=1000
+    [04-phase-3-sanitization-bar.md]=900
+    [05-phase-4-manifest-catalog-compose.md]=1200
+    [06-phase-5-cross-family-validation.md]=1000
+    [07-phase-6-ship.md]=800
+    [08-phase-7-failure-modes-as-first-class-content.md]=1500
+)
 declare -A CHAPTER_MAX=(
-    [00-introduction.md]=1200
+    [00-introduction.md]=1100
     [01-phase-0-maturity-check.md]=1100
-    [02-phase-1-facet-inventory.md]=1400
-    [03-phase-2-parameterization-surface.md]=1400
+    [02-phase-1-facet-inventory.md]=1300
+    [03-phase-2-parameterization-surface.md]=1300
     [04-phase-3-sanitization-bar.md]=1200
-    [05-phase-4-manifest-catalog-compose.md]=1600
-    [06-phase-5-cross-family-validation.md]=1400
-    [07-phase-6-ship.md]=1100
+    [05-phase-4-manifest-catalog-compose.md]=1500
+    [06-phase-5-cross-family-validation.md]=1300
+    [07-phase-6-ship.md]=1000
     [08-phase-7-failure-modes-as-first-class-content.md]=2000
 )
 
@@ -112,14 +157,63 @@ if [ ! -d "$LONGREAD_DIR" ]; then
     exit 1
 fi
 
+# Chapter-strict mode: enforce [target, max] for one chapter,
+# ignore the rest.
+if [ -n "$CHAPTER_STRICT" ]; then
+    # Resolve NN to the chapter file (matches "NN-*.md").
+    strict_file=""
+    for file in "${CHAPTER_FILES[@]}"; do
+        case "$file" in
+            "$CHAPTER_STRICT"-*) strict_file="$file"; break ;;
+        esac
+    done
+    if [ -z "$strict_file" ]; then
+        printf 'validate-longread-structure: --chapter %s does not match any §6.1 chapter prefix\n' "$CHAPTER_STRICT" >&2
+        exit 2
+    fi
+    path="$LONGREAD_DIR/$strict_file"
+    if [ ! -f "$path" ]; then
+        printf 'validate-longread-structure: FAIL — chapter-strict %s requires longread/%s to exist\n' "$CHAPTER_STRICT" "$strict_file" >&2
+        exit 1
+    fi
+    count="$(count_prose_words "$path")"
+    target="${CHAPTER_TARGET[$strict_file]}"
+    max="${CHAPTER_MAX[$strict_file]}"
+    if [ "$count" -lt "$target" ]; then
+        err "chapter-strict: longread/$strict_file $count prose words below §6.2 target ($target)"
+    fi
+    if [ "$count" -gt "$max" ]; then
+        err "chapter-strict: longread/$strict_file $count prose words exceeds §6.2 maximum ($max)"
+    fi
+    if [ ${#errors[@]} -gt 0 ]; then
+        printf 'validate-longread-structure: %d issue(s) found in chapter-strict mode:\n' "${#errors[@]}" >&2
+        for e in "${errors[@]}"; do
+            printf '  - %s\n' "$e" >&2
+        done
+        exit 1
+    fi
+    printf 'validate-longread-structure: PASS — chapter-strict; longread/%s at %d prose words (target %d, max %d)\n' \
+        "$strict_file" "$count" "$target" "$max"
+    exit 0
+fi
+
 # 2-3. Per-chapter file presence + word count.
+# In-progress mode: missing chapters are warnings (printed to
+# stderr; do not increment err count). Release mode: missing
+# chapters are errors. Per chapter file present, the floor +
+# §6.2 maximum apply in both modes.
 total_words=0
 existing_files=0
+missing_warnings=()
 
 for file in "${CHAPTER_FILES[@]}"; do
     path="$LONGREAD_DIR/$file"
     if [ ! -f "$path" ]; then
-        err "missing chapter file: longread/$file"
+        if [ $RELEASE_MODE -eq 1 ]; then
+            err "missing chapter file: longread/$file"
+        else
+            missing_warnings+=("longread/$file (deferred to a later slice)")
+        fi
         continue
     fi
 
@@ -165,4 +259,10 @@ mode="in-progress"
 [ $RELEASE_MODE -eq 1 ] && mode="release"
 printf 'validate-longread-structure: PASS — mode=%s; %d/9 chapters present; total=%d prose words\n' \
     "$mode" "$existing_files" "$total_words"
+if [ ${#missing_warnings[@]} -gt 0 ]; then
+    printf '  in-progress warnings (deferred chapters, not errors):\n'
+    for w in "${missing_warnings[@]}"; do
+        printf '    - %s\n' "$w"
+    done
+fi
 exit 0
