@@ -98,7 +98,7 @@ source has one structured artefact at
 `research/primary-sources/<slug>.md`. An `INDEX.md` at the
 directory root lists every in-scope source, its slug, its
 current status (`pending` / `primary-read-complete` /
-`access-blocked` / `superseded`), and a one-line summary of
+`partial` / `access-blocked` / `superseded`), and a one-line summary of
 the verbatim claims the methodology depends on from that
 source. A check script
 (`scripts/check-corpus-completeness.sh`) walks the index and
@@ -533,8 +533,14 @@ agents consuming the SPEC bundle.
       scripts/check-corpus-completeness.sh` exits 0.
 - [x] AC-4: `cmd://bash
       scripts/check-corpus-completeness.sh` exits 0 with
-      every §6.1 slug at status
-      `primary-read-complete` OR `access-blocked` + note.
+      every §6.1 slug at status: (a) `primary-read-
+      complete`, (b) `partial` with deferred-reads note
+      per §7.2 (the partial-with-note rule, v1.1
+      alignment), OR (c) `access-blocked` with
+      alternative-source-found or unreachability note.
+      Updated per codex Round-5 finding that the prior
+      "complete OR access-blocked + note" wording was
+      stale relative to §13 AC-4 + §7.2 + INDEX reality.
 - [x] AC-5: Every §6.1 slug has a corresponding
       artefact file under `research/primary-sources/`.
 - [x] AC-6: Every artefact's front-matter passes the §8.1
@@ -665,6 +671,10 @@ Downstream methodology slices reference both: <!-- lint-ok: no-citation -->
   - cucumber-gherkin (executable behavior spec)
   - openapi-3-1 (HTTP API contract)
   - structurizr-dsl (architecture-as-code)
+  - json-schema (added at v1.1 per §7.D; validation
+    primitive Helm + OpenAPI build on)
+  - cyclonedx-sbom (added at v1.1 per §7.D; SBOM
+    primary for the manifest's provenance facet)
 - This SPEC's §15 Acceptance Criteria checkboxes
   flipped to checked.
 
