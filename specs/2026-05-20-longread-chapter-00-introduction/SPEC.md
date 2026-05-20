@@ -1,6 +1,6 @@
 ---
 id: 2026-05-20-longread-chapter-00-introduction
-status: verified
+status: closed
 type: task
 owner: HasNoBeef
 ideated_in: specs/2026-05-20-longread-chapter-00-introduction/IDEA.md
