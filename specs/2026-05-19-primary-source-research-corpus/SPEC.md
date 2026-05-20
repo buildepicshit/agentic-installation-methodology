@@ -668,7 +668,34 @@ Downstream methodology slices reference both: <!-- lint-ok: no-citation -->
 - This SPEC's §15 Acceptance Criteria checkboxes
   flipped to checked.
 
-### 19.2 Commands run
+### 19.0 Amendment log (post-verification edits)
+
+Per the pattern established in the parent Decision SPEC
+§14.0, this Completion Report was filled at original
+verification 2026-05-19 (v1.0 source list, 20 sources).
+Subsequent codex cross-family remediation rounds amended
+§6.1 (v1.1 source-list expansion adding json-schema +
+cyclonedx-sbom), §7.2 (partial-with-note rule),
+research/primary-sources/* (overreach + status-truth
+fixes), and the check script (partial enforcement).
+Historical evidence values in §19.2 reflect original-
+verification state, NOT current state.
+
+| Round | Date | Notable | Current evidence |
+|---|---|---|---|
+| Original | 2026-05-19 | v1.0 source list | 20 sources, 47 corpus-SPEC citation hits |
+| §7.D | 2026-05-19 | v1.1 expansion | 22 sources, +2 added (json-schema, cyclonedx-sbom) |
+| R3-R5 | 2026-05-19 | Overreach + status-truth + AC alignment | 22 sources (3 partial-with-notes), 55 corpus-SPEC citation hits |
+
+Current-state evidence values supersede §19.2:
+- corpus-SPEC citation-prefix hits: 55 (per current
+  `lint-spec.sh` invocation)
+- corpus row count: 22 (19 primary-read-complete +
+  3 partial)
+- script check: PASS — 22 sources (3 partial with
+  deferred-reads notes)
+
+### 19.2 Commands run (historical; original verification)
 
 - 25 `cmd://WebFetch` invocations across the 22 sources
   (some sources required supplementary fetches; one
@@ -677,7 +704,9 @@ Downstream methodology slices reference both: <!-- lint-ok: no-citation -->
   codex remediation §7.D).
 - `cmd://bash scripts/lint-spec.sh
   specs/2026-05-19-primary-source-research-corpus/SPEC.md`
-  — exit 0 (0 errors, 0 warnings, 47 citation hits).
+  — exit 0 (0 errors, 0 warnings, 47 citation hits at
+  original verification; 55 current per §19.0 Amendment
+  Log).
 - `cmd://bash scripts/check-corpus-completeness.sh` —
   exit 0; PASS — 22 sources (3 partial with deferred-reads notes; bumped from v1.0 20-source baseline per codex remediation §7.D).
 - Per-artefact `cmd://bash scripts/lint-spec.sh
