@@ -497,10 +497,10 @@ agents consuming the SPEC bundle.
 | AC-1 | `cmd://bash scripts/lint-spec.sh specs/2026-05-19-primary-source-research-corpus/SPEC.md` exits 0 |
 | AC-2 | `cmd://test -f research/primary-sources/INDEX.md` exits 0 |
 | AC-3 | `cmd://test -f scripts/check-corpus-completeness.sh && test -x scripts/check-corpus-completeness.sh` exits 0 |
-| AC-4 | `cmd://bash scripts/check-corpus-completeness.sh` exits 0 |
+| AC-4 | `cmd://bash scripts/check-corpus-completeness.sh` exits 0 with every slug at one of: (a) `primary-read-complete`, (b) `partial` with documented deferred-reads note in artefact §6 (the partial-with-note rule per §7.2 — v1.1 alignment), or (c) `access-blocked` with alternative-source-found or unreachability note. |
 | AC-5 | For each slug in §6.1: `cmd://test -f research/primary-sources/<slug>.md` exits 0 |
 | AC-6 | Every artefact has `fetch_outcome` ∈ {`primary-read-complete`, `partial`, `access-blocked`} |
-| AC-7 | Every `access-blocked` artefact's §6 records an alternative-source-found note OR an explicit "this source is unreachable; methodology will not draw on it" disclaimer |
+| AC-7 | Every `access-blocked` artefact's §6 records an alternative-source-found note OR an explicit "this source is unreachable; methodology will not draw on it" disclaimer. Every `partial` artefact's §6 records a deferred-reads note per §7.2 (the partial-with-note rule added 2026-05-19 to align contract with the script's actual semantics post v1.1 source-list expansion). |
 | AC-8 | Every verbatim §3 quote in every artefact is ≤ 200 words OR the source's license permits longer excerpts (recorded in §1) |
 | AC-9 | §17 Completion Report records the per-source fetch outcomes, total artefacts authored, and any sources where access-blocked + alternative-found resolution happened |
 
@@ -594,12 +594,16 @@ provenance is preserved.
       Default: same-family proxy with explicit caveat
       recorded; if owner directs external cross-family,
       escalate.
-- [ ] Q4: Are there primary sources missing from §6.1
-      that should land in v1.0? Specifically: SPDX/SBOM
-      (CycloneDX), Pact for contract testing, JSON
-      Schema (separately from Helm values), CUE
-      (configuration language). Defer to owner; not a
-      blocker for v1.0 if absent.
+- [x] Q4: Are there primary sources missing from §6.1?
+      RESOLVED 2026-05-19 (codex remediation §7.D
+      brought JSON Schema + CycloneDX SBOM into v1.1
+      source list; `SOURCE_LIST_VERSION` bumped to
+      v1.1). REMAINING v1.2 candidates: SPDX (alternate
+      SBOM format), Pact (contract testing), CUE
+      (configuration language), Dev Container Spec,
+      SLSA/in-toto (supply-chain attestation). Defer
+      to follow-on Contract SPEC amendment; not a
+      blocker for v1.1 corpus closure.
 
 Neither Q1-Q4 is `owner-blocking`; all can land as
 follow-on Contract SPEC amendments without re-work of
@@ -755,25 +759,34 @@ PASS. All §15 ACs met:
   evolution adds corpus-mode, the per-artefact lint
   warnings disappear; meanwhile they are documented
   noise.
-- **Three artefacts fetched as `partial` material but
-  recorded `primary-read-complete` because the
-  primary URL returned substantive content**:
+- **Three artefacts at `partial` status, with INDEX
+  rows now correctly showing `partial` per the v1.1 +
+  v1.2-pending status-truth alignment** (codex Round-2
+  finding 2.2 closed this gap; original residual-risk
+  text below labelled them "recorded primary-read-
+  complete" which was false — the INDEX now matches the
+  artefact front-matter):
   - `structurizr-dsl` — root page returned definition
     + C4-implementation framing; deep syntax (workspace
     / model / views keywords) was navigation-only on
-    the fetched page. Fetch outcome marked `partial`
-    in the artefact's front-matter; INDEX row still
-    primary-read-complete because the load-bearing
-    methodology claims (DSL purpose, architecture-as-
-    code posture, C4 implementation) were anchored.
+    the fetched page. Fetch outcome `partial` in both
+    artefact front-matter AND INDEX row. The load-
+    bearing methodology claims (DSL purpose,
+    architecture-as-code posture, C4 implementation)
+    were anchored; deep syntax remains a deferred read.
   - `adr-tools-state` — root page returned community
     framing + template-family references but deep
     template specifics + CLI conventions live on
-    sub-pages not fetched. Outcome `partial` in
-    front-matter, `primary-read-complete` in INDEX —
-    sub-pages are queued as open questions for
-    follow-on supplementary fetches if the methodology
-    mandates specific ADR templates.
+    sub-pages not fetched. Outcome `partial` in both
+    front-matter AND INDEX row (INDEX flipped from
+    `primary-read-complete` to `partial` per codex
+    remediation 2.2). Sub-pages queued as open
+    questions for follow-on supplementary fetches.
+  - `json-schema` — added at v1.1 source-list
+    expansion (codex remediation §7.D). Spec index
+    page deep-read; per-vocabulary drafts (Core +
+    Validation) NOT deep-read. Outcome `partial` in
+    both front-matter AND INDEX row.
 - **Kiro Bedrock binding correction**: prior summary
   in the research workpad characterised Kiro as
   "Bedrock-tethered"; the homepage primary read did
