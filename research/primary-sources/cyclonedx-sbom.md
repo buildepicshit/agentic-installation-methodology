@@ -127,10 +127,16 @@ Methodology claims licensed by this entry (cite as
   hardware, ML models, source code, and configurations;
   the methodology's spec bundle qualifies as a CycloneDX
   component when distributed via OCI registry."
-- methodology-claim: "CycloneDX addresses the regulated-
-  environments compliance gap LeadDev's critique
-  identified; methodology's audit posture rests on
-  CycloneDX-format provenance for releases."
+- methodology-claim: "CycloneDX is one primary SBOM option
+  relevant to the regulated-environments compliance gap
+  LeadDev's critique identified; the methodology's audit
+  posture MAY use CycloneDX-format provenance for releases.
+  Full compliance requires comparison against SPDX (§6
+  open question), NTIA minimum elements (§6 open question),
+  and VEX vulnerability handling (§6 open question);
+  CycloneDX alone is not sufficient. Wording softened from
+  'addresses' / 'rests on' per codex Round-3 cyclonedx-
+  overreach finding."
 
 ## 6. Open questions surfaced by the primary read
 

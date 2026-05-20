@@ -7,13 +7,19 @@ fetched_on: 2026-05-19
 fetch_outcome: "primary-read-complete"
 fetch_evidence: "primary URL at nixos.org redirected to nix.dev/manual/...; fetched canonical content with flake.nix structure + flake.lock semantics verbatim"
 methodology_relevance: |
-  Nix flakes are research §5.1's "strongest reproducible-
-  from-spec primitive." This corpus entry anchors the
-  flake.nix file structure, the flake.lock content-hash
-  model, and Nix's reproducibility guarantees so the
-  methodology can cite the flake model precisely when
-  prescribing the deployment/ sub-spec's reproducibility
-  contract.
+  Nix flakes are one of the reproducible-from-spec
+  primitives the research workpad §5.1 surveyed. (The
+  research workpad characterised Nix flakes as
+  "strongest"; that comparative ranking is judgment://
+  agent-synthesis not licensed by Nix documentation, so
+  this corpus entry treats Nix as one concrete example
+  rather than the strongest. Wording refined per codex
+  Round-2 + Round-3 findings.) This corpus entry anchors
+  the flake.nix file structure, the flake.lock content-
+  hash model, and Nix's reproducibility guarantees so
+  the methodology can cite the flake model precisely
+  when prescribing the deployment/ sub-spec's
+  reproducibility contract.
 ---
 
 # Nix Flakes
@@ -82,9 +88,12 @@ methodology_relevance: |
 
 <!-- lint-ok: no-citation -->
 
-Nix flakes operationalize "reproducible-from-spec" at the
-strongest current level: content-addressed inputs +
-transitive lock + reproducible outputs. Key shape
+Nix flakes operationalize "reproducible-from-spec" via
+content-addressed inputs + transitive lock + reproducible
+outputs. (Comparative "strongest current level" framing
+removed per codex Round-3 finding — ranking is
+judgment://agent-synthesis not licensed by Nix
+documentation.) Key shape
 implications for the methodology's deployment/ sub-spec:
 
 - The deployment/ sub-spec MAY adopt a flake-style

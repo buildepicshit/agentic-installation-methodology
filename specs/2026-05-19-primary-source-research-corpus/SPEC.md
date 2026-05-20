@@ -342,10 +342,23 @@ For each in-scope source (§6.1):
    superseded | pending`.
 5. Verify `SOURCE_LIST_VERSION` in INDEX.md matches the
    version frozen in §6.1 of this SPEC.
-6. Exit 0 if every slug in INDEX.md is either
-   `primary-read-complete` or has a documented
-   `access-blocked` (with §6 alternative note); else
-   exit non-zero with diagnostic lines per gap.
+6. Exit 0 if every slug in INDEX.md is one of:
+   (a) `primary-read-complete`, OR
+   (b) `partial` with a documented deferred-reads note
+       in the artefact §6 (the partial status is
+       acceptable iff the artefact discloses what was
+       NOT deep-read; per codex remediation Round 3 the
+       check script enforces this), OR
+   (c) `access-blocked` with a documented alternative-
+       source-found note (or explicit unreachability
+       disclaimer);
+   else exit non-zero with diagnostic lines per gap.
+   (Updated 2026-05-19 to align with the v1.1 source-
+   list expansion which introduced legitimate `partial`
+   sources requiring follow-on deep-reads on
+   sub-pages; previous §7.2 rule allowed only complete
+   or access-blocked which contradicted the v1.1
+   reality.)
 
 ### 7.3 Corpus citation binding (downstream slices)
 
