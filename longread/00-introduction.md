@@ -6,17 +6,27 @@
 > — Lukaas Kruger, quoted in
 > `research/primary-sources/leaddev-agent-compiled.md` §3.
 
-## The hypothesis we tested in production
+## The hypothesis we are publishing as procedure
 
-We shipped a real product to real users by writing a spec a
-coding agent could install from, and then we did it again,
-and then we wrote down what we learned. The hypothesis
-underneath: a developer ships an exhaustive intent
-specification; a user with a coding agent installs from that
-specification locally; there is no developer-in-the-loop
-support call. We do not consider this hypothesis novel in
-invention. The closest published prior-art statement comes
-from the LeadDev critique at
+We shipped Product A as a public operating-framework
+release, then repacked it into a manifest + catalog v2.0
+bundle as the worked case study for Product B. That much is
+done: the packaging is real and the studio discipline that
+produced it is real. What remains gated is independent
+user-with-agent installation from the bundle alone — a
+cross-family validation pass by an installer who is not
+us, with an agent that is not ours. That gate is the
+methodology's outstanding obligation, named in the parent
+Decision SPEC §7 of `../bes-fleet-policy/` and tracked as
+Slice 5 of the Product B execution arc. We are honest
+about it here because honesty about what is not yet proven
+is part of the reader contract this longread commits to. The hypothesis
+underneath all of this: a developer ships an exhaustive
+intent specification; a user with a coding agent installs
+from that specification locally; there is no
+developer-in-the-loop support call. We do not consider this
+hypothesis novel in invention. The closest published
+prior-art statement comes from the LeadDev critique at
 `research/primary-sources/leaddev-agent-compiled.md` §3,
 which framed exactly this shape as risk — incident response
 becomes an archaeology problem when every deployment
@@ -93,28 +103,29 @@ when a claim is methodology-shape we cite a primary source.
 
 ## Reader roadmap
 
-Chapter 01 (Phase 0) asks when a product is ready to be
-published as a deployment-grade SPEC. Chapter 02 (Phase 1)
-walks through the facet inventory that classifies every
-artefact in the product by its intent role. Chapter 03
-(Phase 2) covers the parameterization surface and the
-deferral contract. Chapter 04 (Phase 3) is the sanitization
-bar — dropping studio context without dropping rigor.
-Chapter 05 (Phase 4) composes the manifest plus catalog
-shape Product A ships in. Chapter 06 (Phase 5) is the
-cross-family validation pass; Chapter 07 (Phase 6) covers
-ship, cross-link, and signing; Chapter 08 (Phase 7) puts the
-failure modes and the seven open research questions in front
-of the reader as content, not errata.
+The eight phase chapters that follow each take one phase
+of the methodology. Chapter 01 (Phase 0) is the maturity
+check. Chapter 02 (Phase 1) is facet inventory. Chapter 03
+(Phase 2) is the parameterization surface. Chapter 04
+(Phase 3) is the sanitization bar. Chapter 05 (Phase 4) is
+manifest + catalog composition. Chapter 06 (Phase 5) is
+cross-family validation. Chapter 07 (Phase 6) is ship.
+Chapter 08 (Phase 7) is failure modes as content. Each
+phase chapter carries its own corpus citations for the
+methodology primitives it introduces; chapter 00 names the
+phases by title only and defers the primary-source corpus
+anchors to the chapter that handles each phase.
 
 A note on what is and is not in scope of this longread.
 The SPEC bundle that ships alongside it — the Product A
 manifest + catalog at v2.0 of the
-`agentic-ops-framework` repo — carries the executable
-contract for installers. This longread carries the prose
-that explains why the bundle is shaped that way and what
-it cost to get there. They ship paired and they cross-
-link; neither is sufficient alone.
+`agentic-ops-framework` repo — carries the structural
+contract installers consume. Its conformance facet is
+declared `reserved` at v2.0 by deliberate disclosure; a
+later release closes that gap. This longread carries the
+prose that explains why the bundle is shaped that way and
+what it cost to get there. They ship paired and they
+cross-link; neither is sufficient alone.
 
 ---
 
