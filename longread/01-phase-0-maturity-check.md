@@ -4,17 +4,20 @@
 
 The first time we tried to publish Product A as a
 deployment-grade SPEC, we shipped a v1 of the
-`agentic-ops-framework` repo without a conformance bar.
-The repo had a structural contract, a skill catalog, a hook
-suite, a lint script. What it did not have was a way for an
-installer to know — mechanically, without us answering an
-email — whether their install of the framework was
-behaving correctly. There were no acceptance commands an
-installer could run. There were no reference outputs to
-diff against. There was, in retrospect, no Phase 0 at all
-in our process; we went straight from "we built a useful
-thing" to "we will publish it." That was the failure that
-made the rest of this methodology necessary.
+`agentic-ops-framework` repo without an installer-facing
+conformance bar. The repo had a structural contract, a
+skill catalog, a hook suite, a lint script, and internal
+acceptance commands and CI that we trusted. What it did
+not have was a way for an installer to know —
+mechanically, without us answering an email — whether
+their install of the framework was behaving correctly.
+There were no installer-facing acceptance commands; no
+reference outputs to diff against; no conformance profile
+the installer could run. There was, in retrospect, no
+Phase 0 at all in our process; we went straight from "we
+built a useful thing" to "we will publish it." That was
+the failure that made the rest of this methodology
+necessary.
 
 ## The maturity question
 
@@ -51,22 +54,25 @@ publish failure modes we have not yet observed.
 
 **Signal 3 — the developer can name 3-5 load-bearing
 intent decisions, distinct from implementation accidents.**
-This distinction is Nygard's at
-`research/primary-sources/adr-nygard.md` §3 — the
-architecturally-significant decision criterion. Without
-the ability to separate the load-bearing from the
-accidental, Phase 1's facet inventory has no way to
-classify what to specify vs what to leave to the
-installer.
+We use Nygard's architecturally-significant-decision
+criterion at `research/primary-sources/adr-nygard.md` §3
+as one support for this distinction; the load-bearing-
+vs-implementation-accidents framing itself comes from the
+Phase 0 research workpad. Without the ability to separate
+the load-bearing from the accidental, Phase 1's facet
+inventory has no way to classify what to specify vs what
+to leave to the installer.
 
 **Signal 4 — an empirical conformance bar exists.** At
-minimum, acceptance commands the developer trusts; ideally,
-a conformance suite the installer can run against their
-install per the spec-kit framing at
-`research/primary-sources/spec-kit.md` §3 and the
-acceptance-commands posture at
-`research/primary-sources/openspec.md` §3. Signal 4 is the
-one we missed.
+minimum, acceptance commands the developer trusts;
+ideally, a conformance suite the installer can run
+against their install. The shape closest to what we mean
+is Symphony's three Conformance Profiles at
+`research/primary-sources/symphony-spec.md` §3 (Core,
+Extension, Real Integration), with executable acceptance
+expressed in something like the Given/When/Then form at
+`research/primary-sources/cucumber-gherkin.md` §3. Signal
+4 is the one we missed.
 
 ## Three anti-signals
 
@@ -87,10 +93,12 @@ not yet characterized the conformance shape.
 
 ## Phase 0 failure note (BES)
 
-**What happened.** We published Product A v1 without a
-conformance bar — Signal 4 missing. We described the
-framework structurally and operationally, but offered no
-mechanical check an installer could run. Per
+**What happened.** We published Product A v1 without an
+installer-facing conformance bar — Signal 4 missing. We
+had internal acceptance commands and CI checks the
+developers trusted, but no conformance suite an installer
+could run against their install, and no reference outputs
+to diff against. Per
 `research/primary-sources/leaddev-agent-compiled.md` §3,
 that is exactly the shape that turns installs into
 archaeology.
@@ -99,9 +107,9 @@ archaeology.
 manifest+catalog repack made the conformance gap visible.
 The v2.0 bundle declares the `conformance` facet
 `reserved` — an honest disclosure that the bar exists in
-the schema but the suite is not yet authored. A later
-release closes that gap; until then, the disclosure is the
-bar.
+the schema but the suite is not yet authored. The
+disclosure is a stopgap, not the bar itself; the bar
+remains unbuilt at v2.0 and is owed to a later release.
 
 **What pattern generalizes.** The conformance bar belongs
 in Phase 0, not in Phase 4. If you reach Phase 4

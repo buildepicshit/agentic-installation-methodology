@@ -406,11 +406,18 @@ External effects:
   Mechanical evidence: `cmd://grep -F
   'research/primary-sources/adr-nygard.md'
   longread/01-phase-0-maturity-check.md` exits 0.
-- T-13: Conformance-bar anchor (openspec OR spec-kit).
-  Mechanical evidence:
-  `cmd://grep -qF 'research/primary-sources/openspec.md'
+- T-13: Conformance-bar anchor. Per the chapter-01
+  prose codex review (Finding 1), the correct corpus
+  anchors for installer-runnable conformance are
+  `research/primary-sources/symphony-spec.md` §3
+  (Conformance Profiles: Core / Extension / Real
+  Integration) and
+  `research/primary-sources/cucumber-gherkin.md` §3
+  (Given/When/Then executable specifications). At
+  least one MUST be cited. Mechanical evidence:
+  `cmd://grep -qF 'research/primary-sources/symphony-spec.md'
   longread/01-phase-0-maturity-check.md ||
-  grep -qF 'research/primary-sources/spec-kit.md'
+  grep -qF 'research/primary-sources/cucumber-gherkin.md'
   longread/01-phase-0-maturity-check.md` exits 0.
 - T-14: Per-chapter Phase 0 failure-mode note in the
   §6.5 three-element structure, placed as the chapter's
@@ -457,7 +464,9 @@ External effects:
       coverage (helper script).
 - [ ] AC-11: T-11 ≥ 3 distinct corpus citations.
 - [ ] AC-12: T-12 adr-nygard anchor present.
-- [ ] AC-13: T-13 openspec OR spec-kit anchor present.
+- [ ] AC-13: T-13 symphony-spec OR cucumber-gherkin
+      anchor present (conformance-bar corpus anchors
+      per chapter-01 prose codex Finding 1).
 - [ ] AC-14: T-14 Phase 0 failure-mode note.
 - [ ] AC-15: T-15 forward pointer to chapter 02.
 
