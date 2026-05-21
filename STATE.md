@@ -1,134 +1,182 @@
-# STATE — methodology arc, 2026-05-20 close-out
+# STATE — methodology arc, 2026-05-21 close-out
 
 Session closed out for the night. Morning pickup notes below.
 
-## What converged
+## What converged today
 
-Six rounds of codex (gpt-5.5, xhigh) cross-family review on the
-three Contract SPECs that bind Product B:
+- **T-01 chapter 00 introduction**: closed. R5 SPEC + R2
+  prose CONVERGENCE-PASS. 946 prose words. Status: closed.
+- **T-02 chapter 01 Phase 0 maturity check**: verified.
+  R2 SPEC + R2 prose CONVERGENCE-PASS. Two amendments in
+  §17 Amendment Log: R1 prose remediation (3 MAJOR
+  findings closed) + Amendment 2 (padding-for-budget
+  trim under explicit owner directive). 822 prose words.
+  Status: verified (owner-only flip to closed pending).
+- **Soft-floors amendment** (parent Decision §7 + longread
+  Contract §6.2/§8.2/§9.2 + validator): 12 000 upper
+  bound stays ENFORCED (anti-bloat); 8 000 lower bound
+  demoted to ADVISORY only. Per-chapter targets also
+  advisory. Per-chapter maxima still enforced.
 
-| SPEC | Repo | Latest | R6 verdict |
-|---|---|---|---|
-| Parent Decision | `bes-fleet-policy` | `16f9c8d` | PASS — no MAJOR-or-higher |
-| Primary-source corpus | this repo | `4d8c2f7` | PASS — no MAJOR-or-higher |
-| v2.0 repack (Product A) | `agentic-ops-framework` | `05ad7a5` | PASS — no MAJOR-or-higher |
+## Convergence trajectory comparison
 
-Convergence trajectory: 27 → 17 → 10 → 9 → 7 → **0** findings.
-~1M tokens of codex review across 18 runs + 6 synthesis docs.
-Review evidence at `reviews/codex-2026-05-19{,-round2,-round3,-round4,-round5,-round6}/`.
+| Slice | SPEC rounds | Prose rounds | Total |
+|---|---:|---:|---:|
+| T-01 | 5 (7→4→4→1→0) | 2 (2→0) | 7 |
+| T-02 | 2 (4→0) | 2 (3→0+gov→0) | 4 |
 
-The methodology arc is **substantively ready for forward motion**.
+T-02 converged ~2× faster than T-01. Lessons compound.
 
 ## Parent Decision §7 slice queue
 
 ```
 Slice 1   (repo standup)            ─────────────────  verified ✓
-Slice 1.5 (primary-source corpus, 22 sources, 3 partial-with-notes)
-                                    ─────────────────  verified ✓
-Slice 2   (Product A v2.0 repack)   ─────────────────  verified ✓ — v2.0.0 released
-                                                          (manifest schema is v2.1.0
-                                                           in main; v2.1 release tag
-                                                           pending)
-Slice 3   (longread structure Contract) ─────────────  in-execution
-                                                          (validator authored;
-                                                           chapters not yet)
-Slice 3.1-3.9 (per-chapter Task SPECs + execution) ──  next
+Slice 1.5 (primary-source corpus, 22 sources)         verified ✓
+Slice 2   (Product A v2.0 repack)   ─────────────────  verified ✓
+Slice 3   (longread structure Contract)               in-execution
+                                                          (3 amendments
+                                                           landed during
+                                                           T-01 + T-02 +
+                                                           soft-floors)
+Slice 3.1 (T-01 chapter 00 introduction)              closed ✓
+Slice 3.2 (T-02 chapter 01 Phase 0)                   verified (close pending)
+Slice 3.3-3.9 (chapters 02-08)                        next
 Slice 4   (per-facet SPEC bundle content for Product B) — not yet
-Slice 5   (external cross-family validation pass)   ─  not yet
+Slice 5   (external cross-family validation pass)       not yet
 ```
+
+## Where the longread sits
+
+- 2/9 chapters published.
+- Total prose: 1 768 words (946 + 822).
+- Per-chapter target sum so far: 1 600 (800 + 800).
+  Above target.
+- Under soft-floors regime, the 8 000 lower bound on the
+  whole longread is advisory, so target tracking is
+  reference only.
 
 ## Next move when picking up
 
-The natural next slice is **T-01 chapter 00 introduction**
-(Slice 3.1). Per longread Contract §7.1 authoring sequence,
-chapter 00 is authored first (lower cognitive load; sets the
-frame for everything else).
+The natural next slice is **T-03 chapter 02 — Phase 1
+facet inventory** (Slice 3.3). Per longread Contract §6.1
+the chapter title is "Classifying every artefact by
+facet"; per §6.2 target 1 000 words / max 1 300; per
+§6.3 first-person voice; per §6.4 corpus-citation; per
+§6.5 three-element failure note.
 
-Author path: `longread/00-introduction.md`. Target 800 words,
-max 1100. First-person experiential voice (see longread
-Contract §6.3, with the Phase-0 voice exception added in
-Round 1 remediation). Citation discipline: every methodology
-primitive cites `file://research/primary-sources/<slug>.md
-§3`, not agent memory or external URLs.
+Corpus anchors that may support Phase 1 primitives:
+- `research/primary-sources/arc42.md` §3 (architecture
+  documentation by viewpoints).
+- `research/primary-sources/c4-model.md` §3 (per-level
+  decomposition).
+- `research/primary-sources/diataxis.md` §3 (four-type
+  documentation classification).
+- `research/primary-sources/ref-arch-vs-solution-arch.md`
+  §3 (reference vs solution split).
+- Research workpad §6 Phase 1 definition (seven facets:
+  architecture, deployment, behavior, customization,
+  decisions, operations, non-goals).
 
-Authoring procedure per parent v1 procedure:
+Authoring procedure per the v1 procedure + T-01/T-02
+patterns:
 
-1. Author a Task SPEC at
-   `specs/2026-05-20-longread-chapter-00-introduction/SPEC.md`
-   with front-matter `cites_contract: 2026-05-20-longread-structure`.
-2. SPEC lint → owner approves → execute (author the chapter
-   prose) → re-run `scripts/validate-longread-structure.sh` →
-   chapter file present + word count within in-progress bounds
-   → spec-review → owner approves → verified.
+1. Author IDEA at
+   `specs/2026-05-{N}-longread-chapter-02-phase-1-facet-inventory/IDEA.md`.
+2. Author Task SPEC; apply T-01 R1-R5 + T-02 R1 lessons
+   upfront (path-base normalization, ideated_in,
+   requires_network, mechanically-runnable T-evidence,
+   AC ↔ T parity, corpus-citation strictness, §6.5
+   three-element rule, §6.6 attribution posture,
+   chapter-strict mode in acceptance_commands).
+3. Codex SPEC pass; iterate to PASS.
+4. Execute (author chapter prose) WITHOUT padding-for-
+   budget pressure (soft-floors regime).
+5. Codex prose pass; iterate to PASS.
+6. Verify; fill Completion Report.
+7. Owner closes.
 
 ## Parking-lot follow-ups (acknowledged-and-deferred)
 
-These were surfaced during codex review and accepted as
-not in scope of any active slice yet:
+- **Corpus-citation lint extension** (codex R1 T-02
+  surfaced again as a manual reviewer concern). A
+  follow-on Task SPEC for
+  `scripts/validate-corpus-citations.sh` would
+  mechanically enforce what is currently manual
+  reviewer judgment.
+- **v1.2 corpus expansion candidates**: SPDX, Pact,
+  CUE, Dev Container Spec, SLSA/in-toto. Documented in
+  corpus SPEC §17 Q4.
+- **v2.1 release tag** for `agentic-ops-framework`:
+  manifest schema bumped to 2.1.0 on main; v2.0.0
+  release tag stays at v2.0.0 schema. Cut v2.1 release
+  when ready.
+- **Editorial polish drift**: every future edit
+  introduces new stale-text occurrences in adjacent
+  sections. Property of edited documents; codex cross-
+  family review per major slice catches it.
 
-- **Corpus-citation lint extension** (codex R1 finding 4.2;
-  tracked in remediation Contract §7.G): Task SPEC for
-  `scripts/validate-corpus-citations.sh` OR a corpus-mode
-  flag on `scripts/lint-spec.sh`. Until this lands, AC-8 of
-  the longread Contract + §7.1 of the corpus Contract remain
-  manual-reviewer-enforced.
-- **v1.2 corpus expansion candidates**: SPDX, Pact, CUE, Dev
-  Container Spec, SLSA/in-toto. Documented in corpus SPEC §17
-  Q4 (marked resolved at v1.1 with these as v1.2-pending).
-- **v2.1 release tag** for `agentic-ops-framework`: manifest
-  schema bumped to 2.1.0 on main; v2.0.0 release tag stays
-  at v2.0.0 schema (the tag was cut before the schema bump).
-  Cut v2.1 release when ready; release tooling should
-  populate `source_commit` + `source_tag` at tag time.
-- **Editorial polish drift**: every future edit introduces
-  new stale-text occurrences in adjacent sections. This is a
-  property of edited documents, not a defect to be eliminated.
-  Accept it; codex-style cross-family review per major slice
-  is the loop that catches it.
+## Pattern-level spec evidence accumulated today
 
-## Pattern-level spec evidence from six review rounds
-
-1. **Cross-family review is the gate that distinguishes
-   well-formed-and-citable from well-formed-and-bullshit.**
-   Same-family Claude review passed all three SPECs on the
-   first attempt; codex caught 70 substantive findings over
-   6 rounds. The "deep research, not bullshit" directive of
-   2026-05-18 was operationalised by this iteration loop.
-2. **Cross-family review is iterative, not one-shot.**
-   Each round catches what previous rounds missed. Scope
-   decreases per round but doesn't reach zero quickly.
-3. **Amendments need a per-target stale-text audit before
-   verified-flip.** Sections that reference the amended
-   sections drift; bulk sed misses sibling occurrences;
-   front-matter and body inconsistencies are the dominant
-   carry-through class.
-4. **Machine gates must verify what their SPECs claim.**
-   R1 caught an acceptance command that didn't verify;
-   R2-R5 progressively caught a validator that didn't
-   enforce → didn't enforce containment → didn't enforce
-   boundary. SPEC text + machine gate drift was the
-   recurring BLOCKER class.
-5. **Honest disclosure beats fake convergence.** Several
-   findings (provenance fields, partial source status,
-   amendment log) closed not by faking populated values
-   but by explicit documentation of the empty / partial /
-   amended state.
+1. **Padding-for-budget violates the honest-experience
+   contract.** Word-count floors enforced mechanically
+   on experiential prose create the failure mode the
+   methodology was trying to prevent. Same-day fix:
+   soft-floors amendment + chapter trim. Asymmetric
+   enforcement is the right design — ceilings ENFORCED
+   (bloat is dishonest), floors ADVISORY (length-for-
+   its-own-sake is also dishonest).
+2. **Cross-family review surfaces what same-family
+   review misses on prose-truth.** SPEC-level codex
+   caught structural issues. Prose-level codex caught
+   the over-claim (chapter 00 "tested in production
+   with real users") and the wrong-anchor citations
+   (chapter 01 spec-kit/openspec → symphony/gherkin).
+   Both classes are content-truth, not structure.
+3. **Lessons compound.** T-02 converged ~2× faster than
+   T-01 because R1-R5 + prose R1-R2 lessons were
+   applied upfront. Per-chapter helper scripts pay
+   back: authoring a small chapter-strict helper costs
+   minutes but mechanically catches content-shape
+   failures.
+4. **Amendments need Amendment Log subsections.**
+   Codex R2 on T-02 chapter 01 caught the §17
+   Completion Report had stale evidence (830 words,
+   spec-kit citations) post-fix. Same pattern from T-01
+   arc: §X.0 Amendment Log + historical evidence call-
+   out keeps the review trail honest under post-verify
+   amendments.
+5. **Owner directives operationalise into machine
+   gates within hours.** "Just do whats right here"
+   (2026-05-21 morning) → T-02 SPEC + chapter
+   converged. Tonight's "an honest mistake is an
+   opportunity to learn" + grant of explicit permission
+   → soft-floors amendment + chapter 01 trim within
+   the same close-out session. The arc shows the loop
+   is tight enough that owner posture becomes durable
+   gate behavior fast.
 
 ## Commits durable on origin
 
-All three repos: `git status` clean, branches at HEAD =
-origin/main, working trees match remote. Nothing in flight.
+All three repos: clean working tree, branches at HEAD =
+origin/main.
+
+- `bes-fleet-policy` — soft-floors amendment to parent
+  Decision §7 + §14.0 Amendment Log entry.
+- `agentic-ops-framework` — no changes today.
+- `agentic-installation-methodology` — T-01 closure, T-02
+  authoring + verification + closure-pending, soft-floors
+  amendment to longread Contract + validator, chapter 01
+  trim, this STATE.md.
 
 ## What was deliberately NOT done this session
 
-- **v2.1 release tag** on agentic-ops-framework — held until
-  owner directs; the schema bump is durable in main.
-- **Slice 3 chapter authoring** — paused at validator;
-  per-chapter Task SPECs are the next step.
-- **Slice 4 SPEC bundle content** — per-facet sub-spec content
-  authoring not yet started.
-- **Slice 5 external cross-family validation** — methodology
-  Phase 5 against the published Product A bundle; deferred
-  until methodology content lands.
+- **T-02 owner-close flip** (verified → closed) — owner-
+  only.
+- **T-03 chapter 02 authoring** — tomorrow.
+- **Slice 4 SPEC bundle content** — not yet.
+- **Slice 5 external cross-family validation** — Phase 5
+  obligation, owed to a later release.
+- **v2.1 release tag** for Product A — held.
+- **Corpus-citation lint extension** — parking-lot.
 
 Goodnight.

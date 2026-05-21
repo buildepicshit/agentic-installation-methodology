@@ -179,8 +179,9 @@ if [ -n "$CHAPTER_STRICT" ]; then
     count="$(count_prose_words "$path")"
     target="${CHAPTER_TARGET[$strict_file]}"
     max="${CHAPTER_MAX[$strict_file]}"
+    target_advisory=""
     if [ "$count" -lt "$target" ]; then
-        err "chapter-strict: longread/$strict_file $count prose words below §6.2 target ($target)"
+        target_advisory="(below §6.2 target $target; advisory — padding-for-budget violates §6.3 honest-experience contract)"
     fi
     if [ "$count" -gt "$max" ]; then
         err "chapter-strict: longread/$strict_file $count prose words exceeds §6.2 maximum ($max)"
@@ -192,8 +193,13 @@ if [ -n "$CHAPTER_STRICT" ]; then
         done
         exit 1
     fi
-    printf 'validate-longread-structure: PASS — chapter-strict; longread/%s at %d prose words (target %d, max %d)\n' \
-        "$strict_file" "$count" "$target" "$max"
+    if [ -n "$target_advisory" ]; then
+        printf 'validate-longread-structure: PASS — chapter-strict; longread/%s at %d prose words (max %d) %s\n' \
+            "$strict_file" "$count" "$max" "$target_advisory"
+    else
+        printf 'validate-longread-structure: PASS — chapter-strict; longread/%s at %d prose words (target %d, max %d)\n' \
+            "$strict_file" "$count" "$target" "$max"
+    fi
     exit 0
 fi
 
@@ -232,18 +238,23 @@ for file in "${CHAPTER_FILES[@]}"; do
 done
 
 # 4. Total word count bounds.
+# Per the 2026-05-21 soft-floors amendment:
+#   - max (12000 release; per-chapter §6.2 max) stays a hard error (anti-bloat)
+#   - target / floor become advisory (honest-experience > padding-for-budget)
+total_advisory=""
 if [ $RELEASE_MODE -eq 1 ]; then
     if [ "$total_words" -lt "$RELEASE_TOTAL_MIN" ]; then
-        err "release-mode: total $total_words below release minimum $RELEASE_TOTAL_MIN"
+        total_advisory="(below release floor $RELEASE_TOTAL_MIN; advisory — soft floors per the 2026-05-21 amendment)"
     fi
     if [ "$total_words" -gt "$RELEASE_TOTAL_MAX" ]; then
         err "release-mode: total $total_words exceeds release maximum $RELEASE_TOTAL_MAX"
     fi
 else
-    # In-progress mode: only enforce the lower per-chapter floor + a
-    # permissive total floor so the validator can run during authoring.
+    # In-progress mode: the in-progress total floor (450) was a
+    # guard against an empty longread/. Per the soft-floors
+    # amendment, even this floor is advisory.
     if [ "$total_words" -lt "$TOTAL_FLOOR" ]; then
-        err "in-progress: total $total_words below permissive floor $TOTAL_FLOOR"
+        total_advisory="(below in-progress permissive floor $TOTAL_FLOOR; advisory)"
     fi
 fi
 
@@ -259,6 +270,9 @@ mode="in-progress"
 [ $RELEASE_MODE -eq 1 ] && mode="release"
 printf 'validate-longread-structure: PASS — mode=%s; %d/9 chapters present; total=%d prose words\n' \
     "$mode" "$existing_files" "$total_words"
+if [ -n "$total_advisory" ]; then
+    printf '  %s\n' "$total_advisory"
+fi
 if [ ${#missing_warnings[@]} -gt 0 ]; then
     printf '  in-progress warnings (deferred chapters, not errors):\n'
     for w in "${missing_warnings[@]}"; do

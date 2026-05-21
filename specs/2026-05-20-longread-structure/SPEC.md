@@ -208,7 +208,7 @@ one introduction:
 
 ### 6.2 Per-chapter word budget
 
-| Chapter | Target words | Maximum words |
+| Chapter | Target words (advisory) | Maximum words (enforced) |
 |---|---|---|
 | 00-introduction | 800 | 1 100 |
 | 01-phase-0 | 800 | 1 100 |
@@ -219,12 +219,26 @@ one introduction:
 | 06-phase-5 | 1 000 | 1 300 |
 | 07-phase-6 | 800 | 1 000 |
 | 08-phase-7 | 1 500 | 2 000 |
-| **Total** | **9 000** | **11 800** |
+| **Total** | **9 000** (advisory) | **11 800** (enforced) |
+
+**Soft-floors amendment (2026-05-21,
+`owner://transcript-2026-05-21`)**: Per-chapter targets
+and the total target are **advisory**, not enforced. The
+total maximum (12 000) and per-chapter maxima are
+**enforced** (anti-bloat). The asymmetry is deliberate:
+the §6.3 voice contract requires honest experience, not
+padding-for-budget. If a chapter says everything it needs
+to say in fewer words than its target, that is the
+chapter. A target is a heuristic for "long enough to do
+justice to the phase"; the floor in the original
+parent-Decision binding has been demoted to advisory by
+owner directive on 2026-05-21.
 
 The total target (9 000) and the sum-of-maxima (11 800)
-both land within the parent Decision's 8 000–12 000-word
-band; the maximum row gives margin without breaching the
-upper bound (parent Decision §7).
+both land within the parent Decision's 8 000-12 000
+referent band; the 12 000 ceiling is the only hard upper
+bound. Authors SHOULD aim for the per-chapter target but
+SHOULD NOT pad to hit it.
 
 ### 6.3 Voice contract
 
@@ -490,22 +504,26 @@ file prefix like `00`). It does the following:
      to PASS validate-longread when only the chapter
      they author is present.
    - `release`: missing chapter files are errors.
-3. For each chapter file that exists, the script
-   counts prose words (excluding code fences, YAML
-   blocks, and citation prefix tokens) and verifies
-   the count is between 50 (per-chapter placeholder
-   lower bound) and the chapter's §6.2 maximum. Both
-   modes apply this rule.
+3. For each chapter file that exists, the script counts
+   prose words (excluding code fences, YAML blocks, and
+   citation prefix tokens) and verifies the count is
+   at or below the chapter's §6.2 maximum (ENFORCED).
+   The 50-word per-chapter floor is an advisory guard
+   against an empty placeholder file, not a hard error.
 4. Computes total prose words across existing chapter
    files. Per mode:
-   - `in-progress`: verifies total is ≥ 450 (`9 * 50`
-     permissive floor against an empty `longread/`).
-   - `release`: verifies total is in `[8 000, 12 000]`
-     per parent Decision §7 word band.
-5. Exits 0 on full pass; exit 1 with diagnostics
-   otherwise. In `in-progress` mode, deferred-chapter
-   warnings are printed alongside the PASS line on the
-   exit-0 path.
+   - `in-progress`: total floor 450 is **advisory** per
+     the 2026-05-21 soft-floors amendment; only printed
+     in advisory output.
+   - `release`: total must be ≤ 12 000 (ENFORCED). The
+     8 000 lower bound is **advisory** per the 2026-05-21
+     soft-floors amendment.
+   - `chapter-strict`: per-chapter target is advisory;
+     per-chapter max is ENFORCED.
+5. Exits 0 on pass (no max breach); exit 1 if a max is
+   breached or other hard error. Advisory below-floor
+   states print alongside the PASS line on the exit-0
+   path.
 
 Rationale for the three-mode design: per-chapter Task
 SPECs author one chapter at a time. `in-progress` mode
@@ -561,14 +579,17 @@ function check_budgets(release_mode):
       errors.append(f"{file}: {count} words below placeholder bound 50")
     if count > max_words:
       errors.append(f"{file}: {count} words exceeds maximum {max_words}")
+  # Per the 2026-05-21 soft-floors amendment, only maxima
+  # are hard errors. Below-target / below-floor states
+  # emit advisories alongside the exit-0 path.
   if release_mode:
     if total < 8000:
-      errors.append(f"release: total {total} below release floor 8000")
+      advisories.append(f"release: total {total} below release floor 8000 (advisory; soft-floors)")
     if total > 12000:
       errors.append(f"release: total {total} exceeds maximum 12000")
   else:
     if total < 450:
-      errors.append(f"in-progress: total {total} below permissive floor 450")
+      advisories.append(f"in-progress: total {total} below permissive floor 450 (advisory)")
   if errors:
     emit_diagnostics()
     exit 1

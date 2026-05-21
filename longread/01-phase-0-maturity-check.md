@@ -89,7 +89,7 @@ wrong in a non-compliant install.** If you cannot say
 "this install is broken because X is missing," you have
 not yet characterized the conformance shape.
 
-**Anti-signal C — the customization surface is to edit the source directly.** The deferral contract that Phase 2 produces is the opposite of source edits; if installers are expected to fork and edit, you have not yet reached the maturity bar this phase guards. We had not reached it; we shipped a structural contract that, for any non-trivial customization, still required reading the source and patching by hand.
+**Anti-signal C — the customization surface is to edit the source directly.** The deferral contract that Phase 2 produces is the opposite of source edits; if installers are expected to fork and edit, you have not yet reached the maturity bar this phase guards.
 
 ## Phase 0 failure note (BES)
 
@@ -115,13 +115,7 @@ remains unbuilt at v2.0 and is owed to a later release.
 in Phase 0, not in Phase 4. If you reach Phase 4
 (manifest + catalog composition) and find you cannot name
 the conformance shape, you have not yet finished Phase 0,
-regardless of how complete the other artefacts feel. The
-order-of-operations matters because Phase 4 cannot
-recover what Phase 0 did not establish — manifest schema
-fields like `conformance.status: reserved` can disclose
-the gap, but they do not close it. The lesson we took
-from this is to fail Phase 0 explicitly rather than fail
-quietly into the later phases.
+regardless of how complete the other artefacts feel.
 
 ---
 
