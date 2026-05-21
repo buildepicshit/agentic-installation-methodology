@@ -491,10 +491,31 @@ Neither Q1 nor Q2 is `owner-blocking`.
 
 ## 17. Completion Report
 
+### 17.0 Amendment Log
+
+Per the T-01 methodology arc lesson 3 (amendments need a
+per-target stale-text audit), this Completion Report
+records post-verify amendments to chapter 01:
+
+- **Amendment 1** (commit `62bd77e`, 2026-05-21): Chapter
+  prose rewritten per codex chapter-01 prose R1 review
+  (3 MAJOR findings: wrong conformance anchors, failure-
+  note blurred two failures, Nygard over-attributed).
+  See `file://reviews/codex-2026-05-21-chapter-01/REVIEW.md`
+  + `file://reviews/codex-2026-05-21-chapter-01-r2/REVIEW.md`
+  (R2 CONVERGENCE-PASS on prose).
+- **Historical evidence**: At initial verify (commit
+  `aeeb262`), chapter was 830 prose words and cited
+  `openspec.md` + `spec-kit.md` as conformance anchors
+  + cited Nygard as origin of load-bearing-vs-accidents.
+  Acceptance evidence in §17.1-§17.2 has been refreshed
+  to the current (`62bd77e`) state below.
+
 ### 17.1 Files changed
 
-- `longread/01-phase-0-maturity-check.md` (new, 830 prose
-  words).
+- `longread/01-phase-0-maturity-check.md` (new, 897
+  prose words after R1 prose remediation; 830 at
+  initial authoring per Amendment 1).
 - `specs/2026-05-21-longread-chapter-01-phase-0-maturity-check/SPEC.md`
   (status flip draft → in-execution → verified;
   Completion Report fills).
@@ -516,16 +537,25 @@ Neither Q1 nor Q2 is `owner-blocking`.
   → PASS in-progress; 2/9 chapters present; total=1776
   prose words.
 - `cmd://bash scripts/validate-longread-structure.sh --chapter 01`
-  → PASS chapter-strict; 830 prose words in [800, 1100].
+  → PASS chapter-strict; 897 prose words in [800, 1100]
+  (current, post-Amendment 1; 830 at initial verify).
 - `cmd://bash scripts/check-chapter-01-phase-0-signals.sh`
   → PASS (4 positives + 3 anti-signals, paired anchors).
 - `cmd://bash scripts/check-chapter-01-failure-note.sh`
   → PASS (three-element structure at penultimate
   section).
-- T-11: 4 distinct corpus citations (adr-nygard,
-  leaddev-agent-compiled, openspec, spec-kit).
+- T-11: 4 distinct corpus citations (current, post-
+  Amendment 1: adr-nygard, cucumber-gherkin, leaddev-
+  agent-compiled, symphony-spec; initial verify
+  citations were adr-nygard, leaddev-agent-compiled,
+  openspec, spec-kit, replaced per R1 F1).
 - T-12: adr-nygard cite present.
-- T-13: both openspec AND spec-kit cites present.
+- T-13: symphony-spec AND cucumber-gherkin cites
+  present (T-13 + AC-13 updated per Amendment 1 to
+  require symphony-spec OR cucumber-gherkin, replacing
+  the original openspec OR spec-kit; codex chapter-01
+  prose R1 F1 established these are the correct
+  conformance-bar anchors).
 - T-15: forward pointer present, references chapter 02
   / Phase 1 / facet inventory.
 
