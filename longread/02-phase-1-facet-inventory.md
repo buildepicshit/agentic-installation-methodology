@@ -47,42 +47,32 @@ they are an axis along which every artefact gets named.
 ## What we found when we classified Product A
 
 When we ran the inventory against Product A, we worked
-in three buckets — generalizable, mixed, and studio-
-specific — per the research workpad §7 disposition.
-Generalizable bucket: things any team adopting the
-methodology would carry forward without change.
-Studio-specific bucket: things that named or assumed BES
-in ways another studio could not pick up. Mixed bucket:
-the long tail in between, where an artefact carried both
-shapes simultaneously.
+in three buckets per the research workpad §7
+disposition: **generalizable** (things any adopting team
+carries forward unchanged), **studio-specific** (things
+that named or assumed BES in ways another studio could
+not pick up), and **mixed** (the long tail in between).
+The bucket split was useful as a coarse sorting axis.
 
-The bucket split was useful. The trouble was that the
-buckets did not coincide with the facet axis. An artefact
-could be generalizable on the Architecture facet and
-studio-specific on the Customization facet at the same
-time. Worse, many artefacts did not fit cleanly into one
-facet at all — they served multiple facets at once. The
-workpad calls this out plainly: "output: a per-artefact
-classification table, often hybrid (one artefact serves
-multiple facets)." We confirmed it.
+What it did not give us was a clean one-facet-per-
+artefact mapping. The workpad calls this out plainly:
+"output: a per-artefact classification table, often
+hybrid (one artefact serves multiple facets)." We
+confirmed it. Artefacts did not fit cleanly into one
+facet — many served multiple facets at once.
 
 ## Phase 1 failure note (BES)
 
 **What happened.** Classifying every artefact by facet
-produced hybrid output. Many artefacts did not fit
-cleanly into one facet; multiple facets applied at once.
-The clean one-facet-per-artefact table we expected to
-hand to Phase 2 did not exist; the honest table had
-artefacts that landed in two or three facet rows.
+produced hybrid output per the workpad's anticipated
+shape. The clean one-facet-per-artefact table we
+expected to hand to Phase 2 did not exist; what existed
+was a table where many artefacts landed in more than
+one facet row.
 
-**What we did.** We accepted hybrid as the output shape,
-not as a defect to be cleaned up. We added a per-artefact
-facet-primacy ranking — naming which facet was the
-artefact's primary intent role, with secondary facets
-listed alongside — so the table read honestly across
-multi-facet artefacts. The honest table was longer than
-the clean table would have been, and Phase 2 had to draw
-its deferral contract against the longer table.
+**What we did.** We accepted hybrid as the output
+shape, not as a defect to be cleaned up. The honest
+table is the table.
 
 **What pattern generalizes.** `judgment://agent-synthesis`:
 forcing one facet per artefact is the anti-pattern.

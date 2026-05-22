@@ -461,13 +461,30 @@ Neither Q1 nor Q2 is `owner-blocking`.
 
 ## 17. Completion Report
 
+### 17.0 Amendment Log
+
+- **Amendment 1** (this commit, 2026-05-22): Chapter
+  trimmed per codex chapter-02 prose R1 review (1 MAJOR
+  finding — unsupported case-study specifics in failure
+  note + "what we found" section). Removed: bucket/
+  facet axis-crossing claim; Architecture-vs-
+  Customization axis-crossing example; "BES added a
+  per-artefact facet-primacy ranking"; "Phase 2 had to
+  consume a longer primacy-ranked table." Chapter
+  trimmed from 668 → 573 prose words. The "What we did"
+  failure-note element is now narrow: "We accepted
+  hybrid as the output shape." See
+  `file://reviews/codex-2026-05-22-chapter-02/REVIEW.md`
+  for the R1 evidence + remediation summary.
+
 ### 17.1 Files changed
 
-- `longread/02-phase-1-facet-inventory.md` (new; 668
-  prose words). Below advisory target 1 000; below
-  enforced max 1 300. Soft-floors regime explicitly
-  accepts below-target (the chapter says what needs
-  saying; no padding-for-budget per T-02 §17.5).
+- `longread/02-phase-1-facet-inventory.md` (new; 573
+  prose words after Amendment 1; 668 at initial
+  verify). Below advisory target 1 000; below enforced
+  max 1 300. Soft-floors regime explicitly accepts
+  below-target (the chapter says what needs saying; no
+  padding-for-budget per T-02 §17.5).
 - `specs/2026-05-22-longread-chapter-02-phase-1-facet-inventory/SPEC.md`
   (status: draft → in-execution → verified;
   Completion Report fills).
@@ -487,7 +504,8 @@ Neither Q1 nor Q2 is `owner-blocking`.
   → PASS in-progress; 3/9 chapters present; total=2436
   prose words.
 - `cmd://bash scripts/validate-longread-structure.sh --chapter 02`
-  → PASS chapter-strict; 668 prose words (max 1 300);
+  → PASS chapter-strict; 573 prose words (max 1 300;
+  current, post-Amendment 1; 668 at initial verify);
   below advisory target 1 000 — padding-for-budget
   violates §6.3 honest-experience contract per the
   validator's advisory message.
