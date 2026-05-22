@@ -1,6 +1,6 @@
 ---
 id: 2026-05-21-longread-chapter-01-phase-0-maturity-check
-status: verified
+status: closed
 type: task
 owner: HasNoBeef
 ideated_in: specs/2026-05-21-longread-chapter-01-phase-0-maturity-check/IDEA.md
