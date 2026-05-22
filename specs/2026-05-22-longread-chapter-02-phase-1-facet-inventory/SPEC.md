@@ -1,6 +1,6 @@
 ---
 id: 2026-05-22-longread-chapter-02-phase-1-facet-inventory
-status: verified
+status: closed
 type: task
 owner: HasNoBeef
 ideated_in: specs/2026-05-22-longread-chapter-02-phase-1-facet-inventory/IDEA.md
