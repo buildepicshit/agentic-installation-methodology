@@ -1,6 +1,6 @@
 ---
 id: 2026-05-22-longread-chapter-03-phase-2-parameterization-surface
-status: in-execution
+status: verified
 type: task
 owner: HasNoBeef
 ideated_in: specs/2026-05-22-longread-chapter-03-phase-2-parameterization-surface/IDEA.md
@@ -428,22 +428,135 @@ Neither Q1 nor Q2 is `owner-blocking`.
 
 ## 17. Completion Report
 
+### 17.0 Amendment Log
+
+- **Amendment 1** (commit `82d2ca9`, 2026-05-22):
+  Chapter prose trimmed per codex chapter-03 prose R1
+  review (2 MAJOR findings — Symphony §3 over-attribution
+  + failure-note E1 unsupported motive). Symphony
+  single-file claim narrowed: chapter cites
+  `symphony-spec.md` §3 only for "§5 Workflow
+  Specification (Repository Contract)" section name;
+  workpad §6 carries the single-file framing. E1
+  "hoped for single-file" sentence removed; E1 stays
+  workpad-grounded. Chapter post-fix: 595 prose words
+  (initial 582). See
+  `file://reviews/codex-2026-05-22-chapter-03/REVIEW.md`
+  for R1 + `file://reviews/codex-2026-05-22-chapter-03-r2/REVIEW.md`
+  for R2 CONVERGENCE-PASS.
+
 ### 17.1 Files changed
 
-(to be filled — at Verification phase)
+- `longread/03-phase-2-parameterization-surface.md`
+  (new; 595 prose words after Amendment 1; 582 at
+  initial). Below advisory target 1 000; below enforced
+  max 1 300. Soft-floors accepts.
+- `specs/2026-05-22-longread-chapter-03-phase-2-parameterization-surface/SPEC.md`
+  (status: draft → in-execution → verified; §17 fills).
+- `scripts/check-chapter-03-phase-2-anchors.sh` (new
+  helper; paragraph-co-occurrence design).
+- `scripts/check-chapter-03-failure-note.sh` (new
+  helper; explicit bold markers + agent-synthesis tag).
 
 ### 17.2 Commands run
 
-(to be filled — at Verification phase)
+- `cmd://bash scripts/lint-spec.sh
+  specs/2026-05-22-longread-chapter-03-phase-2-parameterization-surface/SPEC.md`
+  → 0 errors, 0 warnings.
+- `cmd://test -f
+  longread/03-phase-2-parameterization-surface.md` →
+  exit 0.
+- `cmd://bash scripts/validate-longread-structure.sh`
+  → PASS in-progress; 4/9 chapters present;
+  total=2954 prose words (current).
+- `cmd://bash scripts/validate-longread-structure.sh --chapter 03`
+  → PASS chapter-strict; 595 prose words (max 1 300);
+  below advisory target 1 000.
+- `cmd://bash scripts/check-chapter-03-phase-2-anchors.sh`
+  → PASS (deferral + single-file + multi-file + BES
+  distributed all paragraph-co-occur).
+- `cmd://bash scripts/check-chapter-03-failure-note.sh`
+  → PASS (explicit bold markers + agent-synthesis tag).
+- T-10: 5 distinct corpus citations (12-factor,
+  helm-values-schema, nix-flakes, ref-arch-vs-solution-
+  arch, symphony-spec).
+- T-11: symphony-spec cited.
+- T-12: both helm-values-schema AND nix-flakes cited.
+- T-14: forward pointer present, references chapter 04
+  / Phase 3 / sanitization bar.
 
 ### 17.3 Verification result
 
-(to be filled — at Verification phase)
+All 14 acceptance criteria PASS.
+
+Manual reviewer checks (current, post-Amendment 1):
+
+- T-5 corpus-citation discipline: methodology
+  primitives cite corpus only. Single-file shape cites
+  workpad §6 explicitly for the characterization +
+  symphony-spec §3 for the narrower workflow-contract
+  section claim. Multi-file shape cites helm-values-
+  schema §3 + nix-flakes §3. 12-factor §3 for the
+  config-vs-code principle. ref-arch-vs-solution-arch
+  §3 for the ownership-split frame. BES distributed
+  disposition cites workpad §7 verbatim.
+- T-6 voice: first-person experiential ("We worked
+  through the facet inventory"; "We accepted the
+  distributed shape"; "we worked from both"). No
+  third-person methodology-vendor voice.
+- Failure-note quality: E1 + E2 strictly workpad-
+  grounded. E3 explicitly tagged
+  `judgment://agent-synthesis` with "synthesis, not a
+  workpad-proven case-study claim" disclaimer.
 
 ### 17.4 Residual risk
 
-(to be filled — at Verification phase)
+- Chapter 03 at 595 prose words is well below advisory
+  target 1 000. Same pattern as chapter 02 (573).
+  Under soft-floors regime this is acceptable; no
+  padding-for-budget pressure surfaced.
+- Symphony single-file framing leans on workpad
+  characterization rather than corpus authority. The
+  chapter is honest about this asymmetry per R1 F1
+  closure. If a future corpus expansion adds a
+  Symphony WORKFLOW.md-specific source, the chapter
+  can amend to anchor the claim more strongly.
+- The Phase 2 failure note's E3 is `judgment://agent-
+  synthesis`; owner sign-off via the "approved" flip
+  is the validation. Subsequent chapters may revisit
+  the synthesis as more case-study data accumulates.
 
 ### 17.5 Spec evidence candidates
 
-(to be filled — durable lessons)
+- **Corpus-vs-workpad attribution asymmetry**.
+  Methodology primitives MUST cite corpus per Contract
+  §6.4 — but the research workpad's phase definitions
+  often summarize prior-art shapes in ways the corpus
+  entries don't literally articulate. Chapter 03 hit
+  this with Symphony's WORKFLOW.md framing (workpad
+  characterizes; corpus entry §3 has it indirectly via
+  the 18-section list). Pattern: cite the workpad for
+  the workpad-characterization; cite the corpus for
+  what the corpus literally says; do NOT cite the
+  corpus for the workpad's gloss of it. This is the
+  same shape as chapter 01's Nygard finding (corpus
+  supports A; workpad framing says B; chapter must
+  separate the two).
+- **Helper-script paragraph-co-occurrence design pays
+  back**. T-04 R1 finding 2 forced a rewrite of the
+  facet/anchor helper from global-grep to paragraph-
+  scoped grep. Cost: minutes. Benefit: a chapter that
+  scatters keywords without co-occurrence now FAILs
+  mechanically rather than passing on false-positive.
+  Forward-applicable to chapters 04-08.
+- **Explicit bold-marker enforcement for §6.5
+  three-element structure** caught vague failure notes
+  cleanly. The helper now requires literal
+  `**What happened.**` / `**What we did.**` /
+  `**What pattern generalizes.**` markers + a
+  `judgment://agent-synthesis` tag. A "vague but
+  failure-themed" section now FAILs.
+- **Soft-floors regime continues to work**. Chapter 03
+  at 595 prose words is the second consecutive sub-
+  target chapter (chapter 02 at 573). Both authored
+  without padding-for-budget pressure.
