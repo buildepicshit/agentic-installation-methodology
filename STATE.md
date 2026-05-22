@@ -1,182 +1,183 @@
-# STATE — methodology arc, 2026-05-21 close-out
+# STATE — methodology arc, 2026-05-22 close-out
 
-Session closed out for the night. Morning pickup notes below.
+Session closed out for the night. Morning pickup notes
+below.
 
 ## What converged today
 
-- **T-01 chapter 00 introduction**: closed. R5 SPEC + R2
-  prose CONVERGENCE-PASS. 946 prose words. Status: closed.
-- **T-02 chapter 01 Phase 0 maturity check**: verified.
-  R2 SPEC + R2 prose CONVERGENCE-PASS. Two amendments in
-  §17 Amendment Log: R1 prose remediation (3 MAJOR
-  findings closed) + Amendment 2 (padding-for-budget
-  trim under explicit owner directive). 822 prose words.
-  Status: verified (owner-only flip to closed pending).
-- **Soft-floors amendment** (parent Decision §7 + longread
-  Contract §6.2/§8.2/§9.2 + validator): 12 000 upper
-  bound stays ENFORCED (anti-bloat); 8 000 lower bound
-  demoted to ADVISORY only. Per-chapter targets also
-  advisory. Per-chapter maxima still enforced.
+- **T-02 chapter 01 Phase 0 maturity check**: closed.
+- **T-03 chapter 02 Phase 1 facet inventory**: closed
+  (SPEC R1→R4 4 rounds; prose R1→R2 2 rounds; 573 words
+  first sub-target chapter under soft-floors).
+- **T-04 chapter 03 Phase 2 parameterization surface**:
+  verified (owner-approved close pending). SPEC 2
+  rounds; prose 2 rounds. 595 words.
+
+Total session work: 8 commits on origin/main; 2/4
+chapters added since morning pickup.
 
 ## Convergence trajectory comparison
 
-| Slice | SPEC rounds | Prose rounds | Total |
-|---|---:|---:|---:|
-| T-01 | 5 (7→4→4→1→0) | 2 (2→0) | 7 |
-| T-02 | 2 (4→0) | 2 (3→0+gov→0) | 4 |
+| Slice | SPEC rounds | Prose rounds | Total | Chapter words |
+|---|---:|---:|---:|---:|
+| T-01 ch 00 | 5 (7→4→4→1→0) | 2 (2→0) | 7 | 946 |
+| T-02 ch 01 | 2 (4→0) | 2 (3→0+gov→0) | 4 | 822 |
+| T-03 ch 02 | 4 (2→1→1→0) | 2 (1→0) | 6 | 573 |
+| T-04 ch 03 | 2 (2→0) | 2 (2→0) | 4 | 595 |
 
-T-02 converged ~2× faster than T-01. Lessons compound.
+T-04 was faster than T-03 because R1-R3 lessons on
+prohibition wording + helper paired-anchor + soft-
+floors all landed clean upfront. Prose codex still
+catches the over-attribution class every time.
 
 ## Parent Decision §7 slice queue
 
 ```
 Slice 1   (repo standup)            ─────────────────  verified ✓
-Slice 1.5 (primary-source corpus, 22 sources)         verified ✓
+Slice 1.5 (primary-source corpus, 22 sources)          verified ✓
 Slice 2   (Product A v2.0 repack)   ─────────────────  verified ✓
-Slice 3   (longread structure Contract)               in-execution
+Slice 3   (longread structure Contract)                in-execution
                                                           (3 amendments
-                                                           landed during
-                                                           T-01 + T-02 +
-                                                           soft-floors)
-Slice 3.1 (T-01 chapter 00 introduction)              closed ✓
-Slice 3.2 (T-02 chapter 01 Phase 0)                   verified (close pending)
-Slice 3.3-3.9 (chapters 02-08)                        next
-Slice 4   (per-facet SPEC bundle content for Product B) — not yet
+                                                           landed; soft-
+                                                           floors regime
+                                                           active)
+Slice 3.1 (T-01 chapter 00 introduction)               closed ✓ (946 w)
+Slice 3.2 (T-02 chapter 01 Phase 0)                    closed ✓ (822 w)
+Slice 3.3 (T-03 chapter 02 Phase 1)                    closed ✓ (573 w)
+Slice 3.4 (T-04 chapter 03 Phase 2)                    verified (close pending)
+Slice 3.5-3.9 (chapters 04-08)                         next
+Slice 4   (per-facet SPEC bundle content for Product B)  not yet
 Slice 5   (external cross-family validation pass)       not yet
 ```
 
 ## Where the longread sits
 
-- 2/9 chapters published.
-- Total prose: 1 768 words (946 + 822).
-- Per-chapter target sum so far: 1 600 (800 + 800).
-  Above target.
-- Under soft-floors regime, the 8 000 lower bound on the
-  whole longread is advisory, so target tracking is
-  reference only.
+- 4/9 chapters published.
+- Total prose: **2 936 words** (~25% of 12k ceiling
+  under soft-floors).
+- 5 chapters remain: 04 Phase 3 (sanitization bar) +
+  05 Phase 4 (manifest + catalog) + 06 Phase 5 (cross-
+  family validation) + 07 Phase 6 (ship) + 08 Phase 7
+  (failure modes as content).
 
 ## Next move when picking up
 
-The natural next slice is **T-03 chapter 02 — Phase 1
-facet inventory** (Slice 3.3). Per longread Contract §6.1
-the chapter title is "Classifying every artefact by
-facet"; per §6.2 target 1 000 words / max 1 300; per
-§6.3 first-person voice; per §6.4 corpus-citation; per
-§6.5 three-element failure note.
+**T-05 chapter 04 — Phase 3 sanitization bar** (Slice
+3.5). Per longread Contract §6.1 chapter title:
+"Dropping studio context without dropping rigor."
+Per §6.2: target 900 words (advisory under soft-
+floors), max 1 200 (enforced).
 
-Corpus anchors that may support Phase 1 primitives:
-- `research/primary-sources/arc42.md` §3 (architecture
-  documentation by viewpoints).
-- `research/primary-sources/c4-model.md` §3 (per-level
-  decomposition).
+Phase 3 substance per research workpad §6:
+- Drop studio context from spec body (no studio name,
+  transcripts, internal SPEC IDs in published spec)
+- Use studio experience as evidence frame (first-person
+  "we tried this and X happened")
+- Document preconditions for the spec's assumptions
+  (e.g., trust-boundary declarations the installer
+  must make)
+
+BES Phase 3 disposition per workpad §7:
+"drop ALL studio context per `owner://transcript-
+2026-05-17`; generalize `owner://` →
+`decision-authority://<role>`."
+
+Corpus anchors that may support Phase 3 primitives:
+- `research/primary-sources/12-factor.md` §3 (config-
+  vs-code separation; backing-services-as-attached-
+  resources principle).
 - `research/primary-sources/diataxis.md` §3 (four-type
-  documentation classification).
+  documentation classification; helps think about
+  what's "studio-specific" vs generalizable).
 - `research/primary-sources/ref-arch-vs-solution-arch.md`
-  §3 (reference vs solution split).
-- Research workpad §6 Phase 1 definition (seven facets:
-  architecture, deployment, behavior, customization,
-  decisions, operations, non-goals).
+  §3 (the reference-vs-solution split — the spec body
+  is reference, the studio context is solution).
+- `research/primary-sources/sigstore-cosign.md` §3
+  (provenance + signing; relevant for the "trust
+  boundary" question Phase 3 names).
+- Research workpad §6 (Phase 3 definition) + §7 (BES
+  Phase 3 case-study).
 
-Authoring procedure per the v1 procedure + T-01/T-02
-patterns:
+Authoring procedure per the established pattern:
 
 1. Author IDEA at
-   `specs/2026-05-{N}-longread-chapter-02-phase-1-facet-inventory/IDEA.md`.
-2. Author Task SPEC; apply T-01 R1-R5 + T-02 R1 lessons
-   upfront (path-base normalization, ideated_in,
-   requires_network, mechanically-runnable T-evidence,
-   AC ↔ T parity, corpus-citation strictness, §6.5
-   three-element rule, §6.6 attribution posture,
-   chapter-strict mode in acceptance_commands).
-3. Codex SPEC pass; iterate to PASS.
-4. Execute (author chapter prose) WITHOUT padding-for-
-   budget pressure (soft-floors regime).
-5. Codex prose pass; iterate to PASS.
-6. Verify; fill Completion Report.
-7. Owner closes.
+   `specs/2026-05-{N}-longread-chapter-04-phase-3-sanitization-bar/IDEA.md`.
+2. Author Task SPEC with all T-01/T-02/T-03/T-04
+   lessons applied upfront. Helpers BEFORE prose. Strict
+   fact-vs-synthesis separation in failure note.
+   Paragraph-co-occurrence anchors. Explicit bold
+   markers for §6.5 three-element structure.
+3. Codex SPEC pass (target: ≤ 2 rounds given lessons).
+4. Owner approve.
+5. Execute (author chapter prose) under soft-floors;
+   no padding; no over-attribution beyond cited
+   authority.
+6. Codex prose pass (target: ≤ 2 rounds).
+7. Verify; fill §17.
+8. Owner close.
 
 ## Parking-lot follow-ups (acknowledged-and-deferred)
 
-- **Corpus-citation lint extension** (codex R1 T-02
-  surfaced again as a manual reviewer concern). A
-  follow-on Task SPEC for
-  `scripts/validate-corpus-citations.sh` would
-  mechanically enforce what is currently manual
-  reviewer judgment.
+- **Corpus-citation lint extension**: mechanically
+  enforce what manual reviewer T-5 currently checks.
 - **v1.2 corpus expansion candidates**: SPDX, Pact,
-  CUE, Dev Container Spec, SLSA/in-toto. Documented in
-  corpus SPEC §17 Q4.
-- **v2.1 release tag** for `agentic-ops-framework`:
-  manifest schema bumped to 2.1.0 on main; v2.0.0
-  release tag stays at v2.0.0 schema. Cut v2.1 release
-  when ready.
-- **Editorial polish drift**: every future edit
-  introduces new stale-text occurrences in adjacent
-  sections. Property of edited documents; codex cross-
-  family review per major slice catches it.
+  CUE, Dev Container Spec, SLSA/in-toto.
+- **v2.1 release tag** for `agentic-ops-framework`.
+- **Codex stdin-hang gotcha**: future codex dispatches
+  append `</dev/null` (lesson captured in T-03 §17.5).
 
 ## Pattern-level spec evidence accumulated today
 
-1. **Padding-for-budget violates the honest-experience
-   contract.** Word-count floors enforced mechanically
-   on experiential prose create the failure mode the
-   methodology was trying to prevent. Same-day fix:
-   soft-floors amendment + chapter trim. Asymmetric
-   enforcement is the right design — ceilings ENFORCED
-   (bloat is dishonest), floors ADVISORY (length-for-
-   its-own-sake is also dishonest).
-2. **Cross-family review surfaces what same-family
-   review misses on prose-truth.** SPEC-level codex
-   caught structural issues. Prose-level codex caught
-   the over-claim (chapter 00 "tested in production
-   with real users") and the wrong-anchor citations
-   (chapter 01 spec-kit/openspec → symphony/gherkin).
-   Both classes are content-truth, not structure.
-3. **Lessons compound.** T-02 converged ~2× faster than
-   T-01 because R1-R5 + prose R1-R2 lessons were
-   applied upfront. Per-chapter helper scripts pay
-   back: authoring a small chapter-strict helper costs
-   minutes but mechanically catches content-shape
-   failures.
-4. **Amendments need Amendment Log subsections.**
-   Codex R2 on T-02 chapter 01 caught the §17
-   Completion Report had stale evidence (830 words,
-   spec-kit citations) post-fix. Same pattern from T-01
-   arc: §X.0 Amendment Log + historical evidence call-
-   out keeps the review trail honest under post-verify
-   amendments.
-5. **Owner directives operationalise into machine
-   gates within hours.** "Just do whats right here"
-   (2026-05-21 morning) → T-02 SPEC + chapter
-   converged. Tonight's "an honest mistake is an
-   opportunity to learn" + grant of explicit permission
-   → soft-floors amendment + chapter 01 trim within
-   the same close-out session. The arc shows the loop
-   is tight enough that owner posture becomes durable
-   gate behavior fast.
+1. **Corpus-vs-workpad attribution asymmetry** (T-04
+   chapter 03 prose R1 finding 1 + chapter 01 Nygard
+   finding): methodology primitives MUST cite corpus,
+   but the research workpad's phase definitions often
+   summarize prior-art shapes in ways the corpus
+   entries don't literally articulate. Cite the workpad
+   for the workpad-characterization; cite the corpus
+   for what the corpus literally says.
+2. **Strict fact-vs-synthesis separation in §6.5
+   three-element failure notes** (T-04 R1 + chapter 02
+   prose R1): E1 + E2 workpad-grounded only; E3
+   explicitly `judgment://agent-synthesis` tagged.
+   Authoring contract enforced by helper script
+   requiring the literal `judgment://agent-synthesis`
+   string in the failure-note section.
+3. **Paragraph-co-occurrence anchor design** (T-04 R1
+   finding 2): helper scripts must check anchor pairs
+   in the SAME paragraph, not scattered globally.
+   Otherwise a chapter listing keywords without
+   substantive coverage passes the mechanical gate.
+4. **Soft-floors regime is durable**. Chapters 02 + 03
+   both landed sub-target (573 + 595 words against
+   1000 + 1000 advisory targets). No padding pressure
+   surfaced; chapters say what they need to say.
+5. **Convergence acceleration plateaus**. T-01 took 7
+   codex rounds (SPEC + prose). T-02 took 4. T-03 took
+   6. T-04 took 4. The convergence floor is ~4 rounds
+   per chapter (2 SPEC + 2 prose) because prose-codex
+   catches a new class each time (over-attribution to
+   cited authority, motive imported into E1, etc.).
+   This is the natural rate; the loop is working.
 
 ## Commits durable on origin
 
-All three repos: clean working tree, branches at HEAD =
-origin/main.
+All three repos clean + synced.
 
-- `bes-fleet-policy` — soft-floors amendment to parent
-  Decision §7 + §14.0 Amendment Log entry.
-- `agentic-ops-framework` — no changes today.
-- `agentic-installation-methodology` — T-01 closure, T-02
-  authoring + verification + closure-pending, soft-floors
-  amendment to longread Contract + validator, chapter 01
-  trim, this STATE.md.
+- `bes-fleet-policy` @ `175866c` (soft-floors amendment
+  yesterday; no changes today).
+- `agentic-ops-framework` @ `05ad7a5` (no changes since
+  v2.0 work).
+- `agentic-installation-methodology` @ `ddc0a51` (T-04
+  verified; all 8 of today's commits durable).
 
 ## What was deliberately NOT done this session
 
-- **T-02 owner-close flip** (verified → closed) — owner-
-  only.
-- **T-03 chapter 02 authoring** — tomorrow.
-- **Slice 4 SPEC bundle content** — not yet.
-- **Slice 5 external cross-family validation** — Phase 5
+- **T-04 owner-close flip** — owner has just approved
+  in transcript, will flip in this commit batch.
+- **T-05 chapter 04 authoring** — tomorrow.
+- **Parking-lot items** — all deferred.
+- **External Slice 5 validation pass** — Phase 5
   obligation, owed to a later release.
-- **v2.1 release tag** for Product A — held.
-- **Corpus-citation lint extension** — parking-lot.
 
 Goodnight.

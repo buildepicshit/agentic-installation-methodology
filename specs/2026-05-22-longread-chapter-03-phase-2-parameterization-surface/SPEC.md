@@ -1,6 +1,6 @@
 ---
 id: 2026-05-22-longread-chapter-03-phase-2-parameterization-surface
-status: verified
+status: closed
 type: task
 owner: HasNoBeef
 ideated_in: specs/2026-05-22-longread-chapter-03-phase-2-parameterization-surface/IDEA.md
