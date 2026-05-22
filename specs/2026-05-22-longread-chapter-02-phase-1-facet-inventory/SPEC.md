@@ -538,28 +538,31 @@ Manual reviewer checks confirmed during authoring:
   memory claims.
 - T-6 voice contract: first-person experiential
   dominates ("We did not invent the pattern; we used
-  it"; "We accepted hybrid"; "We added a per-artefact
-  facet-primacy ranking"; "We confirmed it"). No
+  it"; "We accepted hybrid"; "We confirmed it"). No
   third-person methodology-vendor voice; no passive
   voice for studio actions.
-- Failure-note quality: names the actual Phase 1
-  failure (hybrid output forced revision of the
-  expected clean table); states what BES did
-  concretely (added per-artefact facet-primacy
-  ranking); generalizes the pattern (forcing one facet
-  per artefact is the anti-pattern; categorize
-  honestly even when honesty means hybrid).
+- Failure-note quality (current, post-Amendment 1):
+  names the actual Phase 1 failure (the clean one-
+  facet-per-artefact table did not exist; the honest
+  table had multi-facet artefacts); states what BES
+  did (accepted hybrid as the output shape);
+  generalizes the pattern (forcing one facet per
+  artefact is the anti-pattern; categorize honestly
+  even when honesty means hybrid). The earlier
+  facet-primacy-ranking claim was trimmed per codex
+  prose R1 finding 1 (no workpad authority).
 
 ### 17.4 Residual risk
 
-- Chapter 02 at 668 words is the first chapter to land
+- Chapter 02 at 573 prose words (current, post-
+  Amendment 1) is the first chapter to land
   meaningfully below its advisory target under the
   soft-floors regime. If owner or external reviewer
   reads chapter 02 as too thin (e.g. wants more
   concrete Product A examples), a follow-on amendment
-  may add citable example sources per R3 + R4
-  closures. The current chapter discharges the §6.5
-  + §6.4 obligations the cited authority actually
+  may add citable example sources per the SPEC R3 +
+  R4 closures. The current chapter discharges the
+  §6.5 + §6.4 obligations the cited authority actually
   supports.
 - The Phase 1 failure note's "what generalizes" element
   is `judgment://agent-synthesis` per Contract §6.5
@@ -570,11 +573,13 @@ Manual reviewer checks confirmed during authoring:
 ### 17.5 Spec evidence candidates
 
 - **Soft-floors regime works as designed.** Chapter
-  02 landed at 668 words against an advisory target
-  of 1 000. The validator emitted PASS + an advisory
-  note. No padding-for-budget pressure surfaced
-  during authoring. This is the first chapter
-  authored entirely under the post-amendment regime
+  02 landed at 573 prose words (current, post-
+  Amendment 1; 668 at initial verify) against an
+  advisory target of 1 000. The validator emitted
+  PASS + an advisory note. No padding-for-budget
+  pressure surfaced during authoring. This is the
+  first chapter authored entirely under the post-
+  amendment regime
   and the regime did exactly what was hoped — the
   chapter is shorter than expected and that is fine.
 - **Cross-family review accelerates further with each
