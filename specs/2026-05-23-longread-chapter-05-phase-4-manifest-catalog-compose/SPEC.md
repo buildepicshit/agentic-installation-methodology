@@ -1,6 +1,6 @@
 ---
 id: 2026-05-23-longread-chapter-05-phase-4-manifest-catalog-compose
-status: verified
+status: closed
 type: task
 owner: HasNoBeef
 ideated_in: specs/2026-05-23-longread-chapter-05-phase-4-manifest-catalog-compose/IDEA.md
