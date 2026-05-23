@@ -1,6 +1,6 @@
 ---
 id: 2026-05-24-longread-chapter-07-phase-6-ship
-status: in-execution
+status: verified
 type: task
 owner: HasNoBeef
 ideated_in: specs/2026-05-24-longread-chapter-07-phase-6-ship/IDEA.md
@@ -403,22 +403,73 @@ Neither Q1 nor Q2 is `owner-blocking`.
 
 ## 17. Completion Report
 
+### 17.0 Amendment Log
+
+- **Amendment 1** (this commit, 2026-05-24): Chapter
+  prose trimmed per chapter-07 prose R1 (2 MAJOR):
+  F1 BES current-state triad overclaim → workpad §6
+  generic shape split from §7 paired-A/B state;
+  conformance noted as shape-not-yet-state. F2 OCI
+  wording overclaim → rewrote to descriptor/content-
+  address/hash language. Chapter post-fix: 702 prose
+  words (initial 674).
+
 ### 17.1 Files changed
 
-(to be filled — at Verification phase)
+- `longread/07-phase-6-ship.md` (new; 702 prose words
+  post-Amendment 1; 674 at initial).
+- `specs/2026-05-24-longread-chapter-07-phase-6-ship/SPEC.md`.
+- `scripts/check-chapter-07-phase-6-anchors.sh` (new;
+  7-row paragraph-co-occurrence pattern).
+- `scripts/check-chapter-07-failure-note.sh` (new;
+  explicit bold markers + agent-synthesis).
 
 ### 17.2 Commands run
 
-(to be filled — at Verification phase)
+- `lint-spec.sh ...SPEC.md` → 0/0.
+- `validate-longread-structure.sh` → PASS in-progress;
+  8/9 chapters; chapter 08 deferred.
+- `validate-longread-structure.sh --chapter 07` →
+  PASS; 702 words; below advisory target 800.
+- `check-chapter-07-phase-6-anchors.sh` → PASS.
+- `check-chapter-07-failure-note.sh` → PASS.
+- T-10: 4 distinct corpus citations (oci-artifacts,
+  sigstore-cosign, cyclonedx-sbom, spec-kit).
+- T-11: sigstore-cosign cited.
+- T-12: oci-artifacts cited.
+- T-14: forward pointer to chapter 08 / Phase 7.
 
 ### 17.3 Verification result
 
-(to be filled — at Verification phase)
+All 14 acceptance criteria PASS. Manual T-5 + T-6
+confirmed: corpus discipline + first-person voice.
+Failure note E1 + E2 workpad/Decision/chapter
+grounded; E3 explicitly synthesis-tagged. No
+overclaim that Product A v2.0 has shipped; Decision
+binds shape not state.
 
 ### 17.4 Residual risk
 
-(to be filled — at Verification phase)
+- Chapter 07 at 702 prose words is sixth consecutive
+  sub-target chapter under soft-floors.
+- "Shape-not-yet-state" language surfaces the
+  methodology's outstanding-obligation in chapter 07
+  substance, not only in chapter 06's failure note.
+- T-06 R6 block applied upfront + §6 kept as standard
+  slot reduced SPEC convergence to 2 rounds.
 
 ### 17.5 Spec evidence candidates
 
-(to be filled — durable lessons)
+- **Authority-source-list block applied upfront
+  works**. T-06 needed 6 SPEC rounds to discover the
+  block; T-07 applied it but renumbered §6; T-08
+  applied it AND kept §6 as the standard slot. T-08
+  SPEC: 2 rounds.
+- **Helper docstring count must match implemented
+  row count** — T-08 R1 F1 caught a 5-vs-7 row
+  mismatch. T-09 lesson.
+- **OCI/SBOM authority drift class**: each anchor's
+  claim within its §3.
+- **Shape-vs-state distinction is the methodology's
+  honest-disclosure tool** — composes across chapters
+  01 + 04 + 06 + 07.
