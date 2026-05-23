@@ -1,6 +1,6 @@
 ---
 id: 2026-05-23-longread-chapter-06-phase-5-cross-family-validation
-status: verified
+status: closed
 type: task
 owner: HasNoBeef
 ideated_in: specs/2026-05-23-longread-chapter-06-phase-5-cross-family-validation/IDEA.md
