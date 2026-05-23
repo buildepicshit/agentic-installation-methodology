@@ -1,6 +1,6 @@
 ---
 id: 2026-05-23-longread-chapter-04-phase-3-sanitization-bar
-status: verified
+status: closed
 type: task
 owner: HasNoBeef
 ideated_in: specs/2026-05-23-longread-chapter-04-phase-3-sanitization-bar/IDEA.md
