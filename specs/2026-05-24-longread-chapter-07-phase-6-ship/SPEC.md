@@ -1,6 +1,6 @@
 ---
 id: 2026-05-24-longread-chapter-07-phase-6-ship
-status: verified
+status: closed
 type: task
 owner: HasNoBeef
 ideated_in: specs/2026-05-24-longread-chapter-07-phase-6-ship/IDEA.md
