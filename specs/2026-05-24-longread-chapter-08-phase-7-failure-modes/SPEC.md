@@ -1,6 +1,6 @@
 ---
 id: 2026-05-24-longread-chapter-08-phase-7-failure-modes
-status: approved-pending-owner
+status: verified
 type: task
 owner: HasNoBeef
 ideated_in: specs/2026-05-24-longread-chapter-08-phase-7-failure-modes/IDEA.md
@@ -385,24 +385,27 @@ External effects: `cmd://git push` under
 
 ## 14. Acceptance Criteria
 
-- [ ] AC-1: chapter file present.
-- [ ] AC-2: in-progress validator PASSes.
-- [ ] AC-3: chapter-strict validator PASSes (≤ 2 000
+- [x] AC-1: chapter file present.
+- [x] AC-2: in-progress validator PASSes.
+- [x] AC-3: chapter-strict validator PASSes (≤ 2 000
       max; 1 500 target advisory).
-- [ ] AC-4: SPEC lint exits 0.
-- [ ] AC-5: T-5 corpus discipline (manual).
-- [ ] AC-6: T-6 voice (manual).
-- [ ] AC-7: T-7 commit-hygiene.
-- [ ] AC-8: T-8 Completion Report fills.
-- [ ] AC-9: T-9 paragraph-co-occurrence anchors
-      (helper PASS).
-- [ ] AC-10: T-10 closing line per §8.1 (helper PASS).
-- [ ] AC-11: T-11 leaddev anchor present.
-- [ ] AC-12: T-12 all 7 chapters 01-07 referenced
+- [x] AC-4: SPEC lint exits 0.
+- [x] AC-5: T-5 corpus discipline (manual) — codex R2
+      CONVERGENCE-PASS confirms after R1 F1 fix.
+- [x] AC-6: T-6 voice (manual) — codex R2
+      CONVERGENCE-PASS.
+- [x] AC-7: T-7 commit-hygiene — Conventional Commits;
+      no AI-attribution trailers.
+- [x] AC-8: T-8 Completion Report fills (this §17).
+- [x] AC-9: T-9 paragraph-co-occurrence anchors
+      (helper PASS — 7 rows).
+- [x] AC-10: T-10 closing line per §8.1 (helper PASS).
+- [x] AC-11: T-11 leaddev anchor present.
+- [x] AC-12: T-12 all 7 chapters 01-07 referenced
       (covered by T-9).
-- [ ] AC-13: T-13 all 7 open research questions
+- [x] AC-13: T-13 all 7 open research questions
       present (covered by T-9).
-- [ ] AC-14: T-14 all 4 BES failure modes present
+- [x] AC-14: T-14 all 4 BES failure modes present
       AND each owns a DISTINCT `### …` subsection
       with the anchor in the heading line + the §6.5
       three-element structure in the body
@@ -431,20 +434,117 @@ Neither Q1 nor Q2 is `owner-blocking`.
 
 ### 17.1 Files changed
 
-(to be filled — at Verification phase)
+- `longread/08-phase-7-failure-modes-as-first-class-content.md`
+  (new; 1441 prose words; methodology Contract §6.5
+  three-element structure on the four BES cross-phase
+  modes via distinct `### …` subsections + per-chapter
+  failure-note synthesis + seven open research
+  questions + Phase 7 meta-failure note + Contract
+  §8.1 closing).
+- `specs/2026-05-24-longread-chapter-08-phase-7-failure-modes/SPEC.md`
+  (new + iterated; final status: verified).
+- `specs/2026-05-24-longread-chapter-08-phase-7-failure-modes/IDEA.md`
+  (new).
+- `scripts/check-chapter-08-phase-7-anchors.sh` (new;
+  7 rows incl. F2 per-mode owned-subsection coupling).
+- `scripts/check-chapter-08-closing.sh` (new; byte-
+  exact final-paragraph match against Contract §8.1).
+- `reviews/codex-2026-05-24-T09/REVIEW.md`,
+  `reviews/codex-2026-05-24-T09-r2/REVIEW.md`,
+  `reviews/codex-2026-05-24-T09-r3/REVIEW.md`,
+  `reviews/codex-2026-05-24-T09-r4/REVIEW.md` (SPEC
+  cross-family review trail; R4 CONVERGENCE-PASS).
+- `reviews/codex-2026-05-24-chapter-08/REVIEW.md`,
+  `reviews/codex-2026-05-24-chapter-08-r2/REVIEW.md`
+  (prose cross-family review trail; R2
+  CONVERGENCE-PASS).
 
 ### 17.2 Commands run
 
-(to be filled — at Verification phase)
+- `bash scripts/lint-spec.sh
+  specs/2026-05-24-longread-chapter-08-phase-7-failure-modes/SPEC.md`
+  — 0 errors / 0 warnings.
+- `bash scripts/lint-spec.sh
+  specs/2026-05-24-longread-chapter-08-phase-7-failure-modes/IDEA.md`
+  — 0 errors / 0 warnings.
+- `bash scripts/check-chapter-08-phase-7-anchors.sh`
+  — PASS (7 rows: leaddev + workpad + parent Decision
+  + 7 chapter refs + 4 failure modes + §6.5 per-mode
+  owned-subsection + 7 research questions).
+- `bash scripts/check-chapter-08-closing.sh` — PASS
+  (final non-blank paragraph byte-exact match against
+  Contract §8.1).
+- `bash scripts/validate-longread-structure.sh` —
+  PASS (9/9 chapters; total 7154 prose words).
+- `bash scripts/validate-longread-structure.sh
+  --chapter 08` — PASS at 1441 prose words (≤ 2000
+  max; below 1500 target advisory).
+- `bash -n scripts/check-chapter-08-phase-7-anchors.sh`
+  + `bash -n scripts/check-chapter-08-closing.sh` —
+  PASS.
+- Codex cross-family SPEC review: R1 (2 MAJOR) → R2
+  (1 MAJOR) → R3 (1 MAJOR) → R4 CONVERGENCE-PASS.
+- Codex cross-family prose review: R1 (1 MAJOR) →
+  R2 CONVERGENCE-PASS.
 
 ### 17.3 Verification result
 
-(to be filled — at Verification phase)
+All 14 acceptance criteria PASS. Helper output stored
+at workpad-grounded paths. Codex cross-family review
+converged at CONVERGENCE-PASS on both the Task SPEC
+(R4) and the chapter prose (R2). Chapter 08 is the
+ninth and final chapter of the methodology longread;
+the full longread now passes the in-progress
+validator at 9/9 chapters / 7154 prose words and the
+chapter-08 strict validator at 1441 prose words.
 
 ### 17.4 Residual risk
 
-(to be filled — at Verification phase)
+- The strict cross-family validation pass (real
+  external user-with-agent install) remains owed per
+  parent Decision §7 publication-gate binding; this
+  is a longread-arc-wide gap, not a chapter-08
+  defect. Disclosure preserved across chapters 00,
+  06, 07, and 08.
+- The conformance facet remains `reserved` per
+  chapter 01's disclosure; same disclosure status as
+  prior chapters.
+- The F2 helper's owned-subsection contract assumes
+  level-3 markdown headings. Chapter 08 conforms;
+  future chapter authors must do likewise if the
+  contract gets reused elsewhere.
 
 ### 17.5 Spec evidence candidates
 
-(to be filled — durable lessons)
+- **Iterative helper-tightening converges to
+  structural binding, not loose-text grep.** T-09 R1
+  helper grep'd anchors; R2 added marker-count
+  counts; R3 collapsed to one-block-satisfies-all;
+  R4 finally required anchor-in-heading-line +
+  body-triplet-co-occurrence + distinct-heading-per-
+  anchor. Each round closed exactly one false-
+  positive class. Durable lesson: when a SPEC
+  promises "mechanical per-X enforcement," the
+  helper MUST bind to a structural primitive (a
+  heading, a subsection, a block) that cannot be
+  satisfied by re-arrangement; loose-grep + counts
+  always leaves a re-arrangement loophole.
+- **Codex F2 lessons cascade across the longread
+  arc.** Chapter 08 prose R1 caught corpus anchors
+  missing in the open-questions section — the same
+  corpus-discipline class codex caught earlier in the
+  chapter 05 + chapter 06 prose passes. Durable
+  lesson: any chapter that introduces methodology
+  primitives MUST anchor them to corpus entries at
+  authoring time, not at review time.
+- **"Eat your own dogfood" pattern.** Chapter 08
+  publishes BES's four cross-phase failure modes in
+  the §6.5 three-element structure mandated by the
+  methodology Contract that the longread itself
+  defines. The Phase 7 meta-failure note in §5
+  publishes the failure mode of failure-modes-as-
+  content itself. Durable lesson: self-applied
+  methodology is the most credible evidence the
+  methodology generalizes; the meta-failure-note
+  position is what keeps it from being a closed
+  loop.

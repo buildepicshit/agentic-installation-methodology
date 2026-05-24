@@ -1,39 +1,60 @@
-# STATE — methodology arc, 2026-05-23 close-out
+# STATE — methodology arc, 2026-05-23 close-out (V1 complete)
 
-Session closed out for the night. Morning pickup notes
-below.
+V1 of the methodology longread is complete: nine
+chapters authored under the v1 BES spec-first
+procedure with cross-family codex review on each
+chapter SPEC and each chapter prose. V2 ideation
+seeded.
 
-## What converged today
+## What converged this session
 
-- **T-05 chapter 04 Phase 3 sanitization bar**: closed.
-- **T-06 chapter 05 Phase 4 manifest+catalog**: closed
-  (SPEC R1→R6 6 rounds; prose R1→R2 2 rounds; 789 words).
-- **T-07 chapter 06 Phase 5 cross-family validation**:
-  verified (owner-approved close pending). SPEC R1→R4
-  4 rounds; prose R1→R3 3 rounds. 669 words.
+- **T-08 chapter 07 Phase 6 ship**: closed
+  (verified → closed owner-approved; SPEC R1→R2 2
+  rounds; prose R1→R2 2 rounds; 702 words).
+- **T-09 chapter 08 Phase 7 failure modes as
+  first-class content**: verified, pending owner
+  close. SPEC R1→R4 4 rounds; prose R1→R2 2 rounds;
+  1441 prose words.
+- **V2 IDEA seeded**: cellular automata named as V2
+  primitive; IDEA at
+  `bes-fleet-policy/specs/2026-05-23-methodology-v2-cellular-automata/IDEA.md`;
+  status `owner-blocking` on slice / shape / sources
+  / timing.
 
-Today's session: 6 chapters total made it through verify
-or close (00 closed, 01 closed, 02 closed, 03 closed,
-04 closed, 05 closed, 06 verified-pending-close).
+## V1 longread shape (9 chapters complete)
 
-## Convergence trajectory across slices
+| Slice | Chapter | SPEC rounds | Prose rounds | Words |
+|---|---|---:|---:|---:|
+| T-01 | 00 introduction | 5 | 2 | 946 |
+| T-02 | 01 Phase 0 maturity | 2 | 2 | 822 |
+| T-03 | 02 Phase 1 facets | 4 | 2 | 573 |
+| T-04 | 03 Phase 2 params | 2 | 2 | 595 |
+| T-05 | 04 Phase 3 sanitize | 2 | 2 | 617 |
+| T-06 | 05 Phase 4 manifest | 6 | 2 | 789 |
+| T-07 | 06 Phase 5 cross-fam | 4 | 3 | 669 |
+| T-08 | 07 Phase 6 ship | 2 | 2 | 702 |
+| T-09 | 08 Phase 7 failures | 4 | 2 | 1441 |
 
-| Slice | SPEC rounds | Prose rounds | Chapter words |
-|---|---:|---:|---:|
-| T-01 ch 00 | 5 | 2 | 946 |
-| T-02 ch 01 | 2 | 2 | 822 |
-| T-03 ch 02 | 4 | 2 | 573 |
-| T-04 ch 03 | 2 | 2 | 595 |
-| T-05 ch 04 | 2 | 2 | 617 |
-| T-06 ch 05 | 6 | 2 | 789 |
-| T-07 ch 06 | 4 | 3 | 669 |
+Longread total: 7154 prose words across 9 chapters.
 
-T-06 was slowest (authority-fence wording class). T-07
-applied the T-06 R6 explicit-authority-source-list
-block from the start — but section renumbering created
-its own new stale-text class (4 rounds vs 2). Lesson
-for T-08: do NOT renumber existing sections when
-adding new ones.
+## T-09 helper-tightening trajectory
+
+T-09 SPEC review converged the hardest because the F2
+row's structural binding required four iterations
+before it could not be defeated by re-arrangement:
+
+| Round | Defect class closed |
+|---|---|
+| R1 | §6.5 three-element enforcement absent on cross-phase modes |
+| R2 | F2 marker counts decoupled from per-mode disclosure |
+| R3 | Combined `### Cross-phase modes` subsection satisfied all four anchors |
+| R4 | CONVERGENCE-PASS (anchor-in-heading-line + body-triplet + distinct-heading-per-anchor) |
+
+Durable lesson: when a SPEC promises "mechanical
+per-X enforcement," the helper MUST bind to a
+structural primitive that cannot be re-arranged
+around. Loose-grep + counts always leaves a
+re-arrangement loophole.
 
 ## Parent Decision §7 slice queue
 
@@ -48,103 +69,36 @@ Slice 3.3 (T-03 ch 02 Phase 1)          closed ✓ (573 w)
 Slice 3.4 (T-04 ch 03 Phase 2)          closed ✓ (595 w)
 Slice 3.5 (T-05 ch 04 Phase 3)          closed ✓ (617 w)
 Slice 3.6 (T-06 ch 05 Phase 4)          closed ✓ (789 w)
-Slice 3.7 (T-07 ch 06 Phase 5)          verified (close pending)
-Slice 3.8 (T-08 ch 07 Phase 6)          next
-Slice 3.9 (T-09 ch 08 Phase 7)          last chapter
-Slice 4   (per-facet SPEC bundle content)  not yet
-Slice 5   (external cross-family pass)     not yet
+Slice 3.7 (T-07 ch 06 Phase 5)          closed ✓ (669 w)
+Slice 3.8 (T-08 ch 07 Phase 6)          closed ✓ (702 w)
+Slice 3.9 (T-09 ch 08 Phase 7)          verified, pending owner close (1441 w)
+Slice 4   (per-facet SPEC bundle content) parking-lot
+Slice 5   (external cross-family validation) parking-lot
 ```
 
-## Where the longread sits
+## Outstanding obligations preserved across chapters
 
-- 7/9 chapters published.
-- Total prose: **5 011 words** (~42% of 12k ceiling).
-- 2 chapters remain: 07 Phase 6 ship + 08 Phase 7
-  failure modes.
+- The strict cross-family validation pass (real
+  external user-with-agent install) remains owed per
+  parent Decision §7 publication-gate binding;
+  disclosure preserved across chapters 00, 06, 07,
+  and 08.
+- The conformance facet remains `reserved` per
+  chapter 01's disclosure; status unchanged.
 
-## Next move when picking up
+## V2 (next research arc, separate)
 
-**T-08 chapter 07 — Phase 6 ship + cross-link + sign**
-(Slice 3.8). Per longread Contract §6.1: "Shipping the
-SPEC bundle separately; cross-linking; signing." Per
-§6.2: target 800 words (advisory under soft-floors),
-max 1 000 (enforced) — the second-smallest budget.
+Owner directive: V1 ships solid on its own; V2 is a
+separate SPEC arc. Seed primitive `cellular automata`
+named verbatim, further detail withheld. IDEA at
+`bes-fleet-policy/specs/2026-05-23-methodology-v2-cellular-automata/IDEA.md`
+status `owner-blocking` on Q1 (slice), Q2 (shape),
+Q3 (sources), Q4 (timing). Prior-art research
+completed in-session and folded into IDEA §2.
 
-Phase 6 substance per research workpad §6:
-- Framework spec ships standalone (Product A)
-- Methodology paper ships standalone (Product B)
-- Conformance suite ships as a versioned bundle
-- Each cites the other; article(s) cite both
+## Pickup notes
 
-BES Phase 6 per workpad §7: "paired release of Product
-A and Product B."
-
-Corpus anchors:
-- sigstore-cosign §3 (signing)
-- oci-artifacts §3 (versioned bundle shape)
-- cyclonedx-sbom §3 (SBOM as provenance)
-- spec-kit §3 (spec-as-deployment-grade)
-
-Authoring procedure (applying T-06/T-07 lessons):
-1. Author IDEA + Task SPEC + 2 helpers
-2. KEEP §6 = Authority Map standard slot — do NOT
-   renumber sections (T-07 lesson)
-3. Authority-source-list block in §6 from the start
-4. Helper requires corpus FILE PATHS in same
-   paragraph (paragraph-co-occurrence pattern)
-5. Failure note: strict fact-vs-synthesis; explicit
-   bold markers; judgment://agent-synthesis tag
-6. Execute under soft-floors (no padding pressure)
-7. Codex SPEC pass; codex prose pass; verify; close
-
-## Pattern-level spec evidence accumulated today
-
-1. **Authority-fence wording is high-iteration class.**
-   T-06 took 6 rounds chasing it. T-07 applied T-06 R6
-   block upfront but introduced a new class (section
-   renumbering creates stale-text). Lesson: ship
-   Authority Map as standard §6; never renumber.
-2. **Recurring E2-drifts-into-synthesis pattern**.
-   Across chapters 02 / 03 / 04 / 05 / 06 prose-codex
-   passes, every chapter had at least one MAJOR
-   finding where E2 imported synthesis content into
-   the workpad-grounded fact section. Authoring
-   contract enforced by helper bold-marker check;
-   still requires manual reviewer judgement of where
-   each sentence belongs.
-3. **Soft-floors regime durable through 5 consecutive
-   sub-target chapters** (chapters 02 + 03 + 04 + 05
-   + 06: 573 / 595 / 617 / 789 / 669). No padding
-   pressure surfaced.
-4. **Phase 5 chapter is the methodology's load-
-   bearing honesty chapter**. Chapter 00 disclosed
-   the gate; chapter 06 operationalised it. The
-   paired-artefact + chapter 00 + chapter 06 trio is
-   how the methodology owns its outstanding gap.
-
-## Parking-lot follow-ups
-
-- Corpus-citation lint extension
-- v1.2 corpus expansion (SPDX, Pact, CUE, Dev
-  Container, SLSA/in-toto)
-- v2.1 release tag for agentic-ops-framework
-- External Slice 5 cross-family validation pass
-
-## Commits durable on origin
-
-All three repos clean + synced.
-
-- bes-fleet-policy @ `175866c` (no changes today)
-- agentic-ops-framework @ `05ad7a5` (no changes today)
-- agentic-installation-methodology @ `14ea64f` (T-07
-  verified; T-08 close-out commit landing now)
-
-## What was deliberately NOT done
-
-- T-07 owner-close (just landing now)
-- T-08 chapter 07 Phase 6 — tomorrow
-- T-09 chapter 08 Phase 7 — after T-08
-- Slice 4 SPEC bundle content — later
-- Slice 5 external validation — Phase 5 obligation
-
-Goodnight 🌙
+Open work for owner:
+- Flip T-09 SPEC `verified → closed` after
+  spec-evidence-governance pass.
+- Direct V2 IDEA shape via §6 Open Questions Q1-Q4.
