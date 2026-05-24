@@ -1,6 +1,6 @@
 ---
 id: 2026-05-24-longread-chapter-08-phase-7-failure-modes
-status: verified
+status: closed
 type: task
 owner: HasNoBeef
 ideated_in: specs/2026-05-24-longread-chapter-08-phase-7-failure-modes/IDEA.md
