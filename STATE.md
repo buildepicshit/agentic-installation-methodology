@@ -92,13 +92,32 @@ Owner directive: V1 ships solid on its own; V2 is a
 separate SPEC arc. Seed primitive `cellular automata`
 named verbatim, further detail withheld. IDEA at
 `bes-fleet-policy/specs/2026-05-23-methodology-v2-cellular-automata/IDEA.md`
-status `owner-blocking` on Q1 (slice), Q2 (shape),
-Q3 (sources), Q4 (timing). Prior-art research
-completed in-session and folded into IDEA §2.
+status `owner-blocking` on Q4 (timing) only as of
+2026-05-24 close-out. Q1-Q3 resolved this session:
+- **Q1** → Framing 1 (CA as software-development
+  methodology; virgin ground per IDEA §2.1).
+- **Q2** → same shape as V1 (longread + framework
+  spec bundle).
+- **Q3** → fresh V2 primary-source corpus; V1
+  referenced by `url://` only.
+
+Q4 deferred to next session per owner close-out
+2026-05-24 ("Actually lets noty start its a sunday I
+wanna go rest. lets close out").
+
+## 2026-05-24 close-out
+
+V1 closed last session (T-09 closed in commit
+`4e8e205`). V2 IDEA grilling started this session
+across Q1-Q3, then paused at Q4 by owner directive.
 
 ## Pickup notes
 
 Open work for owner:
-- Flip T-09 SPEC `verified → closed` after
-  spec-evidence-governance pass.
-- Direct V2 IDEA shape via §6 Open Questions Q1-Q4.
+- Resolve V2 IDEA Q4 (timing): does V2 ideation
+  start immediately, gate publication on V1's
+  external pass, wait for V1 external pass, or
+  reframe V2 ideation AS the external-validation
+  work? Once Q4 lands, IDEA flips
+  `owner-blocking → ready-for-spec` and V2 enters
+  `/author-spec`.
