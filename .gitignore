@@ -30,6 +30,7 @@ build/
 
 # MCP / agent-local
 .mcp.json
+.mcp.local.json
 .claude/settings.local.json
 .agents/
 .claude/
