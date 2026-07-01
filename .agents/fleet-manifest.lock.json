@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "generated_at": "2026-07-01T08:15:02.734Z",
+  "generated_at": "2026-07-01T14:10:12.443Z",
   "source": {
     "repo": "bes-fleet-policy",
     "commit": "4b44e1bb2b10f4944c02543b65f1e3e297f7b7c3",
@@ -80,6 +80,9 @@
       "skills/approved-spec-decomposition/SKILL.md",
       "skills/diagnosis/SKILL.md",
       "skills/tdd/SKILL.md",
+      "skills/cross-agent-cli-invocation/SKILL.md",
+      "skills/evidence-cluster/SKILL.md",
+      "skills/execution-discipline-cluster/SKILL.md",
       "workflows/decompose-approved-spec.md",
       "scripts/audit-entry-docs-fixtures/README.md",
       "scripts/audit-entry-docs-fixtures/good-internal/AGENTS.md",
@@ -608,6 +611,13 @@
     },
     {
       "kind": "agents-file",
+      "source_path": "agents/skills/cross-agent-cli-invocation/SKILL.md",
+      "target_path": ".agents/skills/cross-agent-cli-invocation/SKILL.md",
+      "sha256": "ac5a4ab01a96b0b9480d1858d424faf6c0c6443745cb506203870e789f89afd1",
+      "bytes": 9164
+    },
+    {
+      "kind": "agents-file",
       "source_path": "agents/skills/cross-agent-cli-invocation/tests/run-tests.sh",
       "target_path": ".agents/skills/cross-agent-cli-invocation/tests/run-tests.sh",
       "sha256": "fb444befd805f83aea616e37d9bb386fc1f8035a233e61dd1e788a145a9a779d",
@@ -619,6 +629,20 @@
       "target_path": ".agents/skills/diagnosis/SKILL.md",
       "sha256": "62af7ad60ca2f93a15a6a691a579370813504c12137d715a85a12f8185c014d6",
       "bytes": 4301
+    },
+    {
+      "kind": "agents-file",
+      "source_path": "agents/skills/evidence-cluster/SKILL.md",
+      "target_path": ".agents/skills/evidence-cluster/SKILL.md",
+      "sha256": "5d8c36cc02251f032dee2f66ce3a1533568c397bad8539e3d3af0bda1efebfba",
+      "bytes": 5044
+    },
+    {
+      "kind": "agents-file",
+      "source_path": "agents/skills/execution-discipline-cluster/SKILL.md",
+      "target_path": ".agents/skills/execution-discipline-cluster/SKILL.md",
+      "sha256": "d389514a847ea74999edce01162aae169773746fcfd363da9870c091107619a0",
+      "bytes": 11320
     },
     {
       "kind": "agents-file",
