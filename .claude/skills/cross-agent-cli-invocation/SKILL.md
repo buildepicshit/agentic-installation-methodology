@@ -143,6 +143,29 @@ registered in `.claude/settings.json`. If your Bash call matches
 `claude *`, `copilot *`, or `gh copilot *`, the hook fires; FAIL
 blocks the call.
 
+## Long-running / retrying calls — background them
+
+An external agent CLI can foreground-BLOCK for a very long wall-clock time.
+API-error retries with backoff, a slow model turn, or a machine suspend can
+stall a single invocation for minutes to HOURS even when the actual token
+work is seconds. A foreground Bash call with a generous timeout does NOT
+protect you — it just holds the session hostage on dead air.
+
+Rules:
+
+- Run review / validation lane calls in the BACKGROUND (background Bash /
+  `run_in_background`), or with a HARD short timeout plus an explicit retry —
+  never as an open-ended foreground block.
+- Capture stdout to a file (`… > reviews/<id>.txt 2>&1`) and pick up the
+  result on completion rather than blocking on the pipe.
+- If a call runs past a sane bound (a few minutes for a review), treat it as
+  the escalation-rubric loop signal: stop it, then retry or surface — do not
+  sit on dead air.
+
+Evidence: a Copilot diff-review invocation once foreground-blocked ~4¾h on
+API-retry / machine-suspend for seconds of real work
+(`file://specs/2026-06-30-lean-skill-consolidation/SPEC_EVIDENCE.md` SE-8).
+
 ## Scope boundary
 
 V1 of this contract mechanically blocks ONLY Claude Code Bash
