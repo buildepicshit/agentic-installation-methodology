@@ -11,7 +11,5 @@ diagnosis
 tdd
 fleet-enforce
 cross-agent-cli-invocation
-honesty-cluster
-calibration-cluster
+execution-discipline-cluster
 evidence-cluster
-grill-with-docs

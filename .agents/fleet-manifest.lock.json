@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "generated_at": "2026-07-01T01:41:12.638Z",
+  "generated_at": "2026-07-01T08:15:02.734Z",
   "source": {
     "repo": "bes-fleet-policy",
     "commit": "4b44e1bb2b10f4944c02543b65f1e3e297f7b7c3",
@@ -129,10 +129,8 @@
       "tdd",
       "fleet-enforce",
       "cross-agent-cli-invocation",
-      "honesty-cluster",
-      "calibration-cluster",
-      "evidence-cluster",
-      "grill-with-docs"
+      "execution-discipline-cluster",
+      "evidence-cluster"
     ],
     "fleet_commands": [
       "author-spec",
@@ -248,8 +246,8 @@
       "kind": "agents-file",
       "source_path": "agents/MODEL_ROUTING.md",
       "target_path": ".agents/MODEL_ROUTING.md",
-      "sha256": "28c3b3b5eab4a0956691da58a5e989c1b0cd482b78e8589317e3c02095a75757",
-      "bytes": 33458
+      "sha256": "71ab7abe1d1c16539897d4451c5939bda1799885b83740e5d514ee9359bbf68b",
+      "bytes": 33471
     },
     {
       "kind": "agents-file",
@@ -437,8 +435,8 @@
       "kind": "agents-file",
       "source_path": "agents/scripts/fleet-skills.txt",
       "target_path": ".agents/scripts/fleet-skills.txt",
-      "sha256": "56c6e7f383c99c9e1465e3ba19c50cf37c965ae217c589537c1eed4b5ca3a113",
-      "bytes": 295
+      "sha256": "4e2009f2ee08666f1baf36f8ceca02bd869910fbe156abf6be00e90c90bf9b39",
+      "bytes": 272
     },
     {
       "kind": "agents-file",
@@ -563,8 +561,8 @@
       "kind": "agents-file",
       "source_path": "agents/SKILL_REGISTRY.md",
       "target_path": ".agents/SKILL_REGISTRY.md",
-      "sha256": "3ae5076f5b0c83bb6882daa23edbd3578fe26f1ee4e55e2721fd04e326d16916",
-      "bytes": 5685
+      "sha256": "0c71e5dfce1460ff4ed6bb5946ab334ff9c9af30295a90f43b50e238a03af045",
+      "bytes": 5498
     },
     {
       "kind": "agents-file",
@@ -661,8 +659,8 @@
       "kind": "agents-file",
       "source_path": "agents/skills/spec-authoring/SKILL.md",
       "target_path": ".agents/skills/spec-authoring/SKILL.md",
-      "sha256": "729cdfbf540a5029e26af3d4bdb67762a7f9a9486c14546229c08884ddb8e82c",
-      "bytes": 12819
+      "sha256": "d044faf569a9ffab05b9246d0a8e43b9d6046346e5af848f14cf56d46d78abbd",
+      "bytes": 15574
     },
     {
       "kind": "agents-file",
@@ -815,8 +813,8 @@
       "kind": "agents-file",
       "source_path": "agents/templates/WORKFLOW.body.md",
       "target_path": ".agents/templates/WORKFLOW.body.md",
-      "sha256": "cf9bd38c6056c4133f9e88c4fa2f206d64403a791665d42d5ca99f7978845bbf",
-      "bytes": 21014
+      "sha256": "69cf7842b2684fb170273848dd249c7f9bc29cc055b6f3ddac29dbaa51b6f43d",
+      "bytes": 21036
     },
     {
       "kind": "agents-file",
@@ -1039,8 +1037,8 @@
       "kind": "hook",
       "source_path": ".claude/hooks/session-start-context.sh",
       "target_path": ".claude/hooks/session-start-context.sh",
-      "sha256": "b37c69d2ef3b948303bf96ad18d5b5cd4c351601f41e2b21ecaa51233a5f16cc",
-      "bytes": 4058
+      "sha256": "674df628b7398d27178546d523786dbd7a2709122a1c51d34dc89a03d88e5c33",
+      "bytes": 4071
     },
     {
       "kind": "hook-fixture",
@@ -1113,13 +1111,6 @@
       "bytes": 9311
     },
     {
-      "kind": "skill",
-      "source_path": "agents/skills/calibration-cluster/SKILL.md",
-      "target_path": ".claude/skills/calibration-cluster/SKILL.md",
-      "sha256": "aebe5b83c0fd79d99d2ccdd1cdf9e5f795dd3cb1d1458bd1a6db2c59d5542f9c",
-      "bytes": 5099
-    },
-    {
       "kind": "skill-reference",
       "source_path": "agents/skills/code-review/references/multi-agent-review.md",
       "target_path": ".claude/skills/code-review/references/multi-agent-review.md",
@@ -1151,8 +1142,15 @@
       "kind": "skill",
       "source_path": "agents/skills/evidence-cluster/SKILL.md",
       "target_path": ".claude/skills/evidence-cluster/SKILL.md",
-      "sha256": "64b52c3642047e5edb760d606ada7ad5874e39f4dd712d55b91fb9faf2844817",
-      "bytes": 5018
+      "sha256": "5d8c36cc02251f032dee2f66ce3a1533568c397bad8539e3d3af0bda1efebfba",
+      "bytes": 5044
+    },
+    {
+      "kind": "skill",
+      "source_path": "agents/skills/execution-discipline-cluster/SKILL.md",
+      "target_path": ".claude/skills/execution-discipline-cluster/SKILL.md",
+      "sha256": "d389514a847ea74999edce01162aae169773746fcfd363da9870c091107619a0",
+      "bytes": 11320
     },
     {
       "kind": "skill",
@@ -1160,20 +1158,6 @@
       "target_path": ".claude/skills/fleet-enforce/SKILL.md",
       "sha256": "50be850f992b2bb65d2d38795112863f03da2191ea2d0b7eb2ea01c9c2092ba0",
       "bytes": 5739
-    },
-    {
-      "kind": "skill",
-      "source_path": "agents/skills/grill-with-docs/SKILL.md",
-      "target_path": ".claude/skills/grill-with-docs/SKILL.md",
-      "sha256": "33c00b8ee14f78f88f8206edb5b4577ec1831e9041d180188d020472cb2e1594",
-      "bytes": 4333
-    },
-    {
-      "kind": "skill",
-      "source_path": "agents/skills/honesty-cluster/SKILL.md",
-      "target_path": ".claude/skills/honesty-cluster/SKILL.md",
-      "sha256": "098ffc9ba23a19ccd72a8ca75ee5c77f89a3d5a3106c76eabad2104bbc6ff9ac",
-      "bytes": 6608
     },
     {
       "kind": "skill",
@@ -1207,8 +1191,8 @@
       "kind": "skill",
       "source_path": "agents/skills/spec-authoring/SKILL.md",
       "target_path": ".claude/skills/spec-authoring/SKILL.md",
-      "sha256": "729cdfbf540a5029e26af3d4bdb67762a7f9a9486c14546229c08884ddb8e82c",
-      "bytes": 12819
+      "sha256": "d044faf569a9ffab05b9246d0a8e43b9d6046346e5af848f14cf56d46d78abbd",
+      "bytes": 15574
     },
     {
       "kind": "skill-reference",

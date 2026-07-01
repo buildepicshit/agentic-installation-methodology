@@ -44,6 +44,7 @@ bes:
 
 
 
+
 # agentic-installation-methodology Workflow
 
 This is the **public OSS** repo for the agentic installation
@@ -120,7 +121,7 @@ compliance and not unbounded action
    **research, do not speculate** — find primary sources, become the
    SME, then cite what you fetched or say "unverified". See
    `.agents/specs/SPEC.schema.md` §2 and
-   `.agents/skills/honesty-cluster/SKILL.md` practice 4.
+   `.agents/skills/execution-discipline-cluster/SKILL.md` practice 4.
 2. **Owner authority is non-negotiable.** Owner alone sets
    `status: approved`, `status: decomposed`, `status: superseded`,
    and `status: closed`
@@ -156,7 +157,7 @@ compliance and not unbounded action
    not with confidence; prefer the simplest design that works.
 6. **Anti-doom-loop — stop, surface, or reset with a handoff.** When
    iteration is not converging (per the loop-counter rubric in
-   `.agents/skills/calibration-cluster/SKILL.md`), do not grind: stop
+   `.agents/skills/execution-discipline-cluster/SKILL.md`), do not grind: stop
    and either surface to the owner or reset context. A context reset
    MUST first record a short handoff — current facts, commands run,
    the open blocker — to `SESSION_JOURNAL.md` so evidence is not

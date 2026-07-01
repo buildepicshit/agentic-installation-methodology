@@ -55,7 +55,7 @@ Before declaring a behaviour change done:
   (import graph, not just sibling tests).
 - Run THAT set, not just the tests you wrote.
 - Cite the test run as a tool-receipt
-  (`honesty-cluster` cross-ref).
+  (`execution-discipline-cluster` cross-ref).
 - If a predicate or contract gates behavior, execute it against the
   live filesystem/runtime before sign-off; text review alone missed
   a live-repo-broken predicate across four cross-family rounds
@@ -141,5 +141,5 @@ surface, not the implementation.
   complexity-delta gate runs inside code-review.
 - `file://agents/skills/spec-review/SKILL.md` —
   ambiguity probe runs inside spec-review.
-- `file://agents/skills/honesty-cluster/SKILL.md` —
+- `file://agents/skills/execution-discipline-cluster/SKILL.md` —
   tool-receipts pair with impact-aware runs.

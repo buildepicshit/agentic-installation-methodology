@@ -91,7 +91,7 @@ if [ "$modified_count" -gt 0 ] || [ "$untracked_count" -gt 0 ]; then
 fi
 
 # Standing grounding norm (research-first / no-speculation).
-printf 'Norm: on any load-bearing knowledge gap, research it from primary sources before answering — do not speculate or answer from memory. Be frugal on process churn, never on research. (honesty-cluster practice 4)\n\n'
+printf 'Norm: on any load-bearing knowledge gap, research it from primary sources before answering — do not speculate or answer from memory. Be frugal on process churn, never on research. (execution-discipline-cluster practice 4)\n\n'
 
 # Hint to read the full state if it changes the agent's plan.
 printf 'For full state read `STATUS.md` and `AGENTS.md`. For active SPEC read its body and §17 Completion Report.\n'

@@ -372,7 +372,7 @@ tasks a `rg` / tests / preflight / read-only scan can answer. Frugality
 MUST NOT be applied to research: grounding a load-bearing gap from
 primary sources is PROTECTED spend, and correctness-when-it-matters
 outranks token frugality (see
-`file://agents/skills/honesty-cluster/SKILL.md` practice 4 "Ground
+`file://agents/skills/execution-discipline-cluster/SKILL.md` practice 4 "Ground
 Before You Answer"). Use frontier models for ambiguity, architecture,
 code changes, integration, research, and final calls.
 

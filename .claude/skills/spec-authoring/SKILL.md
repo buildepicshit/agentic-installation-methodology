@@ -10,14 +10,16 @@ allowed-tools: []
 metadata:
   bes_provenance:
     origin: internal
-    source_urls: []
-    borrowed_from: []
+    source_urls:
+      - https://github.com/mattpocock/skills
+    borrowed_from:
+      - mattpocock/skills
     upstream_status: not-applicable
-    last_audited: 2026-06-05
+    last_audited: 2026-06-30
     audit_cadence: annual
     adoption_status: bes-native
     security_review: not-required
-    notes: "BES fleet-native skill."
+    notes: "BES fleet-native spec-authoring procedure. Additionally incorporates one externally-adapted questioning pattern (the +docs grill layer — see body 'The +docs Layer: Structured Options Cited To Docs') absorbed 2026-06-30 from the Matt Pocock skills collection; the source pattern's own provenance was origin: adapted / security_review: needed. No new executable or tool surface is added by the absorbed prose pattern, so the skill's security_review remains not-required. Full upstream URL + adoption record: specs/2026-05-05-ai-engineering-tactical-skill-adoption and specs/2026-06-30-lean-skill-consolidation."
   bes_tool_surface:
     scripts: none
     network: false
@@ -79,6 +81,49 @@ writing the artefact:
 
 Do not let grilling become a new approval gate. It is a clarification
 tactic that feeds the existing IDEA -> SPEC procedure.
+
+### The +docs Layer: Structured Options Cited To Docs
+
+When a grill question has two-or-more viable design paths, use the
+"Grill With Docs" pattern — an owner-affirmed augmentation of the grill
+clause above (owner affirmation 2026-05-25,
+`file://specs/2026-05-25-agent-engineering-craft-discipline/IDEA.md`
+§2.3). For each such question:
+
+1. **Run prior-art / research first** if the design space is unclear.
+   Capture findings in IDEA §2 or a research-wave artefact.
+2. **Frame the question with 2-4 mutually-exclusive options**
+   (`AskUserQuestion` supports up to 4).
+3. **Each option carries**: a short label (1-5 words); a description
+   with the tradeoff named — including the downside, not just the
+   upside; and a citation tag where applicable — e.g. "(framing N per
+   §2.1 prior art)" or "(matches Wave 3 §2.2 finding)".
+4. **Recommend one option** as the default by labeling it
+   `(recommended)` — and put it first.
+5. **Include "Not yet decided — explore the full surface first"** as an
+   option when scope is genuinely open, so the owner can pre-empt
+   narrowing.
+
+Pattern hard rules:
+
+- Do not grill on metadata you can decide yourself (slug names, dates,
+  file paths). Grill on substantive design only.
+- Do not ask "do you approve this?" — that is a confirmation, not a
+  grill. Use the existing status-flip flow for approvals.
+- Do not bury the recommendation. Put it first + label it
+  `(recommended)`.
+- Do not skip the docs citation. The owner affirmed the pattern's value
+  specifically because the docs grounding lets them check the reasoning
+  quickly.
+
+Provenance: this pattern is BES-adapted (not a verbatim import) from an
+external checked-in skill lineage — Matt Pocock's public `skills`
+engineering collection (`url://github.com/mattpocock/skills`);
+`adaptation_status: adapted`, `security_review: needed`. The full
+upstream URL and original adoption record are preserved in
+`file://specs/2026-05-05-ai-engineering-tactical-skill-adoption/SPEC.md`
+§4 and the 2026-06-30 consolidation SPEC
+`file://specs/2026-06-30-lean-skill-consolidation/SPEC.md`.
 
 ## Reference Architecture First
 

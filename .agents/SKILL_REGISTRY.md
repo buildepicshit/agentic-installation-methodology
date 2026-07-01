@@ -13,7 +13,7 @@ that guide before creating, moving, archiving, or publishing docs/specs.
 | Skill | Use when | Output |
 |---|---|---|
 | `repo-orientation` | Starting any task or entering a repo | Repo map, source-of-truth list, verification gates, risks |
-| `spec-authoring` | Capturing an IDEA conversation or authoring a typed SPEC (fastpath / task / contract / decision) | Structured `IDEA.md` and/or typed `SPEC.md` populated from the matching template, with citation discipline |
+| `spec-authoring` | Capturing an IDEA conversation or authoring a typed SPEC (fastpath / task / contract / decision); includes the structured-options-cited-to-docs grill pattern | Structured `IDEA.md` and/or typed `SPEC.md` populated from the matching template, with citation discipline |
 | `spec-driven-development` | Planning non-trivial work | Approved executable `SPEC.md` |
 | `spec-review` | Reviewing a draft spec | Blocking findings, open questions, approval recommendation |
 | `implementation-execution` | Implementing approved scope | Scoped diff and updated tests/docs |
@@ -33,10 +33,8 @@ authority layer. Approved SPECs and repo policy still control scope.
 | `approved-spec-decomposition` | An approved SPEC is large enough to split into vertical HITL or AFK slices | Subordinate decomposition plan with owned files, dependencies, acceptance evidence, and two-stage review order |
 | `fleet-enforce` | (bes-fleet-policy only) Cross-repo enforcement of fleet rule changes via structured directives | `agents/fleet-directives/<id>.md` + `fleet-enforce.sh` apply across target repos; `audit-fleet-compliance.sh` verifies; owner-only authority |
 | `cross-agent-cli-invocation` | Invoking another agent's CLI from Bash (claude→copilot, copilot→claude, and similar future cross-agent calls) | Documented gotchas + minimum-viable invocations; helper `validate-cli-invocation.sh` provides PASS/WARN/FAIL pre-flight check; PreToolUse hook `block-bad-cli-invocation.sh` mechanically blocks malformed Claude Code Bash calls. Copilot-side mechanical enforcement belongs in the approved CLI-invocation guardrail lane. |
-| `honesty-cluster` | Every execution-phase task; three practices bundled (tool receipts, in-flight failure disclosure, receiving-code-review) | Receipts cite captured artefacts not prose; in-flight failures surface as first-class report entries; review feedback verified before accepting, pushed back when wrong, never performance |
-| `calibration-cluster` | Completion-report writing + iteration-loop escalation | Confidence-band declarations (HIGH/MEDIUM/LOW) on claims; escalation rubric triggers at 2+ non-converging review rounds or 3+ same-error tool retries |
+| `execution-discipline-cluster` | Every execution-phase task + any answer with a load-bearing knowledge gap; six practices bundled (tool receipts, in-flight failure disclosure, receiving-code-review, ground-before-you-answer, confidence-band declaration, escalation rubric) | Receipts cite captured artefacts not prose; failures + scope drift surface as first-class report entries; review feedback verified before accepting; load-bearing gaps researched to primary sources before answering; HIGH/MEDIUM/LOW confidence bands on claims; escalation / reset-with-handoff when a fix loop stops converging |
 | `evidence-cluster` | Code authoring + spec-review | Impact-aware test selection (transitive graph) + anti-over-mock (no mocks in prod files) + complexity-delta gate during review + dual-reader ambiguity probe at SPEC review |
-| `grill-with-docs` | IDEA-authoring rounds (`/idea-capture` / `/author-spec`) | Owner-affirmed pattern: AskUserQuestion with 2-4 mutually-exclusive options, each carrying a one-line tradeoff + citation to the document section that justifies it; recommended option first + labeled |
 
 ## Invocation Rules
 
