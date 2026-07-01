@@ -14,10 +14,8 @@ Workflow:
 
 1. Read `AGENTS.md`, `CLAUDE.md`, `STATUS.md`, and the IDEA.md.
 2. Read `agents/specs/SPEC.schema.md` for shared conventions.
-3. Select the template by `implies_spec_type:`:
-   - `task` → `agents/specs/SPEC.task.template.md`
-   - `contract` → `agents/specs/SPEC.contract.template.md`
-   - `decision` → `agents/specs/SPEC.decision.template.md`
+3. Author from the one unified template `agents/specs/SPEC.template.md`
+   (`type:` flavours optional sections only).
 4. Author `SPEC.md` in the spec folder, populated from the IDEA and the
    conversation. Use the `spec-authoring` skill.
 5. Set SPEC front-matter:

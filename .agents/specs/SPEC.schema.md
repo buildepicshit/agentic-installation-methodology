@@ -36,7 +36,7 @@ delimited by `---` on its own line.
 | `owner` | string | REQUIRED | owner identifier | e.g. `HasNoBeef` |
 | `brainstormed_by` | string | REQUIRED | agent identifier | e.g. `copilot-gpt-5.5`, `claude-opus-4-8-1m`, or any other model:lane label |
 | `brainstormed_on` | date | REQUIRED | ISO-8601 date | e.g. `2026-05-01` |
-| `implies_spec_type` | enum | REQUIRED | `task` \| `contract` \| `decision` | drives template selection in `/author-spec` |
+| `implies_spec_type` | enum | OPTIONAL | `task` \| `contract` \| `decision` | informational only post-WS-SPEC-lean; all specs use the one unified `SPEC.template.md` |
 
 Example:
 
@@ -220,14 +220,22 @@ directory reach `done`, the parent SPEC MAY flip
 full `acceptance_commands`. The parent SPEC's §17 / §19 Completion
 Report aggregates per-task evidence.
 
-## 2. Citation grammar
+## 2. Evidence gate
 
-Every factual claim in IDEA.md or SPEC.md MUST carry a citation
-prefix from the table below. Memory and training are NOT citable
-evidence (per OPERATING_MODEL Memory Policy, input-vs-artefact
-distinction).
+WS-SPEC lean (2026-07-01, `file://specs/2026-07-01-ws-spec-system-lean/SPEC.md`):
+the heavy per-claim six-prefix grammar + section-inheritance heuristic is
+replaced by a lighter SECTION-LEVEL evidence gate. `lint-spec.sh` requires
+that every evidence-bearing section (Authority Map, Current System Facts,
+Substance Citations, Code/Docs Reality Check, Decision Criteria, Candidate
+Options) carries at least one SOURCE TOKEN. Memory and training are NOT
+citable evidence (per OPERATING_MODEL Memory Policy). Enforcement is
+RETAINED — it is not downgraded to convention.
 
-### 2.1 Allowed prefixes
+### 2.1 Accepted source tokens
+
+Any of: a citation prefix (below), a bare URL, a backticked `path/file` or
+command, or a ≥25-char verbatim / owner quote. Citation prefixes remain the
+RECOMMENDED, most auditable form:
 
 | Prefix | Form | Required surrounding context |
 |---|---|---|
@@ -313,23 +321,14 @@ lowercase keyword appears in unambiguously non-normative prose
 markers are line-local: `no-citation` applies to the paragraph
 containing the marker, `no-rfc` applies to the line containing it.
 
-## 3. RFC 2119 adoption rules
+## 3. RFC 2119 usage
 
-| Artefact / Section | Normative preamble | Keyword usage |
-|---|---|---|
-| `IDEA.md` | REQUIRED | constraints, recommendations, owner judgments |
-| `SPEC.task.md` | REQUIRED | Desired Behavior, Acceptance Criteria, Test Plan, Safety Invariants |
-| `SPEC.contract.md` | REQUIRED | throughout normative sections |
-| `SPEC.decision.md` | REQUIRED only on §Decision Statement | **MUST NOT** appear outside the Decision Statement section |
-
-Lint rules:
-
-- Any RFC 2119 keyword MUST be uppercase to carry normative force.
-- Lowercase variants ("must", "should", "may") are ordinary English
-  and MUST NOT carry normative force.
-- The lint script flags lowercase variants in normative sections as
-  *advisory warnings* (exit 2), not blocking failures, to avoid
-  false positives on ordinary English usage.
+WS-SPEC lean (2026-07-01): per-section scope enforcement is REMOVED. RFC
+2119 keywords carry normative force wherever they appear UPPERCASE;
+lowercase variants are ordinary English. `lint-spec.sh` no longer scopes
+keywords to specific sections and no longer emits per-section RFC warnings.
+A `## Normative Language` preamble is OPTIONAL (RECOMMENDED for specs that
+lean heavily on normative keywords).
 
 ## 4. Section naming conventions
 
@@ -380,9 +379,8 @@ The `spec-review` skill MUST NOT set `status: approved`.
 
 ## 6. Cross-references
 
-- Templates: `agents/specs/SPEC.task.template.md`,
-  `agents/specs/SPEC.contract.template.md`,
-  `agents/specs/SPEC.decision.template.md`,
+- Templates: `agents/specs/SPEC.template.md` (unified),
+  `agents/specs/SPEC.fastpath.template.md`,
   `agents/specs/IDEA.template.md`.
 - Lint script: `agents/scripts/lint-spec.sh`.
 - Authoring workflow: `agents/workflows/idea-capture.md`,

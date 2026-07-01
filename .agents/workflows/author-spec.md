@@ -30,10 +30,8 @@ function author_spec(spec_folder):
     return error("IDEA.md missing at " + idea_path)
   if front_matter(idea_path, "status") != "ready-for-spec":
     return error("IDEA.md not ready-for-spec at " + idea_path)
-  type = front_matter(idea_path, "implies_spec_type")
-  if type not in {"task", "contract", "decision"}:
-    return error("invalid implies_spec_type: " + str(type))
-  template_path = "agents/specs/SPEC." + type + ".template.md"
+  type = front_matter(idea_path, "implies_spec_type")  # optional; flavours optional sections
+  template_path = "agents/specs/SPEC.template.md"       # one unified template
   template = read(template_path)
   spec = render_spec(template, idea_path)
   write(spec_folder + "/SPEC.md", spec)
@@ -53,11 +51,9 @@ function author_spec(spec_folder):
    ideation record.
 4. Read `agents/specs/SPEC.schema.md` for citation grammar and
    front-matter conventions.
-5. Read `implies_spec_type:` from `IDEA.md` front-matter and select
-   the matching template:
-   - `task` → `agents/specs/SPEC.task.template.md`
-   - `contract` → `agents/specs/SPEC.contract.template.md`
-   - `decision` → `agents/specs/SPEC.decision.template.md`
+5. Author from the one unified template
+   `agents/specs/SPEC.template.md`. `implies_spec_type:` (if present)
+   only flavours which OPTIONAL sections to keep.
 6. Inspect the codebase and authoritative sources before proposing
    implementation details. Every factual claim authored into
    `SPEC.md` MUST carry a citation prefix.

@@ -138,18 +138,18 @@ Procedure + historical worked examples:
 
 ## Templates
 
-The four authoring templates live at:
+The authoring templates live at:
 
 - `agents/specs/IDEA.template.md` — the IDEA artefact.
-- `agents/specs/SPEC.task.template.md` — concrete, scoped, verifiable
-  work.
-- `agents/specs/SPEC.contract.template.md` — stateful, multi-component,
-  protocol-defining work.
-- `agents/specs/SPEC.decision.template.md` — binding choice between
-  named options.
+- `agents/specs/SPEC.template.md` — the ONE unified spec format
+  (WS-SPEC lean, 2026-07-01). Core sections are required; optional
+  sections flex by flavour (task / contract / decision). `type` is
+  informational and no longer selects a template.
+- `agents/specs/SPEC.fastpath.template.md` — small, reversible,
+  owner-directed work (capture-after; lands `closed`).
 
-Cross-template conventions (front-matter schema, citation grammar,
-RFC 2119 rules, section naming) live in `agents/specs/SPEC.schema.md`.
+Cross-template conventions (front-matter schema, evidence gate, section
+naming) live in `agents/specs/SPEC.schema.md`.
 Templates reference that schema rather than restating it. Read the
 schema before authoring.
 
@@ -161,9 +161,10 @@ IKTO, Mimir, UsefulIdiots, Wick) they live at
 
 ## Type Selection
 
-Pick the type before opening a SPEC template. The IDEA artefact
-records the choice as front-matter `implies_spec_type`; the SPEC
-inherits it as `type`.
+All non-fastpath work uses the ONE unified
+`agents/specs/SPEC.template.md`. Pick a `type` only to flavour which
+OPTIONAL sections you keep; the IDEA's `implies_spec_type` (if set)
+carries to the SPEC's `type`. It no longer selects a template.
 
 Decision tree:
 
@@ -179,22 +180,22 @@ Decision tree:
 	   the steps below.
 1. **Is this a binding choice between two or more named options
    (stack pick, architecture pick, vendor pick, policy pick)?**
-   YES → `decision`. Use `SPEC.decision.template.md`. The Decision
-   Statement section is the only place RFC 2119 keywords appear in
-   a Decision spec.
+   YES → set `type: decision`. Keep the Decision Criteria / Candidate
+   Options / Trade-off / Decision Statement / Locks / Reversal sections
+   of `SPEC.template.md`.
 2. **Otherwise: does the work specify behavior that future agents
    implement against?** Signs: stateful (state machine, persistence,
    idempotency), multi-component (more than one skill/script/repo
    coordinates), defines a wire or file protocol, has a non-trivial
    failure surface, has observability requirements, will be referenced
-   by other specs. YES → `contract`. Use
-   `SPEC.contract.template.md`. Contract specs MUST pass the lint
-   script.
+   by other specs. YES → set `type: contract` and keep the
+   contract-flavour optional sections of `SPEC.template.md` (Domain
+   Model, Failure Model, Observability, Migration).
 3. **Otherwise: this is concrete, scoped, verifiable work with a
    defined endpoint** (add a file, refactor a module, fix a bug, run
-   a migration). → `task`. Use `SPEC.task.template.md`. Task is the
-   default; when in doubt and the work is small AND meets fastpath
-   thresholds, prefer fastpath; otherwise, task.
+   a migration). → set `type: task` (the default). Use the core
+   sections of `SPEC.template.md`; when in doubt and the work is small
+   AND meets fastpath thresholds, prefer fastpath; otherwise, task.
 
 Edge cases:
 
