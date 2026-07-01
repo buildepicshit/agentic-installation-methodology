@@ -1,0 +1,10 @@
+author-spec
+decompose-approved-spec
+execute-spec
+idea-capture
+orient
+review-diff
+review-spec
+spec-evidence
+verify-spec
+fleet-enforce

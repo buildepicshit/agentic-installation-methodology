@@ -1,0 +1,17 @@
+code-review
+implementation-execution
+repo-orientation
+spec-authoring
+spec-driven-development
+spec-evidence-governance
+spec-review
+verification
+approved-spec-decomposition
+diagnosis
+tdd
+fleet-enforce
+cross-agent-cli-invocation
+honesty-cluster
+calibration-cluster
+evidence-cluster
+grill-with-docs

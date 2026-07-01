@@ -1,0 +1,23 @@
+# BES bash lint rules
+# Maps to agents/standards/UNIVERSAL.md universal rules.
+# Format: <universal-rule> <tool> <rule-id> <threshold>
+
+# U1 cognitive complexity (heuristic; bash has weaker tooling)
+U1 convention max-function-cyclomatic 10
+
+# U3 no discarded errors
+U3 shellcheck SC2086 error
+U3 convention set-euo-pipefail-required
+
+# U5 no commented-out code blocks
+U5 convention no-commented-blocks
+
+# U7 file/function size caps
+U7 convention max-file-lines 500
+U7 convention max-function-lines 80
+
+# U8 tests in tests/ directory
+U8 convention tests-dir-only
+
+# U14 format check
+U14 shfmt -d -i 4

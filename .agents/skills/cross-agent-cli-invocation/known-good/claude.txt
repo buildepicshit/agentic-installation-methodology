@@ -1,0 +1,81 @@
+# refreshed: 2026-05-25
+# cli-version: 2.1.150 (Claude Code)
+# help-source: claude --help
+--add-dir
+--agent
+--agents
+--allow-dangerously-skip-permissions
+--allowedTools | --allowed-tools
+--append-system-prompt
+--bare
+--betas
+--brief
+--chrome
+--continue | -c
+--dangerously-skip-permissions
+--debug | -d
+--debug-file
+--disable-slash-commands
+--disallowedTools | --disallowed-tools
+--effort
+--exclude-dynamic-system-prompt-sections
+--fallback-model
+--file
+--fork-session
+--from-pr
+--help | -h
+--ide
+--include-hook-events
+--include-partial-messages
+--input-format
+--json-schema
+--max-budget-usd
+--mcp-config
+--mcp-debug
+--model
+--name | -n
+--no-chrome
+--no-session-persistence
+--output-format
+--permission-mode
+--plugin-dir
+--plugin-url
+--print | -p
+--remote-control
+--remote-control-session-name-prefix
+--replay-user-messages
+--resume | -r
+--session-id
+--setting-sources
+--settings
+--strict-mcp-config
+--system-prompt
+--tmux
+--tools
+--verbose
+--version | -v
+--worktree | -w
+
+# BEGIN combination-rules
+requires: --fallback-model requires --print
+requires: --input-format requires --print
+requires: --max-budget-usd requires --print
+requires: --no-session-persistence requires --print
+requires: --output-format requires --print
+# END combination-rules
+
+# BEGIN admin-subcommands
+agents
+auth
+auto-mode
+doctor
+install
+mcp
+plugin
+plugins
+project
+setup-token
+ultrareview
+update
+upgrade
+# END admin-subcommands

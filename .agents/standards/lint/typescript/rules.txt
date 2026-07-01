@@ -1,0 +1,42 @@
+# BES TypeScript lint rules
+# Maps to agents/standards/UNIVERSAL.md universal rules.
+# Format: <universal-rule> <tool> <rule-id> <threshold>
+
+# U1 cognitive complexity ≤ 15
+U1 eslint-plugin-sonarjs sonarjs/cognitive-complexity 15
+
+# U2 nesting depth ≤ 4
+U2 eslint max-depth 4
+
+# U3 no empty catch / discarded errors
+U3 @typescript-eslint no-useless-catch error
+U3 eslint no-empty error
+
+# U4 no any / strict mode
+U4 tsconfig strict true
+U4 @typescript-eslint no-explicit-any error
+
+# U5 no commented-out code
+U5 eslint no-warning-comments error
+
+# U6 dead code / unused imports
+U6 knip --strict
+U6 @typescript-eslint no-unused-vars error
+
+# U7 file/function size caps
+U7 eslint max-lines 300
+U7 eslint max-lines-per-function 50
+
+# U8 no inline tests in production modules
+# (enforced by directory convention: tests/ or *.test.ts siblings)
+U8 convention tests-dir-or-sibling
+
+# U9 mock-density cap
+U9 eslint-plugin-jest no-conditional-in-test warn
+U9 convention mocks-only-in-test-files
+
+# U13 public-symbol docstring
+U13 eslint-plugin-jsdoc require-jsdoc public-only
+
+# U14 format check
+U14 prettier --check

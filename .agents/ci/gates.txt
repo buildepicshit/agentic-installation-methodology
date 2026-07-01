@@ -1,0 +1,12 @@
+# Fleet CI gates manifest.
+# Per specs/2026-05-25-fleet-ci-bootstrap/SPEC.md §6.1.2 / §8.1.
+#
+# Format: one line per gate, whitespace-separated:
+#   <gate-name> <script-path-relative-to-agents-or-.agents>
+#
+# Comments (#) and blank lines ignored. V1 ships empty; downstream
+# SPECs (dep-hygiene CI, standards CI, etc.) register their gates
+# here.
+#
+# refreshed: 2026-05-25
+dep-hygiene-verify ci/gates/dep-hygiene-verify.sh

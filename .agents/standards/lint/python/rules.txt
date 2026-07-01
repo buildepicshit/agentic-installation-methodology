@@ -1,0 +1,50 @@
+# BES Python lint rules
+# Maps to agents/standards/UNIVERSAL.md universal rules.
+# Format: <universal-rule> <tool> <rule-id> <threshold>
+
+# U1 cognitive complexity ≤ 15
+U1 ruff C901 15
+
+# U2 nesting depth (covered by complexity)
+U2 ruff PLR1702 4
+
+# U3 no bare except
+U3 ruff BLE001 error
+U3 ruff E722 error
+
+# U4 strict type mode
+U4 mypy --strict
+U4 pyright strict-mode
+
+# U5 no commented-out code
+U5 ruff ERA001 error
+
+# U6 dead code / unused imports
+U6 vulture --min-confidence 80
+U6 ruff F401 error
+U6 ruff F841 error
+
+# U7 file/function size caps
+U7 ruff PLR0915 50
+U7 convention max-file-lines 400
+
+# U8 no inline tests in src
+U8 convention tests-dir-only
+
+# U9 mock-density cap
+U9 convention mocks-only-in-tests
+
+# U11 lockfile frozen
+U11 uv sync --frozen
+U11 pip-compile --hash
+
+# U13 public-symbol docstring
+U13 ruff D102
+U13 ruff D103
+
+# U14 format check
+U14 ruff format --check
+U14 black --check
+
+# U15 boundary validation (pydantic / dataclass)
+U15 convention pydantic-or-dataclass-at-boundary

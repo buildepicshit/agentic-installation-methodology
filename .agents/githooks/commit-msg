@@ -1,0 +1,39 @@
+#!/usr/bin/env bash
+# Fleet-baseline commit-msg hook: enforce Conventional Commits.
+# Authority: file://AGENTS.md "Engineering standards" — Conventional Commits.
+# Enable: git config core.hooksPath .githooks
+set -euo pipefail
+msg_file="$1"
+msg=$(head -1 "$msg_file")
+
+# Allow merge/revert commits (standard git).
+if [[ "$msg" =~ ^(Merge|Revert)[[:space:]] ]]; then
+  exit 0
+fi
+
+# Conventional Commits: type(scope)?: description
+# Types: feat|fix|refactor|test|docs|chore|research|tooling|perf|style|build|ci|spec|fleet
+if [[ "$msg" =~ ^(feat|fix|refactor|test|docs|chore|research|tooling|perf|style|build|ci|spec|fleet)(\([a-z0-9_.-]+\))?!?:[[:space:]].+ ]]; then
+  exit 0
+fi
+
+cat >&2 <<EOF
+[commit-msg] REJECTED: commit message does not match Conventional Commits.
+Required form:
+  <type>(<scope>)?: <description>
+
+Types: feat | fix | refactor | test | docs | chore | research | tooling | perf | style | build | ci | spec | fleet
+
+Examples:
+  feat(compiler): add spline-following layout strategy
+  fix(determinism): seed WFC solver per room
+  docs(concepts): clarify ring-0 BSP parameterization
+  spec(closed): close studio-principle-ai
+  fleet: propagate skill update from bes-fleet-policy
+
+Got:
+  $msg
+
+Amend via:  git commit --amend
+EOF
+exit 1

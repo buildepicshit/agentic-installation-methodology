@@ -1,0 +1,52 @@
+{
+  "$schema": "preflight-config.schema (informal)",
+  "_doc": "Topology + allowlist config consumed by preflight.mjs. Edit this file to change what the preflight gate considers a known repo / allowed top-level / product-repo-specific extension. Repo topology (activeRepos/publicOssRepos) is NOT stored here — it is derived directly from fleet-internal-repos.txt + fleet-oss-repos.txt by preflight.mjs (single source of truth).",
+
+  "rootWorkspaceAllowedTopLevel": [
+    ".agents",
+    ".claude",
+    ".config",
+    ".git",
+    ".githooks",
+    ".gitignore",
+    ".mcp.example.json",
+    ".mcp.json",
+    "ACTOCCATUD",
+    "AGENT_FEEDBACK.md",
+    "AGENT_INBOX.md",
+    "AGENTS.md",
+    "Assets",
+    "BESAdmin",
+    "CLAUDE.md",
+    "Floom",
+    "IKTO",
+    "Mimir",
+    "ModelSandbox",
+    "NewIdeas",
+    "SESSION_JOURNAL.md",
+    "UnityTest",
+    "UsefulIdiots",
+    "Wick",
+    "WORKFLOW.md",
+    "agentic-installation-methodology",
+    "agentic-ops-framework",
+    "bes-blender-mcp",
+    "bes-fleet-policy",
+    "bes-fleet-runtime",
+    "content_store.db.backup",
+    "tools"
+  ],
+
+  "productRepoCommonExtraTopLevel": [
+    "IDEATION.md",
+    "STATUS.md",
+    "SESSION_JOURNAL.md",
+    "AGENT_FEEDBACK.md",
+    "AGENT_INBOX.md"
+  ],
+
+  "productRepoAllowedTopLevel": {
+    "bes-fleet-runtime": ["README.md", "bin", "package.json", "src", "test"],
+    "IKTO": ["unity"]
+  }
+}

@@ -1,0 +1,33 @@
+# BES fleet CI workflow (managed by fleet-sync.sh from
+# bes-fleet-policy/agents/ci/github-actions/bes-ci.yml).
+# Per specs/2026-05-25-fleet-ci-bootstrap/SPEC.md §7.6.
+#
+# Propagates to OSS repos with `bes-ci: enabled` in their
+# repo-policy. Internal repos use the local pre-push hook
+# instead.
+
+name: bes-ci
+
+on:
+  push:
+    branches: ["**"]
+  pull_request:
+    branches: ["**"]
+
+jobs:
+  run-ci-gates:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Run BES fleet CI gates
+        run: |
+          if [ -x .agents/scripts/run-ci-gates.sh ]; then
+            bash .agents/scripts/run-ci-gates.sh
+          elif [ -x agents/scripts/run-ci-gates.sh ]; then
+            bash agents/scripts/run-ci-gates.sh
+          else
+            echo "FAIL: run-ci-gates.sh not found in .agents/ or agents/" >&2
+            exit 1
+          fi

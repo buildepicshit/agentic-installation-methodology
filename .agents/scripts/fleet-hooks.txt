@@ -1,0 +1,13 @@
+block-ai-attribution.sh
+block-bad-cli-invocation.sh
+block-edit-on-main.sh
+block-git-add-all.sh
+block-probe-residue.sh
+block-stale-derived-artifacts.sh
+block-push-to-main.sh
+block-undeclared-deps.sh
+block-verify-bypass.sh
+verify-reminder.sh
+session-start-context.sh
+warn-security-surface.sh
+warn-subagent-routing.sh

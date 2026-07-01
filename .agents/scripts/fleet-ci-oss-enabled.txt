@@ -1,0 +1,9 @@
+# Fleet CI: OSS repos that have opted IN to GitHub Actions
+# propagation (per fleet-ci-bootstrap SPEC §7.6 / IDEA Q3).
+#
+# Format: one repo basename per line. Comments + blank lines OK.
+# When `fleet-sync.sh <repo> oss` runs, if the repo's basename is
+# listed here, bes-ci.yml is copied to .github/workflows/bes-ci.yml.
+#
+# V1 ships empty. Owner adds repo basenames here once Wick / Mimir
+# are ready to opt in.

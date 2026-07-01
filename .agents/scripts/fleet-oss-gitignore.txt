@@ -1,0 +1,6 @@
+.agents/
+.claude/
+.githooks/
+AGENT_INBOX.md
+AGENT_FEEDBACK.md
+SESSION_JOURNAL.md

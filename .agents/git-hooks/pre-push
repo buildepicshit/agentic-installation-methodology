@@ -1,0 +1,31 @@
+#!/usr/bin/env bash
+# BES fleet CI pre-push hook (managed by install-pre-push-hook.sh)
+# Per specs/2026-05-25-fleet-ci-bootstrap/SPEC.md §7.4.
+#
+# The first-line comment IS the marker — install-pre-push-hook.sh
+# uses it to detect "installed by us" vs a pre-existing user hook.
+# DO NOT change that comment text without updating the installer.
+
+set -uo pipefail
+
+# Fleet-aware resolution: try .agents/ (propagated layout) then
+# agents/ (source-repo layout).
+repo_root="$(git rev-parse --show-toplevel 2>/dev/null || pwd)"
+runner=""
+for candidate in \
+    "$repo_root/.agents/scripts/run-ci-gates.sh" \
+    "$repo_root/agents/scripts/run-ci-gates.sh"
+do
+    if [ -x "$candidate" ]; then
+        runner="$candidate"
+        break
+    fi
+done
+
+if [ -z "$runner" ]; then
+    echo "BES pre-push: run-ci-gates.sh not found; skipping CI gates" >&2
+    exit 0
+fi
+
+CLAUDE_PROJECT_DIR="$repo_root" bash "$runner"
+exit $?
