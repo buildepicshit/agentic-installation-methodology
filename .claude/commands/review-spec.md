@@ -9,7 +9,7 @@ Workflow:
    `implies_spec_type:` (IDEA).
 2. Select the per-type gate:
    - Task → bar (b) "verifiable" (per SPEC §10.2)
-   - Contract → bar (c) "Symphony-grade" with REQUIRED lint pass
+   - Contract → bar (c) "Contract-grade" with REQUIRED lint pass
      (per SPEC §10.3)
    - Decision → bar (b) plus candidate-comparison (per SPEC §10.4)
    - IDEA → IDEA quality gate (per SPEC §10.1)

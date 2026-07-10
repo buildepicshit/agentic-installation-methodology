@@ -9,4 +9,4 @@
 # here.
 #
 # refreshed: 2026-05-25
-dep-hygiene-verify ci/gates/dep-hygiene-verify.sh
+dep-hygiene-verify ci/gates/dep-hygiene-verify.sh # network

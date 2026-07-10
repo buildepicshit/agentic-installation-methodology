@@ -4,7 +4,7 @@ status: draft
 type: task            # task | contract | decision  (optional; flavours OPTIONAL sections only)
 owner: HasNoBeef
 repo: <repo>
-branch_policy: <branch | main-direct>
+branch_policy: <worktree-preferred | main-direct>
 risk: <low | medium | high>
 requires_network: false
 requires_secrets: []
@@ -57,16 +57,15 @@ How each AC is verified — the exact commands (mirroring
 
 ## 6. Completion Report
 
-Filled at execution: files changed, commands run (with results), residual
-risk, spec-evidence candidates.
+Filled at execution: spec path and status, files changed, commands run
+(with results), anything intentionally left untouched, residual risk,
+spec-evidence candidates.
 
 <!-- ========================= OPTIONAL (keep what helps) ==================== -->
 
 ## Normative Language <!-- optional -->
 
-RFC 2119 keywords (`MUST`, `SHOULD`, `MAY`, …) carry normative force when
-UPPERCASE. Post-lean there is NO per-section scoping — use them wherever
-they clarify a requirement.
+RFC 2119 keywords carry normative force when UPPERCASE (`SPEC.schema.md` §3).
 
 ## Reality Check · Interfaces / Files · Execution Plan · Rollback · Open Questions <!-- optional, task-flavour -->
 

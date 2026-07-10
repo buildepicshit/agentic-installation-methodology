@@ -1,16 +1,25 @@
 # BES MCP Policy
 
 Status: canonical root MCP policy, 2026-04-29.
-Updated 2026-06-20: disentangle source USE from PROVISIONING
-(`specs/2026-06-20-agent-canon-bounded-autonomy-voice/SPEC.md` §7 dim. 5).
 
 The default BES agent environment starts with no active MCP servers. This keeps
 Copilot and Claude agents uniform, fast to start, and free from
 machine-specific secrets or optional tool failures.
 
+**Scope of this policy.** The zero-active-default rule governs
+*repo-level and fleet-level* MCP config — `.mcp.json`, `.mcp.example.json`,
+and `approved-defaults.json` — which is what `preflight.mjs` audits. It does
+NOT govern an operator's *personal user-scope* config (e.g. `~/.claude.json`)
+on their own machine: a developer MAY run personal MCP servers (Blender,
+Sketchfab, etc.) in their own sessions. Those personal servers are out of
+scope here and are NOT fleet defaults — they never make an MCP a default fleet
+dependency, and code/automation MUST NOT assume them
+(`owner://transcript-2026-07-10` "Scope policy to repo config").
+
 ## Use versus provisioning
 
-These are two distinct cases; do not conflate them.
+These are two distinct cases; do not conflate them
+(`file://specs/2026-06-20-agent-canon-bounded-autonomy-voice/SPEC.md` §7).
 
 - USE is the default. Where a high-quality source is already
   connected or available — web search and URL fetch, the GitHub
@@ -42,15 +51,7 @@ to the owner.
 - Agents must ask before installing or enabling task-specific MCP servers.
 - MCPs that depend on local apps, API keys, sockets, game engines, or external
   services are task-scoped, not default fleet dependencies.
-- Mimir remains a product repo and is not the BES operating-layer memory
-  authority until a future spec-authority integration is approved.
 
 ## Current Recommendation
 
 Recommended default provisioned MCP servers: none.
-
-Use built-in filesystem, shell, GitHub connector, and repo docs/specs for the
-baseline agent workflow — and use any already-connected high-quality source
-(web search/fetch, GitHub, Google, Slack, live MCP connectors) freely for
-load-bearing external gaps, within the lethal-trifecta bound above. Provision
-or enable a NEW MCP server only when a specific approved task needs it.

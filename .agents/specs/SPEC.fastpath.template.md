@@ -38,13 +38,6 @@ Fast-path SPECs MUST cite their authorising owner directive in §3.
 
 # SPEC (fast-path): [Title]
 
-## Normative Language
-
-The key words `MUST`, `MUST NOT`, `REQUIRED`, `SHALL`, `SHALL NOT`,
-`SHOULD`, `SHOULD NOT`, `RECOMMENDED`, `MAY`, and `OPTIONAL` in this
-document are to be interpreted as described in RFC 2119 and RFC 8174
-when, and only when, they appear in all capitals.
-
 ## 1. Problem
 
 [One paragraph. What was broken or missing. Cite the file/issue/

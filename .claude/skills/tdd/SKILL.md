@@ -11,15 +11,15 @@ metadata:
   bes_provenance:
     origin: adapted
     source_urls:
-      - https://raw.githubusercontent.com/mattpocock/skills/main/skills/engineering/tdd/SKILL.md
+      - https://github.com/mattpocock/skills
     borrowed_from:
       - mattpocock/skills tdd
     upstream_status: current
-    last_audited: 2026-06-05
+    last_audited: 2026-07-08
     audit_cadence: quarterly
     adoption_status: adapted
     security_review: needed
-    notes: "BES-adapted from checked-in external skill lineage; not a verbatim import."
+    notes: "BES-adapted from external skill lineage (mattpocock/skills tdd); not a verbatim import. 2026-07-08 (v1.1.0 @ d574778): added the tautological-test anti-pattern (expected values drawn from an independent source of truth, distinct from implementation-coupling). Adoption record: specs/2026-07-08-pocock-v1.1-alignment-rebaseline."
   bes_tool_surface:
     scripts: none
     network: false
@@ -48,6 +48,9 @@ lint. Use the verification method required by the approved SPEC.
 6. Refactor only after the check passes.
 7. Run the SPEC acceptance commands or directly coupled broader gate.
 
+Work one behavior slice at a time; never write a batch of imagined
+tests first and then a batch of implementation.
+
 ## Good Checks
 
 - Exercise public behavior rather than private implementation details.
@@ -55,19 +58,12 @@ lint. Use the verification method required by the approved SPEC.
 - Stay deterministic.
 - Fail clearly when the behavior regresses.
 - Fit into the repo's existing test or lint style.
-
-## Vertical Slices
-
-Use red/green/refactor as one behavior slice at a time:
-
-1. Write one failing check for one public behavior.
-2. Implement only enough to pass that check.
-3. Refactor only after it passes.
-4. Repeat with the next behavior.
-
-Do not write a batch of imagined tests first and then a batch of
-implementation. That horizontal pattern outruns the real design and
-usually produces brittle checks.
+- Draw expected values from an **independent source of truth**, not by
+  recomputing them the way the code under test does. An assertion that
+  re-derives its expected value with the same logic as the code passes by
+  construction — a **tautological test** that proves nothing. This is
+  distinct from implementation-coupling below: a check can exercise public
+  behavior yet still be tautological if its oracle mirrors the code.
 
 ## When Not To Force It
 
@@ -85,6 +81,11 @@ Record the reason and run the best approved verification instead.
 
 - Do not make TDD outrank the approved SPEC acceptance plan.
 - Do not add brittle tests that only pin implementation details.
+- Do not write tautological tests — assertions whose expected value is
+  computed the same way the code computes it (adapted from
+  `mattpocock/skills` `tdd` @ `d574778`, v1.1.0, per
+  `file://specs/2026-07-08-pocock-v1.1-alignment-rebaseline/SPEC.md`
+  §11 T6).
 - Do not skip existing acceptance commands after the focused check
   passes.
 - Do not claim completion without fresh verification output.

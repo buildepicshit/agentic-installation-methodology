@@ -1,6 +1,10 @@
-# refreshed: 2026-06-05
-# cli-version: GitHub Copilot CLI 1.0.60.
+# refreshed: 2026-07-10
+# cli-version: GitHub Copilot CLI 1.0.70.
 # help-source: gh copilot -- --help
+# refresh-cadence: re-diff against `gh copilot -- --help` on any CLI
+#   minor-version bump. ADD-ONLY: never remove entries — a MISSING flag
+#   false-blocks a legit call, a stale one only under-blocks
+#   (2026-07-10-fleet-policy-hygiene-sweep).
 --acp
 --add-dir
 --add-github-mcp-tool
@@ -57,6 +61,7 @@
 --prompt
 --reasoning-effort
 --remote
+--remove
 --resume
 --screen-reader
 --secret-env-vars

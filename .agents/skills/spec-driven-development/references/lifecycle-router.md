@@ -18,82 +18,67 @@ Read this reference when:
 
 For one active phase, prefer the phase skill directly.
 
-## Full Lifecycle
+## Lifecycle
 
-1. **Preflight** - confirm repo, branch policy, and tooling per
-   `AGENTS.md`, `CLAUDE.md`, `STATUS.md`, and preflight.
-2. **Orient** - read `DOCUMENTATION_GUIDE.md` when present, active
-   project docs, and approved specs relevant to the area.
-3. **Predict known failures** - surface likely failure modes, scope
-   drift, and ambiguous owner intent before authoring.
-4. **Ideate** - resolve constraints, spec type, approaches, open
-   owner questions, and recommendation.
-5. **Author SPEC** - use `spec-authoring`; `/author-spec` consumes a
-   ready IDEA unless the route is fastpath.
-6. **Review SPEC** - use `spec-review`; the gate can set
-   `approved-pending-owner` or `needs-revision`, never `approved`.
-7. **Owner approve** - owner alone sets `status: approved`.
-8. **Decompose when needed** - multi-slice Task / Contract SPECs use
-   `approved-spec-decomposition` before execution.
-9. **Dispatch** - each durable TASK.md anchors one executable slice.
-10. **Execute** - implementation follows the approved SPEC / TASK.
-11. **Cross-validate** - review runs before task completion using a
-    different model family where required.
-12. **Verify** - run acceptance commands and record evidence.
-13. **Report / close** - fill Completion Report; owner alone closes
-    after evidence governance.
+The 5-gate flow is the DEFAULT
+(`file://specs/2026-06-30-operating-model-lean-down/SPEC.md` §7). The full
+13-phase path MAY be used for high-risk or multi-agent work but MUST NOT be
+the default.
+
+### 5-gate default
+
+1. **Align** - preflight (repo, branch policy, tooling per `AGENTS.md`,
+   `CLAUDE.md`, `STATUS.md`); orient (`DOCUMENTATION_GUIDE.md` + active docs
+   + relevant approved specs); and predict likely failure modes, scope
+   drift, and ambiguous owner intent.
+2. **Spec** - ideate (constraints, type, approaches, owner questions,
+   recommendation) then author via `spec-authoring` (`/author-spec` consumes
+   a ready IDEA unless the route is fastpath).
+3. **Approve** - `spec-review` sets `approved-pending-owner` or
+   `needs-revision` (never `approved`); owner alone sets `status: approved`.
+4. **Execute** - implementation follows the approved SPEC.
+5. **Verify** - run acceptance commands, record evidence, fill the
+   Completion Report; owner alone closes after evidence governance.
+
+### Full path (high-risk / multi-agent exception)
+
+Insert between Approve and Execute: **Decompose** (multi-slice Task /
+Contract SPECs use `approved-spec-decomposition` to emit durable TASK.md),
+**Dispatch** (each TASK.md anchors one executable slice), and
+**Cross-validate** (review on a different model family where required).
 
 ## Status Ownership
 
-- Owner alone sets `approved`, `decomposed`, `superseded`, and `closed`.
-- Agents may set `draft`, `needs-revision`,
-  `approved-pending-owner`, `in-execution`, and `verified` when the
-  applicable gate has been satisfied.
-- `approved-pending-owner` is a review result, not permission to
-  execute.
-- TASK.md evidence sections and SPEC Completion Reports are the only
-  mutable execution sections unless the owner explicitly reopens
-  scope.
-
-The status grammar lives in `file://agents/specs/SPEC.schema.md`.
+The status grammar and the owner-only status class (`approved`,
+`decomposed`, `superseded`, `closed`) are canonical in
+`file://agents/specs/SPEC.schema.md` §1.3.
+`approved-pending-owner` is a review result, not permission to
+execute. TASK.md evidence sections and SPEC Completion Reports are
+the only mutable execution sections unless the owner explicitly
+reopens scope.
 
 ## Type Routing
 
-- **Fastpath** - small, single-component, reversible,
-  owner-directed work that passes every threshold in
-  `file://agents/specs/SPEC.fastpath.template.md`.
-- **Task SPEC** - concrete, scoped, verifiable implementation with a
-  defined endpoint.
-- **Contract SPEC** - behavior or protocol that future agents
-  implement against: state machines, failure models, file formats,
-  observability, or multi-component coordination.
-- **Decision SPEC** - binding choice between named options with
-  rationale and reversal plan.
-- **Research workpad** - evidence gathering before IDEA when the
-  problem is not yet crisp enough for a SPEC.
+Fastpath / Task / Contract / Decision selection is owned by
+`file://agents/skills/spec-authoring/SKILL.md` "Type Selection";
+fastpath thresholds live in
+`file://agents/specs/SPEC.fastpath.template.md`. Use a research
+workpad for evidence gathering when the problem is not yet crisp
+enough for an IDEA.
 
 ## Citation and Memory Boundary
 
-Agent memory and training are legitimate inputs to ideation and
-review reasoning, but artefacts need citable evidence. IDEA.md,
-SPEC.md, Completion Reports, and spec evidence candidates cite
-facts using the grammar in `file://agents/specs/SPEC.schema.md`.
+Memory is input, never evidence: artefacts cite facts using the
+grammar in `file://agents/specs/SPEC.schema.md` §2.
 
-## Decomposition and Dispatch
+## Decomposition, Dispatch, and Cross-Family Validation
 
-Multi-slice Task / Contract SPECs are decomposed into durable TASK.md
-files before execution. Each TASK.md owns one vertical slice, records
-model lanes, and binds the implementation agent to the parent SPEC.
-
-Non-durable decomposition output is insufficient because later agents
-would re-derive scope instead of anchoring on the same contract.
-
-## Cross-Family Validation and Model Routing
-
-TASK.md cross-validation uses a different model family from the
-primary implementation lane when required by the decomposition. Before
-delegation, model-specific work, dispatch, or non-trivial planning,
-read `file://agents/MODEL_ROUTING.md`.
+Multi-slice mechanics (durable per-slice TASK.md, model lanes,
+integration order) are owned by
+`file://agents/skills/approved-spec-decomposition/SKILL.md`.
+Cross-family review semantics are stated once in
+`file://agents/MODEL_ROUTING.md` Rule 20; read MODEL_ROUTING before
+dispatch, delegation, model-specific work, or non-trivial planning.
 
 ## Skill-Addition Atomicity
 

@@ -8,6 +8,10 @@ small operating procedures, not broad policy documents.
 Documentation placement rules live in `.agents/DOCUMENTATION_GUIDE.md`. Read
 that guide before creating, moving, archiving, or publishing docs/specs.
 
+Craft for authoring or editing the skills in this registry — steering
+failure modes (Negation, Negative Space), leading words, the no-op test,
+and the invocation model — lives in `SKILL_AUTHORING.md`.
+
 ## Required Core Skills
 
 | Skill | Use when | Output |
@@ -38,24 +42,15 @@ authority layer. Approved SPECs and repo policy still control scope.
 
 ## Invocation Rules
 
+The tables' "Use when" column is the routing rule. Additionally:
+
 - Run `node .agents/scripts/preflight.mjs` before root planning, dispatch, or
   spec execution.
-- Use `repo-orientation` before choosing implementation files.
 - Read `.agents/DOCUMENTATION_GUIDE.md` during orientation when the repo has
   one.
-- Use `spec-driven-development` for architecture, behavior, guardrail,
-  workflow, data model, CI, public-doc, or multi-file work.
-- Use `spec-authoring` to run the IDEA→SPEC pipeline: `/idea-capture` to
-  capture the ideation conversation as a structured `IDEA.md`, then
-  `/author-spec` to render the matching typed SPEC template.
 - Use `spec-review` before executing a spec written by another agent.
-- Use `verification` before claiming completion.
-- Use `code-review` for reviews; findings lead.
 - Use `spec-evidence-governance` only to produce evidence candidates. The approved
   spec and delivery record remain the trusted write boundary.
-- Use `diagnosis` before fixing unclear failures or regressions.
-- Use `tdd` when a behavior change can be safely expressed as a focused
-  automated or scripted check.
 - Use `approved-spec-decomposition` or `/decompose-approved-spec` only
   after SPEC.md is approved and the work benefits from vertical HITL/AFK
   slices.
@@ -67,5 +62,11 @@ authority layer. Approved SPECs and repo policy still control scope.
   when present.
 - The default MCP allowlist is `.agents/mcp/approved-defaults.json`; it is
   empty until an approved spec changes it.
-- The `.agents/skills/**` copies are the canonical source. Claude-native skill
-  copies should be generated from them or kept byte-for-byte aligned.
+- The canonical source is `bes-fleet-policy/agents/skills/**`. Each child
+  repo's `.agents/skills/**` is a FULL propagated mirror (SKILL.md, references,
+  and the non-governed `known-good/`/`tests/` resources — all carried by
+  `fleet-files.txt`, so enforcement reads them there), while its
+  `.claude/skills/**` mirrors the governed `SKILL.md` + `references/` only.
+  Both are kept aligned by `fleet-sync.sh`. A child-repo `.agents/skills/` copy
+  is a mirror, not an editable source (see Fleet Rule Origination) — amend the
+  canonical copy here and re-propagate.

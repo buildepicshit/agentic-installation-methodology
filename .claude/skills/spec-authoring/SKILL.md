@@ -15,11 +15,11 @@ metadata:
     borrowed_from:
       - mattpocock/skills
     upstream_status: not-applicable
-    last_audited: 2026-06-30
+    last_audited: 2026-07-08
     audit_cadence: annual
     adoption_status: bes-native
     security_review: not-required
-    notes: "BES fleet-native spec-authoring procedure. Additionally incorporates one externally-adapted questioning pattern (the +docs grill layer — see body 'The +docs Layer: Structured Options Cited To Docs') absorbed 2026-06-30 from the Matt Pocock skills collection; the source pattern's own provenance was origin: adapted / security_review: needed. No new executable or tool surface is added by the absorbed prose pattern, so the skill's security_review remains not-required. Full upstream URL + adoption record: specs/2026-05-05-ai-engineering-tactical-skill-adoption and specs/2026-06-30-lean-skill-consolidation."
+    notes: "BES fleet-native spec-authoring procedure. Additionally incorporates externally-adapted questioning patterns absorbed from the Matt Pocock skills collection: (1) the +docs grill layer (body 'The +docs Layer') absorbed 2026-06-30; (2) the facts-vs-decisions split and the shared-understanding comprehension checkpoint added 2026-07-08 from the productivity/grilling primitive @ d574778 (v1.1.0). No new executable or tool surface is added by these prose patterns, so security_review remains not-required. Adoption records: specs/2026-05-05-ai-engineering-tactical-skill-adoption, specs/2026-06-30-lean-skill-consolidation, specs/2026-07-08-pocock-v1.1-alignment-rebaseline."
   bes_tool_surface:
     scripts: none
     network: false
@@ -63,7 +63,13 @@ Do not use this skill for:
 For non-trivial IDEA capture, sharpen the owner conversation before
 writing the artefact:
 
-1. Check the repo first for answers the code or docs can provide.
+1. **Facts vs. decisions.** Split each open question before asking the
+   owner anything: if the answer *can be found by exploring the codebase
+   or docs*, it is a **fact** — look it up yourself, do not ask. If it is
+   the owner's call — a trade-off, a scope boundary, a preference the code
+   cannot reveal — it is a **decision**; put it to the owner and wait for
+   the answer (step 2 carries the one-at-a-time pacing). Never spend an
+   owner turn on a fact you could have grepped.
 2. Ask one owner question at a time.
 3. Prefer concrete trade-offs over broad methodology debate.
 4. When the design space is ambiguous, present 2-3 viable approaches
@@ -74,13 +80,23 @@ writing the artefact:
 7. Batch disposition is valid: once the candidate space is fully
    articulated, a SINGLE binding owner directive MAY resolve
    multiple open questions at once — capture the verbatim once and
-   cite it per resolved item (proven on the 7-question
-   rolls-royce disposition,
-   `file://specs/2026-05-18-agentic-installation-methodology/SPEC.md`
-   §14.5 SE2, dispositioned ACCEPT 2026-06-10).
+   cite it per resolved item
+   (`file://specs/2026-05-18-agentic-installation-methodology/SPEC.md` §14.5).
 
 Do not let grilling become a new approval gate. It is a clarification
 tactic that feeds the existing IDEA -> SPEC procedure.
+
+Confirm shared understanding before drafting: do not begin writing the
+IDEA/SPEC artefact until the owner confirms you have reached a shared
+understanding of the design. This is a **comprehension checkpoint, not an
+approval** — approval remains the owner-only `approved` status flip
+(`file://agents/specs/SPEC.schema.md` §1.3); it adds no status and asks no
+"do you approve?". It only prevents authoring a well-formed artefact on a
+misread of intent. (The facts-vs-decisions split above and this
+comprehension checkpoint were adapted 2026-07-08 from `mattpocock/skills`
+`skills/productivity/grilling` @ `d574778` (v1.1.0) per
+`file://specs/2026-07-08-pocock-v1.1-alignment-rebaseline/SPEC.md` §11 T3 —
+the primitive our 2026-06-30 +docs absorption did not reach.)
 
 ### The +docs Layer: Structured Options Cited To Docs
 
@@ -116,19 +132,10 @@ Pattern hard rules:
   specifically because the docs grounding lets them check the reasoning
   quickly.
 
-Provenance: this pattern is BES-adapted (not a verbatim import) from an
-external checked-in skill lineage — Matt Pocock's public `skills`
-engineering collection (`url://github.com/mattpocock/skills`);
-`adaptation_status: adapted`, `security_review: needed`. The full
-upstream URL and original adoption record are preserved in
-`file://specs/2026-05-05-ai-engineering-tactical-skill-adoption/SPEC.md`
-§4 and the 2026-06-30 consolidation SPEC
-`file://specs/2026-06-30-lean-skill-consolidation/SPEC.md`.
-
 ## Reference Architecture First
 
 When a public reference architecture exists for the SPEC's domain,
-cite it in §4 Authority Map and mirror its contract shape rather
+cite it in §3 Evidence / Authority and mirror its contract shape rather
 than re-deriving its primitives. When adopting an external tool
 that fits BES procedure (CLI, library, runner), follow the
 six-part shape.
@@ -153,10 +160,15 @@ naming) live in `agents/specs/SPEC.schema.md`.
 Templates reference that schema rather than restating it. Read the
 schema before authoring.
 
+Open Questions is OPTIONAL for every spec type: authors MAY omit the
+heading entirely when empty, or keep it with only `None.` / `N/A`
+(`file://specs/2026-05-17-ceremony-weight-refactor/SPEC.md` §7). If
+non-empty, the normal per-section checks apply.
+
 In `bes-fleet-policy`, the produced IDEA.md and SPEC.md live at
-`specs/<spec_id>/`. In each child product repo (ACTOCCATUD, Floom,
-IKTO, Mimir, UsefulIdiots, Wick) they live at
-`.agents/specs/<spec_id>/`. The workflow doc at
+`specs/<spec_id>/`. In each child fleet repo (per the roster manifests
+`agents/scripts/fleet-{internal,oss,local-only}-repos.txt`) they live
+at `.agents/specs/<spec_id>/`. The workflow doc at
 `agents/workflows/idea-capture.md` encodes this branch.
 
 ## Type Selection
@@ -169,15 +181,12 @@ carries to the SPEC's `type`. It no longer selects a template.
 Decision tree:
 
 0. **Is this small, single-component, reversible work under
-   explicit owner directive** — meeting ALL of: ≤ 1 file, ≤ 50
-   lines, single component, no public-contract or persisted-state
-	   impact, no cross-session compounding, owner-cited authority?
-	   YES → `fastpath`. Use `SPEC.fastpath.template.md`. No IDEA, no
-	   review, no decomposition. Capture-after by default; lands at
-	   `status: closed` in the same commit as the work. The template
-	   carries the thresholds. **If ANY threshold is missed, do not use
-	   fastpath** — fall through to
-	   the steps below.
+   explicit owner directive** meeting ALL of the fastpath
+   thresholds carried by `SPEC.fastpath.template.md`?
+   YES → `fastpath`. No IDEA, no review, no decomposition.
+   Capture-after by default; lands at `status: closed` in the same
+   commit as the work. **If ANY threshold is missed, do not use
+   fastpath** — fall through to the steps below.
 1. **Is this a binding choice between two or more named options
    (stack pick, architecture pick, vendor pick, policy pick)?**
    YES → set `type: decision`. Keep the Decision Criteria / Candidate
@@ -207,44 +216,19 @@ Edge cases:
 - Owner explicitly directs a type via `judgment://owner`: honour the
   directive; do not re-derive.
 
-## Contract §17 OPTIONAL when empty (2026-05-17)
+## §1 / §5 capture-after defer-shorthand
 
-Per the 2026-05-17 ceremony-weight-refactor Decision SPEC §7
-(`file://specs/2026-05-17-ceremony-weight-refactor/SPEC.md`),
-Contract SPEC §17 Open Questions is OPTIONAL when empty:
-
-- Authors MAY omit the §17 heading entirely when no open
-  questions remain.
-- If retained, the body MAY contain only `None.`, `N/A`, or a
-  single citation to the producing IDEA's §6 / §7 resolution.
-- If non-empty, existing per-section checks apply (citation
-  grammar, RFC 2119, etc.).
-
-This relaxation only applies to Contract SPECs; Task and
-Decision SPECs continue to require §17.
-
-## Contract §1 / §13 capture-after defer-shorthand (2026-05-17)
-
-Per the same Decision SPEC §7, Contract SPECs landing at
-`status: verified` via the capture-after exception
-(`file://agents/specs/SPEC.schema.md` §1.3) MAY use a
-defer-shorthand for §1 Problem Statement and §13 Test and
-Validation Matrix:
-
-- The section body MAY be a one-paragraph cite-by-id pointer
-  to the producing IDEA's corresponding section, e.g.
-  `See file://specs/<id>/IDEA.md §1 (capture-after defer).`
-- The shorthand is RECOMMENDED only when the producing IDEA's
-  section is itself substantive — the defer must resolve to
-  real content, not to another defer.
-- Lint passes the shorthand by construction (a single-paragraph
-  `file://` cite satisfies the §2 citation-grammar rule); the
-  per-type gate in `spec-review` validates that the cited IDEA
-  section exists and is non-empty.
-
-For Contracts at any other status (`draft`, `approved`,
-`in-execution`), §1 and §13 MUST be filled with substantive
-content; defer-shorthand is rejected by the spec-review gate.
+SPECs landing at `status: verified` via the capture-after exception
+(`file://agents/specs/SPEC.schema.md` §1.3) MAY fill §1 Problem and
+§5 Test / Validation with a one-paragraph cite-by-id defer to the
+producing IDEA's corresponding section, e.g.
+`See file://specs/<id>/IDEA.md §1 (capture-after defer).` The defer
+MUST resolve to substantive IDEA content, not to another defer.
+Validation mechanics live in
+`file://agents/skills/spec-review/SKILL.md` "Contract capture-after
+defer-shorthand check". For SPECs at any other status, §1 and §5
+MUST be filled with substantive content; defer-shorthand is
+rejected by the spec-review gate.
 
 ## Studio Principles
 
@@ -258,13 +242,14 @@ verbatim-to-normative review trace:
 
 ## Citation Discipline
 
-Every factual claim in IDEA.md and SPEC.md MUST carry a citation
-prefix. Allowed prefixes: `file://`, `cmd://`, `url://`, `owner://`,
-`judgment://owner`, `judgment://agent-synthesis`. The full grammar,
-positive and negative examples, and the list of constructs that do
-NOT require citation (section headers, editorial framing, internal
-definitions, internal cross-references, pseudocode, domain-model
-field references) live in
+Every evidence-bearing section in IDEA.md and SPEC.md MUST carry at
+least one source token — a citation prefix (`file://`, `cmd://`,
+`url://`, `owner://`, `judgment://owner`, `judgment://agent-synthesis`;
+RECOMMENDED), a bare URL, a backticked `path`/command, or a ≥25-char
+verbatim/owner quote. The full grammar, positive and negative examples,
+and the list of constructs that do NOT require a source token (section
+headers, editorial framing, internal definitions, internal
+cross-references, pseudocode, domain-model field references) live in
 `file://agents/specs/SPEC.schema.md` §2.
 
 Operating principle: agent memory and training are LEGITIMATE INPUTS
@@ -279,6 +264,19 @@ When the lint flags a sentence that is in fact editorial, append
 `<!-- lint-ok: no-citation -->` per
 `file://agents/specs/SPEC.schema.md` §2.5. Use sparingly; pervasive
 suppression is itself a quality signal.
+
+Practice rules:
+
+- PERSIST load-bearing scratch outputs (workflow results, probe
+  logs) into `specs/<id>/` BEFORE citing them as `file://`
+  authority — session-scratch paths are unrecoverable once the
+  session is gone
+  (`file://specs/2026-07-01-propagation-machinery-fixes/SPEC_EVIDENCE.md` SE-6).
+- Before any §-anchor sweep, classify every hit as a live-template
+  reference (drift — remap) or a cross-doc citation to a specific
+  spec's own numbering (legitimate — keep), and sweep by DIRECTORY,
+  not enumerated file lists
+  (`file://specs/2026-07-01-leandown-doc-reconciliation/SPEC_EVIDENCE.md` SE-2 + SE-5).
 
 ## Quality Gate Handoff
 
@@ -310,30 +308,39 @@ the failures, revise the artefact, re-hand-off. Do not silently
 escalate failures to `owner-blocking`; that status is for unresolved
 Open Questions, not for gate failures.
 
-## Acceptance-Command Authoring (2026-06-10)
-
-Two dispositioned-ACCEPT lessons from the 2026-06-09 wave
-(`file://specs/2026-06-09-mutation-probe-isolation-discipline/SPEC_EVIDENCE.md`
-SE2; `file://specs/2026-06-09-superseded-terminal-status/SPEC_EVIDENCE.md`
-SE1):
+## Acceptance-Command Authoring
 
 - Acceptance commands MUST be satisfiable at execution time —
   commands that read COMMIT state (`git grep` on not-yet-tracked
   files, `git diff --quiet` on regenerated lockfiles with embedded
   timestamps) only pass post-commit. Use `git grep --untracked`,
   compare generated entries excluding metadata, or note the
-  commit-state dependency explicitly in the Test Plan.
+  commit-state dependency explicitly in the Test Plan
+  (`file://specs/2026-06-09-mutation-probe-isolation-discipline/SPEC_EVIDENCE.md` SE2).
 - A SPEC that changes a schema enum or an owner-only status class
   MUST include an enumerate-consumers step in its Execution Plan:
   `rg` the exact list literal across `agents/` and `.claude/` and
-  paste the hit list into the SPEC before execution (9 consumer
-  surfaces existed for the `superseded` change; author sweeps found
-  4, cross-family review the other 5).
+  paste the hit list into the SPEC before execution
+  (`file://specs/2026-06-09-superseded-terminal-status/SPEC_EVIDENCE.md` SE1).
 - A schema relaxation that REMOVES a required entry MUST include a
   full type-corpus re-lint as an acceptance step (every existing
   artefact of that type re-linted clean), per
-  `file://specs/2026-05-17-ceremony-weight-refactor-execute/SPEC.md`
-  §17.5 SE2 (dispositioned ACCEPT 2026-06-10).
+  `file://specs/2026-05-17-ceremony-weight-refactor-execute/SPEC.md` §17.5 SE2.
+- When single-sourcing a duplicated canonical list, grep by the
+  list's VALUES (the member names), not only the expected identifier
+  or filename
+  (`file://specs/2026-06-30-fleet-roster-single-source/SPEC_EVIDENCE.md` SE-1).
+- Prefer acceptance commands that test the structural INVARIANT over
+  ones that pin owner-mutable membership VALUES; when values move on
+  after verification, record the supersession in the SPEC (same
+  file, SE-3).
+- A criterion's PROSE must not assert more than its pinned command
+  tests — encode the discriminating assertion in the command itself
+  (same file, SE-4).
+- For deletion/lean SPECs: re-verify cut ranges line-by-line against
+  the LIVE file before cutting, not against the audit summary that
+  nominated them
+  (`file://specs/2026-06-30-lean-doc-ceremony-cut/SPEC_EVIDENCE.md` SE-1).
 
 ## Hard Rules
 

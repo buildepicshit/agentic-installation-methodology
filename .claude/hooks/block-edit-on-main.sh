@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -uo pipefail
 # PreToolUse(Edit|Write): on the protected branch, block edits to repo-TRACKED
-# paths UNLESS any SPEC (approved/in-execution/verified/closed) declares
+# paths UNLESS any SPEC (approved/decomposed/in-execution/verified/closed) declares
 # branch_policy: main-direct. A closed SPEC represents settled policy that
 # persists until superseded.
 #
@@ -55,7 +55,7 @@ for d in "$repo_root/.agents/specs" "$repo_root/specs"; do
         [ -f "$f" ] || continue
         st=$(awk 'BEGIN{c=0} /^---/{c++; if(c==2)exit} /^status:/{gsub(/^status:[[:space:]]*/,""); print; exit}' "$f")
         case "$st" in
-            approved|in-execution|verified|closed)
+            approved|decomposed|in-execution|verified|closed)
                 bp=$(awk 'BEGIN{c=0} /^---/{c++; if(c==2)exit} /^branch_policy:/{gsub(/^branch_policy:[[:space:]]*/,""); print; exit}' "$f")
                 if [ "$bp" = "main-direct" ]; then
                     allow_main_direct=1; break 2

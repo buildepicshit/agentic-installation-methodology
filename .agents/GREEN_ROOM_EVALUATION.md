@@ -25,41 +25,25 @@ The evaluation is a green room run:
 
 ## Required Pairing
 
-Use different model families for the primary and verifier when capacity allows.
+The primary evaluator and verifier MUST use different model families;
+a smaller-model primary requires a frontier-model verifier. Under
+capacity constraint, serialize the two runs or queue the verification —
+do NOT collapse to same-family (this MUST is unconditional, matching the
+Safety Invariants below and `.agents/MODEL_ROUTING.md` rule 16, neither
+of which carries a capacity escape hatch). Model lanes per
+`.agents/MODEL_ROUTING.md`.
 
-| Primary evaluator | Required verifier |
-|---|---|
-| Copilot `gpt-5.5` | Claude Opus 4.8 |
-| Claude Opus 4.8 | Copilot `gpt-5.5` |
-| Claude Sonnet/adaptive | Copilot `gpt-5.5` or Claude Opus 4.8 |
-| Smaller read-only model | Frontier model verifier required |
-
-For public OSS repos (`Wick`, `Mimir`), prefer Copilot `gpt-5.5` primary with
-Claude Opus 4.8 verification, or the reverse, and keep all outputs local
-until the owner approves public wording and CI cost.
-
-## Parallel Handoff Rule
-
-Remaining repo handoffs should run in parallel where the write scopes are
-disjoint. Each handoff worker may write only inside its assigned repo's
-`.agents/specs/` path unless the root fleet manager explicitly expands scope.
-
-Green room evaluation for a repo may start only after that repo's handoff lane
-is closed or the owner explicitly marks the in-flight work paused.
+For public OSS repos (`Wick`, `Mimir`), keep all outputs local until
+the owner approves public wording and CI cost.
 
 ## Pre-Dispatch Prediction
 
-Before launching a green room primary or verifier, the root fleet manager must
-predict the likely sources of wasted time and put them in the prompt:
-
-- known environment gates, such as missing host packages or required containers;
-- known public/private constraints and CI-cost limits;
-- known stale or superseded authority docs to inspect carefully;
-- owner decisions that a worker must not guess;
-- subjective acceptance criteria that must be resolved in a future executable
-  spec instead of guessed by the evaluator;
-- whether the run is allowed to write files or must only return markdown;
-- expected CLI behavior, including long silent Claude `-p` runs.
+Before launching a green room primary or verifier, the root fleet
+manager must predict the likely sources of wasted time and put them in
+the prompt (per OPERATING_MODEL's predict-known-failures step),
+including the green-room-specific items: whether the run is allowed to
+write files or must only return markdown, and expected CLI behavior
+such as long silent Claude `-p` runs.
 
 Workers must classify failures as one of:
 
@@ -171,28 +155,3 @@ node .agents/scripts/preflight.mjs
   but it is not executable roadmap authority.
 - A verified roadmap still requires owner-approved executable specs before
   implementation.
-
-## Dispatch Prompt Template
-
-Primary evaluator:
-
-```text
-You are running a BES green room product evaluation for <repo>.
-Read root AGENTS.md, .agents/OPERATING_MODEL.md,
-.agents/GREEN_ROOM_EVALUATION.md, .agents/MODEL_ROUTING.md, and the target
-repo AGENTS.md, CLAUDE.md, WORKFLOW.md, STATUS.md, handoff specs, and linked
-docs. Do not use memory or chat history as authority. Do not implement.
-Create <repo>/.agents/specs/<date>-green-room-product-evaluation/EVALUATION.md
-and ROADMAP.md. Include sources, commands, quality findings, critical path,
-next specs, and owner decisions.
-```
-
-Second-model verifier:
-
-```text
-You are independently verifying the BES green room product evaluation for
-<repo>. Use a different model family from the primary evaluator. Read the root
-protocol, repo instructions, EVALUATION.md, ROADMAP.md, current repo docs, and
-safe command output. Do not implement. Write VERIFICATION.md with blockers,
-unsupported claims, missing risks, roadmap corrections, and final status.
-```

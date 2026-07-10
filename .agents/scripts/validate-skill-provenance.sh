@@ -1,7 +1,10 @@
 #!/usr/bin/env bash
 # validate-skill-provenance.sh — validate BES skill provenance metadata.
 #
-# Normal mode is warning-only for missing or stale provenance fields.
+# Normal mode is warning-only for missing or malformed provenance fields
+# (presence + enum + date-format validity). NOTE: audit-staleness
+# (last_audited vs audit_cadence) is NOT yet implemented — only field
+# presence/format is checked; the staleness algorithm is a documented TODO.
 # --strict exits non-zero on warnings and is used by migration specs.
 
 set -euo pipefail

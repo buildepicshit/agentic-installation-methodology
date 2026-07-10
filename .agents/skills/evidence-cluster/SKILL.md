@@ -44,11 +44,6 @@ diff (complexity-delta gate), when reviewing a SPEC
 
 ### 1. Impact-Aware Test Selection
 
-Per Wave 1 §2.1 TDAD paper finding: procedural TDD
-without impact-graph awareness made regressions
-**worse** (6.08% → 9.94%). Graph-based impact analysis
-cut regressions 70%.
-
 Before declaring a behaviour change done:
 - Identify the files you modified.
 - Identify tests that transitively reach those files
@@ -57,8 +52,7 @@ Before declaring a behaviour change done:
 - Cite the test run as a tool-receipt
   (`execution-discipline-cluster` cross-ref).
 - If a predicate or contract gates behavior, execute it against the
-  live filesystem/runtime before sign-off; text review alone missed
-  a live-repo-broken predicate across four cross-family rounds
+  live filesystem/runtime before sign-off
   (`file://specs/2026-06-22-fleet-sync-self-reconcile/SPEC_EVIDENCE.md`
   SE-1).
 
@@ -69,10 +63,6 @@ For the BES fleet today the helpers are:
   per-helper impact.
 
 ### 2. Anti-Over-Mock Cue
-
-Per Wave 1: 36% agent commits add mocks vs 26%
-non-agent. Mocks outside test files are signal of
-laziness or test-as-mirror-of-implementation.
 
 Rules:
 - **NEVER add `mock`, `jest.mock`, `vi.mock`,
@@ -88,17 +78,14 @@ Rules:
 
 ### 3. Complexity-Delta Gate (during review)
 
-Per Wave 1 §2.1 MSR 2026 finding: AI-reviewer
-suggestions adopted at scale produce significantly
-larger complexity + size increases than human-
-reviewer suggestions.
-
 When reviewing a diff:
 - Measure lines added vs behaviour added.
-- If lines:behaviour-points >= 50:1, flag as
-  complexity-bloat. (Heuristic: a 200-line PR that
-  adds one new public-API function is fine; one
-  that adds 2000 lines + one function is suspect.)
+- If the code added is roughly an order of magnitude
+  more than the behaviour warrants, flag as
+  complexity-bloat. (Calibration: a ~200-line PR that
+  adds one new public-API function is fine; ~2000 lines
+  for that same one function is suspect — ~10x too much.
+  Advisory cue, not a lint-enforced ratio.)
 - Check imports added — every new dep is a
   long-lived liability; new deps without
   `deps_added` SPEC declaration are blocked by
@@ -106,10 +93,6 @@ When reviewing a diff:
   inside a node_modules churn warrant review.
 
 ### 4. Dual-Reader Ambiguity Probe (at SPEC review)
-
-Per Wave 1 §2.1 SDD literature: ambiguity has
-near-zero cost for human readers but compounds
-catastrophically with agents.
 
 When cross-family reviewing a SPEC:
 - Pick one normative claim per major section.
@@ -128,18 +111,14 @@ surface, not the implementation.
 - Do not declare a behaviour change done without
   running impact-aware tests.
 - Do not add mocks to non-test files.
-- Do not let a 10:1 lines:behaviour PR land
-  unchallenged.
+- Do not let a PR whose size dwarfs its behaviour by
+  ~an order of magnitude land unchallenged (see the
+  complexity-delta cue above).
 - Do not skip the ambiguity probe on Contract SPECs
   — Contract is the most-binding artefact type.
 
 ## Cross-references
 
-- `file://agents/skills/tdd/SKILL.md` — impact-aware
-  selection extends tdd's discipline.
-- `file://agents/skills/code-review/SKILL.md` —
-  complexity-delta gate runs inside code-review.
-- `file://agents/skills/spec-review/SKILL.md` —
-  ambiguity probe runs inside spec-review.
-- `file://agents/skills/execution-discipline-cluster/SKILL.md` —
-  tool-receipts pair with impact-aware runs.
+Host skills per practice: `tdd` (impact-aware selection),
+`code-review` (complexity-delta), `spec-review` (ambiguity probe),
+`execution-discipline-cluster` (tool receipts).

@@ -13,27 +13,23 @@ Template per `specs/2026-05-01-bes-spec-authoring-procedure-v1/SPEC.md` §9.1.
 Refer to `agents/specs/SPEC.schema.md` for shared conventions
 (front-matter, citation grammar, RFC 2119 rules, section naming).
 
-Citation discipline: every factual claim in this artefact MUST carry a
-citation prefix from SPEC.schema.md §2.1 (`file://`, `cmd://`, `url://`,
-`owner://`, `judgment://owner`, `judgment://agent-synthesis`). Memory
-and training are NOT citable evidence. Any `judgment://agent-synthesis`
-claim MUST be paired with owner-affirmation captured via `owner://`.
+Citation discipline (section-level evidence gate, SPEC.schema.md §2):
+every evidence-bearing section MUST carry at least one source token — a
+citation prefix (`file://`, `cmd://`, `url://`, `owner://`,
+`judgment://owner`, `judgment://agent-synthesis`; RECOMMENDED), a bare
+URL, a backticked `path`/command, or a ≥25-char verbatim/owner quote.
+Memory and training are NOT citable evidence. Any
+`judgment://agent-synthesis` claim MUST be paired with owner-affirmation
+captured via `owner://`.
 -->
 
 # [Working Title]
 
-## Normative Language
-
-The key words `MUST`, `MUST NOT`, `REQUIRED`, `SHALL`, `SHALL NOT`,
-`SHOULD`, `SHOULD NOT`, `RECOMMENDED`, `MAY`, and `OPTIONAL` in this
-document are to be interpreted as described in RFC 2119 and RFC 8174
-when, and only when, they appear in all capitals.
-
 ## 1. Problem Seed
 
 <!-- guidance: state the problem in concrete terms. Cite affected files,
-observed behavior, owner directives, or external references. Each
-factual claim carries a citation prefix. -->
+observed behavior, owner directives, or external references. This
+section must carry at least one source token (SPEC.schema.md §2). -->
 
 [Problem statement with citations.]
 

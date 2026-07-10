@@ -23,18 +23,10 @@ or scratch/runtime state.
 
 ## Active Product Repos
 
-These directories are independent repos. Root agents may read them for
-orientation, but product edits happen inside the target repo and its own
-`AGENTS.md`/`WORKFLOW.md` contract.
-
-- `ACTOCCATUD/`
-- `agentic-installation-methodology/`
-- `bes-fleet-runtime/`
-- `Floom/`
-- `IKTO/`
-- `Mimir/`
-- `UsefulIdiots/`
-- `Wick/`
+The active product directories are independent repos; the canonical
+roster is the OPERATING_MODEL `Active Repos` posture table. Root agents
+may read them for orientation, but product edits happen inside the
+target repo and its own `AGENTS.md`/`WORKFLOW.md` contract.
 
 ## Business Administration Workspace
 
@@ -60,9 +52,8 @@ surface, then update `agents/scripts/preflight.mjs` and propagate from
 
 Tools distinguishing the policy source repo from propagated child layouts MUST
 use the positive marker `.agents/scripts/fleet-skills.txt`: child repos have it,
-and a source repo is identified by its absence. Do not rely on the bare
-`.agents/` directory; `bes-fleet-policy` can carry a stray empty one
-(`file://specs/2026-06-22-fleet-sync-self-reconcile/SPEC_EVIDENCE.md` SE-3).
+and a source repo is identified by its absence — never the bare `.agents/`
+directory (`file://specs/2026-06-22-fleet-sync-self-reconcile/SPEC_EVIDENCE.md` SE-3).
 
 | Repo | Root | Role | Git posture |
 |---|---|---|---|
@@ -73,6 +64,7 @@ and a source repo is identified by its absence. Do not rely on the bare
 | Path | Role | Rule |
 |---|---|---|
 | `tools/` | Local tool checkouts, MCP servers, SDK experiments | ignored by default; promote only small wrappers/docs intentionally |
+| `bes-blender-mcp/` | Local Blender MCP server checkout at the root (predates the `tools/` convention) | ignored; not fleet baseline; allowlisted in `preflight-config.json` |
 
 Do not assume tools under `tools/` are production source. Treat them as local
 runtime dependencies unless a spec explicitly promotes a wrapper or document.
@@ -81,10 +73,9 @@ runtime dependencies unless a spec explicitly promotes a wrapper or document.
 
 | Path | Role | Rule |
 |---|---|---|
+| `Alaricky/` | Private personal product repo (own git; declared 2026-07-02) | non-fleet; agents keep out absent explicit owner instruction |
 | `Assets/` | Local art/audio/model/download holding area | ignored |
 | `Assets/Downloads/` | Download intake inside asset storage | ignored |
-| `ModelSandbox/` | Local model/asset experiments | ignored |
-| `NewIdeas/` | Local idea intake | ignored; promote into specs/docs before product work |
 | `content_store.db.backup` | Local database backup | ignored |
 
 Agents must not move, delete, normalize, or publish these paths without a
@@ -94,15 +85,8 @@ specific approved migration spec. Inventory first, then propose moves.
 
 - `.mcp.json` is active machine-local config and must stay ignored/untracked.
 - `.mcp.example.json` files are checked-in examples and must not contain real
-  secrets. Current examples intentionally define no default servers.
-- `.agents/mcp/approved-defaults.json` is the default MCP allowlist. It is
-  empty until an approved spec changes it.
-- Secrets such as API keys belong in local shell environment or ignored local
-  config only.
-- Absolute workstation paths may exist in ignored `.mcp.json`, not in tracked
-  examples unless they are clearly placeholders.
-- Mimir remains a product repo, not the BES operating-layer memory authority,
-  until a future spec-authority integration is approved.
+  secrets or non-placeholder absolute workstation paths.
+- Allowlist, provisioning gate, and use policy: `.agents/mcp/README.md`.
 
 ## Promotion Rule
 

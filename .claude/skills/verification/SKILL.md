@@ -60,12 +60,8 @@ hash. Before claiming oracle coverage for a behavior, probe-confirm
 the behavior contributes: ablate one term it depends on (zero a
 constant, flip a sign) and REQUIRE the oracle output to CHANGE. If
 the golden reproduces bit-for-bit with the term ablated, the oracle
-never observed that behavior and the claim is hollow. Origin:
-ACTOCCATUD de-risk spike — gravity arithmetic underflowed to zero
-every tick yet reproduced the M1 golden exactly (ACTOCCATUD
-`.agents/specs/2026-06-02-de-risk-spike-rust-godot-vertical-slice/`
-§17.3 M4 + tasks/T-05 §6; routed via bes-fleet-policy
-`AGENT_INBOX.md` 2026-06-05 entry).
+never observed that behavior and the claim is hollow (durable capture:
+`file://specs/2026-06-05-verification-oracle-integrity-addendum/SPEC.md`).
 
 Ablation probes are file-mutating: run them in an isolated
 worktree (or copy-mutate-restore with verified zero delta), per
@@ -76,12 +72,26 @@ the probe lifecycle in
 
 Before claiming a file was committed, verify it is tracked:
 `git ls-files --error-unmatch <path>` (or check the commit's own
-stat list). Ignore rules can silently swallow sources — ACTOCCATUD's
-.NET-era `bin/` rule untracked Rust `src/bin/` SOURCES for two days
-while a commit message claimed them (fixed with a `!**/src/bin/`
-negation; same inbox routing as above). When a repo changes
-ecosystems, audit its ignore rules against the new layout before
-trusting add/commit results.
+stat list). Ignore rules can silently swallow sources (durable capture:
+`file://specs/2026-06-05-tracked-path-overclaim-lint/SPEC.md`).
+When a repo changes ecosystems, audit its ignore rules against the
+new layout before trusting add/commit results.
+
+## Closure Hygiene
+
+- Acceptance commands are re-run VERBATIM as written and the receipt
+  records the TRUE output; intended exclusions are encoded in the
+  command or recorded explicitly — "all clean" against a command that
+  returns matches is an overclaim even when the matches are benign
+  (`file://specs/2026-07-01-leandown-doc-reconciliation/SPEC_EVIDENCE.md` SE-4).
+- A SPEC MUST NOT flip `verified` while any acceptance criterion is
+  unmet: do the work, or the owner amends the criterion FIRST —
+  "deferred acceptance criterion" is a contradiction
+  (`file://specs/2026-07-01-propagation-machinery-fixes/SPEC_EVIDENCE.md` SE-4).
+- Parent/closure reports cite child SPEC front-matter VERBATIM and
+  disposition each child's declared deferrals rather than summarizing
+  intent
+  (`file://specs/2026-06-30-lean-doc-ceremony-cut/SPEC_EVIDENCE.md` SE-2).
 
 ## Hard Rules
 
@@ -98,8 +108,7 @@ trusting add/commit results.
   `Co-Authored-By:` trailer), never a bare token that legitimately
   appears in content (e.g. `Claude` matching `CLAUDE.md`) — bare
   tokens false-positive and mask real gate behavior
-  (`file://specs/2026-05-18-agentic-installation-methodology-repo-standup/SPEC.md`
-  §17.5 SE3, dispositioned ACCEPT 2026-06-10).
+  (`file://specs/2026-05-18-agentic-installation-methodology-repo-standup/SPEC.md` §17.5 SE3).
 - **Verify against reality.** A predicate or contract that gates
   behavior MUST be executed against the live filesystem/runtime
   before sign-off, not only reviewed as text; four cross-family
@@ -111,11 +120,8 @@ trusting add/commit results.
   model family as implementation. **Behavioral verification** —
   confirming the change actually delivers the SPEC's named outcome
   — SHOULD use a different model family from the implementer per
-  the TASK.md `verification_lane`. Same-family behavioral
-  verification inherits the same reasoning blind spots. See
-  `file://agents/MODEL_ROUTING.md` and
-  `file://specs/2026-05-04-agent-parallelism-and-model-routing-v2/SPEC.md`
-  §7.3.
+  the TASK.md `verification_lane`. Wider cross-family semantics:
+  `file://agents/MODEL_ROUTING.md` Rule 20.
 - **Integration gate.** When a parent SPEC's TASK.md set all reach
   `done`, the integration verifier runs the parent SPEC's full
   `acceptance_commands` as the gate before flipping

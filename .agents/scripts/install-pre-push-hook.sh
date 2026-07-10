@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
 # install-pre-push-hook.sh — install/uninstall/check the BES
-# fleet CI pre-push hook into the current git repo's
-# .git/hooks/pre-push.
+# fleet CI pre-push hook. Installs into the repo's ACTIVE hooks
+# path: `.git/hooks/pre-push` by default, or `<core.hooksPath>/pre-push`
+# when `core.hooksPath` is set (fleet posture uses `.githooks/`).
 #
 # Per specs/2026-05-25-fleet-ci-bootstrap/SPEC.md §7.5.
 #
@@ -19,9 +20,9 @@ resolve_template() {
     local script_dir
     script_dir="$(cd "$(dirname "$0")" && pwd)"
     local candidates=(
-        "${CLAUDE_PROJECT_DIR:-}/agents/git-hooks/pre-push"
-        "${CLAUDE_PROJECT_DIR:-}/.agents/git-hooks/pre-push"
-        "$script_dir/../git-hooks/pre-push"
+        "${CLAUDE_PROJECT_DIR:-}/agents/githooks/pre-push"
+        "${CLAUDE_PROJECT_DIR:-}/.agents/githooks/pre-push"
+        "$script_dir/../githooks/pre-push"
     )
     for c in "${candidates[@]}"; do
         if [ -f "$c" ]; then

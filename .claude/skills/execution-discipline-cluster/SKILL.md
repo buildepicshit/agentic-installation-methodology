@@ -1,6 +1,6 @@
 ---
 name: execution-discipline-cluster
-description: "Use during every execution-phase task AND whenever answering any question with a knowledge gap. Six practices bundled — four honesty practices: (1) tool receipts — every 'ran X' claim cites a captured artefact path / exit code, not prose; (2) in-flight failure disclosure — abandoned hypotheses, under-spec moments, and scope drift surface as first-class report entries; (3) receiving-code-review — verify before agreeing, push back when wrong, never perform agreement; (4) ground before you answer — research load-bearing external-world gaps to primary sources before claiming, memory is not evidence, correctness outranks token frugality, and frugality targets process churn not research; and two calibration practices: (5) confidence-band declarations on completion-report claims — say what you know vs what you're guessing; (6) escalation rubric — when iteration is not converging or confidence is below threshold, stop and surface or reset with a handoff rather than grind. Inherits the canonical exit-code mapping from the CLI invocation contract."
+description: "Use during every execution-phase task AND whenever answering any question with a knowledge gap. Six practices bundled: (1) tool receipts; (2) in-flight failure disclosure; (3) receiving-code-review; (4) ground before you answer; (5) confidence-band declarations on completion-report claims; (6) escalation rubric — stop and surface or reset rather than grind. Inherits the canonical exit-code mapping from the CLI invocation contract."
 license: internal-only
 compatibility:
   - copilot
@@ -80,14 +80,9 @@ When during a task you:
 - Detect scope drift (your changes go beyond the SPEC),
 - Hit a blocker you can't resolve unilaterally,
 
-you MUST surface that in the completion report §17.x or
-§19.x — NOT smooth it over. Name what happened, name
+you MUST surface that in the completion report §6.x
+— NOT smooth it over. Name what happened, name
 the alternative chosen, name the residual risk if any.
-
-The blameless-postmortem lineage applies: psychological
-safety surfaces causes faster. Owner directive
-"an honest mistake is an opportunity to learn" binds
-this practice.
 
 ### 3. Receiving Code Review
 
@@ -105,11 +100,15 @@ model) returns findings:
    "good catch, fixing now" but doesn't actually fix
    the underlying issue is worse than disagreement.
    Either fix correctly or push back.
-4. **Adapt the trajectory honestly.** Multiple R-rounds
-   in series surfacing new defects each round is a
-   signal (per CLI #5 R6→R8 trajectory reversal). When
-   trajectory reverses, surface the pattern, don't
-   keep iterating.
+4. **Adapt the trajectory honestly.** When multiple review
+   rounds each surface new defects, surface the pattern —
+   don't keep iterating.
+5. **Re-gate the applied fix.** A reviewer-suggested fix is
+   a hypothesis, not a verified patch: after applying it,
+   re-run the narrowest gate it can affect BEFORE reporting
+   the finding incorporated
+   (`file://specs/2026-06-30-fleet-roster-single-source/SPEC_EVIDENCE.md`
+   SE-2).
 
 ### 4. Ground Before You Answer
 
@@ -132,16 +131,12 @@ speculate; do not fill the gap from training/memory.
    (extends `file://agents/specs/SPEC.schema.md` §2 from
    specs to every answer). If you could not verify, say
    "unverified" — never present a guess as fact.
-4. **Correctness outranks frugality.** A wrong
-   speculative answer costs more than the research:
-   scrapped work plus the research you must do anyway.
-   Token/quota frugality MUST NOT be invoked to skip or
-   shorten research on a gap that matters.
+4. **Correctness outranks frugality.** A wrong speculative
+   answer costs more than the research. Token/quota
+   frugality MUST NOT be invoked to skip or shorten
+   research on a gap that matters.
 5. **Frugal on churn, not on research.** Economise on
-   wasteful PROCESS overhead — redundant back-and-forth,
-   over-synthesis, excessive coordination on routine or
-   settled work (a routine PR needs no thousands of
-   review round-trips). Research and grounding are
+   wasteful PROCESS overhead; research and grounding are
    PROTECTED spend.
 
 The `deep-research` harness is the heavyweight version of
@@ -162,7 +157,7 @@ Completion-report claims fall into bands:
   Example: "I expect this to work on macOS though I
   only tested on Linux."
 
-§17 / §19 completion-report rows MUST tag claims with
+§6 completion-report rows MUST tag claims with
 their band when the band is anything other than HIGH.
 Untagged claims default to HIGH and MUST be verifiable.
 
@@ -173,31 +168,23 @@ not accuracy.
 
 ### 6. Escalation Rubric (First-Class Anti-Doom-Loop Norm)
 
-The escalation rubric is not skill-only fine print: it is a
-**first-class, always-loaded anti-doom-loop norm**. Per the
-canon Decision at
-`file://specs/2026-06-20-agent-canon-bounded-autonomy-voice/SPEC.md`
-§7.3, when iteration is not converging an agent MUST stop and
-either surface to the owner or reset context rather than grind.
-Grinding past the threshold below is the documented cause of
-repeated resets — treat the rubric as a standing obligation, not
-a tip.
+When iteration is not converging, an agent MUST stop and either
+surface to the owner or reset context rather than grind
+(`file://specs/2026-06-20-agent-canon-bounded-autonomy-voice/SPEC.md`
+§7.3). Not converging means:
 
-When iteration stops converging — defined as:
 - 2+ consecutive review rounds with the same OR
   increasing defect count, OR
 - 3+ tool invocations attempting to fix the same
   underlying error, OR
 - A loop where each fix surfaces a new defect of the
   same shape (e.g. all are copilot-doc-verification
-  defects),
+  defects).
 
-STOP and either surface to the owner or reset context. Per the
-CLI #5 R6→R8 trajectory-reversal lesson at
-`file://specs/2026-05-25-agent-cli-invocation-craft/SPEC.md`
-§19.5: "when cross-family review trajectory reverses
-for 2+ rounds, narrow scope before grinding more
-cycles."
+When review trajectory reverses for 2+ rounds, narrow scope
+before grinding more cycles
+(`file://specs/2026-05-25-agent-cli-invocation-craft/SPEC.md`
+§19.5).
 
 The escalation surface IS the owner. The format:
 - Name the loop pattern observed.
@@ -255,14 +242,7 @@ written, so evidence is not lost.
 
 ## Cross-references
 
-- `file://agents/skills/verification/SKILL.md` —
-  verification gates this cluster's tool-receipts
-  practice extends.
-- `file://agents/skills/spec-evidence-governance/SKILL.md`
-  — failure-disclosure feeds durable evidence; a HIGH
-  claim contradicted later is a spec-evidence candidate.
-- `file://agents/skills/code-review/SKILL.md` —
-  receiving-code-review pairs with the giving side.
-- `file://specs/2026-05-25-agent-cli-invocation-craft/SPEC.md`
-  §19.5 — trajectory-reversal lesson + spec-evidence
-  candidates the escalation rubric operationalises.
+- `file://agents/skills/verification/SKILL.md` (the gates the
+  tool-receipts practice extends) and
+  `file://agents/skills/code-review/SKILL.md` (the giving side
+  of receiving-code-review).

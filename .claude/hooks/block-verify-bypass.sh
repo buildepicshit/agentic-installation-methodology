@@ -50,9 +50,26 @@ while IFS= read -r real_cmd; do
     # forms) between `git` and the subcommand — same classifier as
     # block-probe-residue.sh (ported per SE3 of
     # specs/2026-06-09-mutation-probe-isolation-discipline).
-    if printf '%s' "$real_cmd" | grep -qE '^git([[:space:]]+(-C[[:space:]]+[^[:space:]]+|-c[[:space:]]+[^[:space:]]+|--(git-dir|work-tree|namespace)([[:space:]]+[^[:space:]]+|=[^[:space:]]*)|--[A-Za-z-]+(=[^[:space:]]*)?|-[A-Za-z]))*[[:space:]]+(commit|push|rebase|merge|revert|cherry-pick|am)\b' \
-       && printf '%s' "$real_cmd" | grep -qE -- '(--no-verify|--no-gpg-sign)\b'; then
-        fired=1; matched="$real_cmd"; break
+    if printf '%s' "$real_cmd" | grep -qE '^git([[:space:]]+(-C[[:space:]]+[^[:space:]]+|-c[[:space:]]+[^[:space:]]+|--(git-dir|work-tree|namespace)([[:space:]]+[^[:space:]]+|=[^[:space:]]*)|--[A-Za-z-]+(=[^[:space:]]*)?|-[A-Za-z]))*[[:space:]]+(commit|push|rebase|merge|revert|cherry-pick|am)\b'; then
+        if printf '%s' "$real_cmd" | grep -qE -- '(--no-verify|--no-gpg-sign)\b'; then
+            fired=1; matched="$real_cmd"; break
+        fi
+        # core.hooksPath redirect on a guarded op sidesteps the installed
+        # hooks entirely (P4 hook-guardrail-hardening, 2026-07-02).
+        if printf '%s' "$real_cmd" | grep -qE 'core\.hooksPath'; then
+            fired=1; matched="$real_cmd [core.hooksPath redirect]"; break
+        fi
+        # `-n` is --no-verify for COMMIT only (push -n = dry-run,
+        # merge -n = no-stat). Detect a short-option cluster containing n
+        # on a commit invocation, incl. combined forms (-nm, -anm).
+        # Tokens after a `--` pathspec separator are FILE NAMES, not
+        # options — strip them first (r1 cross-family catch).
+        pre_dd="$real_cmd"
+        case "$pre_dd" in *" -- "*) pre_dd="${pre_dd%% -- *}" ;; esac
+        if printf '%s' "$pre_dd" | grep -qE '^git([[:space:]]+(-C[[:space:]]+[^[:space:]]+|-c[[:space:]]+[^[:space:]]+|--(git-dir|work-tree|namespace)([[:space:]]+[^[:space:]]+|=[^[:space:]]*)|--[A-Za-z-]+(=[^[:space:]]*)?|-[A-Za-z]))*[[:space:]]+commit\b' \
+           && printf '%s' "$pre_dd" | grep -qE '[[:space:]]-[A-Za-z]*n[A-Za-z]*([[:space:]]|$)'; then
+            fired=1; matched="$real_cmd [-n short-form no-verify]"; break
+        fi
     fi
 done < <(printf '%s' "$command" | extract_real_commands)
 

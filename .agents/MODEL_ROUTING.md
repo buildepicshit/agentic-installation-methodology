@@ -1,8 +1,6 @@
 # BES Model Routing Guide
 
 Status: canonical shared guidance, 2026-04-29.
-Last amended: 2026-06-10 (Capability Matrix + quality-first routing,
-per `specs/2026-06-10-model-capability-matrix/SPEC.md`).
 
 Purpose: choose the right agent and model for BES fleet work without relying on
 memory or taste. This guide is routing policy, not proof of account entitlement.
@@ -11,52 +9,25 @@ with an owner-approved probe.
 
 ## Source Checkpoints
 
-Checked on 2026-06-10 (full verification ledger:
-`specs/2026-06-10-model-stable-matrix-research/RESEARCH.md` §6 — 30
-claims adversarially verified against primary sources):
-
-- Anthropic Claude Fable 5 (`claude-fable-5`) is GA as of 2026-06-09:
-  Mythos-class frontier tier above Opus, 1M context / 128k output,
-  adaptive thinking always on, safety classifiers with documented
-  fallback to Opus 4.8:
-  <https://platform.claude.com/docs/en/about-claude/models/overview>.
-  Claude Mythos 5 is the same model without classifiers,
-  limited-access only (no BES entitlement).
-- Anthropic Opus 4.8 (`claude-opus-4-8`, GA 2026-05-28) remains the
-  most capable Opus-tier model, 1M context, effort defaults high:
-  <https://www.anthropic.com/news/claude-opus-4-8>. Opus 4.7/4.6 are
-  legacy-but-available pinned references:
-  <https://platform.claude.com/docs/en/about-claude/models/overview>
-- OpenAI GPT model docs identify `gpt-5.5` as the recommended
-  starting point for demanding GPT coding tasks and `gpt-5.4-mini` as the
-  speed/efficiency subagent lane. The GPT family reaches the fleet
-  exclusively through the GitHub Copilot CLI surface; the OpenAI
-  `codex`-line models and the standalone codex CLI are retired
-  (subscription elapsed, 2026-06-30). Cross-family review runs on
-  Copilot-served `gpt-5.5`.
-- GitHub Copilot serves 20 first-party models in the CLI (incl.
-  Claude Fable 5 behind admin enablement); auto model selection is
-  GA but remains FORBIDDEN in lane use — pin `--model` explicitly:
-  <https://docs.github.com/en/copilot/reference/ai-models/supported-models>
-- Canonical score sources: Artificial Analysis Intelligence Index
-  v4.0 <https://artificialanalysis.ai/evaluations/artificial-analysis-intelligence-index>
-  and Vals AI SWE-bench Verified independent re-run
-  <https://www.vals.ai/benchmarks/swebench> — see Capability Matrix.
-
 Re-check provider docs and account model pickers before any
-automation pin or long-running multi-agent dispatch.
+automation pin or long-running multi-agent dispatch. Live sources:
+
+- Claude models:
+  <https://platform.claude.com/docs/en/about-claude/models/overview>
+- Opus 4.8 GA: <https://www.anthropic.com/news/claude-opus-4-8>
+- Copilot-served models:
+  <https://docs.github.com/en/copilot/reference/ai-models/supported-models>
+- Canonical scores: AA Intelligence Index v4.0 + Vals SWE-bench
+  Verified — URLs in the Capability Matrix snapshot below.
+
+Evidence trail:
+`specs/2026-06-10-model-stable-matrix-research/RESEARCH.md`.
 
 ## Local Inventory
 
-Observed from the root control plane on 2026-05-04:
-
-| Surface | Observed state | Operational meaning |
-| --- | --- | --- |
-| Claude Code | `2.1.126 (Claude Code)` | Peer frontier coding/review lane when dispatched deliberately. |
-| Copilot CLI | `GitHub Copilot CLI 1.0.60` via `gh copilot` wrapper (2026-06-05; self-updates) | GPT-family surface for review, cross-validation of Claude-authored work, GPT-lane dispatch, and root fleet management when assigned. Enterprise seat (`copilot_plan: enterprise`, org `microsoft`); chat/completions/premium_interactions all `unlimited: true` per `gh api /copilot_internal/user` 2026-06-05. Adopted per `specs/2026-06-05-copilot-cli-cross-validation-lane/SPEC.md`. |
-| Claude advisor model | `opus` | Configured in `/var/home/hasnobeef/.claude/settings.json`. |
-| Claude configured model evidence | includes `claude-opus-4-8`, `claude-opus-4-7` | Present in `/var/home/hasnobeef/.claude.json`; proves local configuration, not live entitlement. |
-| Claude MCP | no user-level MCP servers configured | Verified after owner-approved cleanup; keep strict empty MCP config unless a spec approves otherwise. |
+Live surfaces: Claude Code and Copilot CLI (the GPT surface;
+unlimited enterprise seat), zero MCP servers — receipts in
+`specs/2026-06-05-copilot-cli-cross-validation-lane/SPEC.md`.
 
 ## Owner Calibration
 
@@ -65,13 +36,10 @@ HasNoBeef's operating preference for this fleet:
 - `gpt-5.5` is the strongest general-purpose OpenAI GPT model currently
   routed for BES. Copilot is the GPT agent surface; `gpt-5.5` is the model.
   Do not refer to a separate "Copilot 5.5" model.
-- Claude Opus 4.8 (`claude-opus-4-8`) is the frontier Claude lane as of
-  2026-05-28, accepted on Anthropic's published comparative evaluations
-  (first-party evidence: GA, $5/$25 unchanged, and ~4x less likely than its
-  predecessor to let flaws in its own code pass unremarked — the property the
-  cross-validation/review lane most needs). Opus 4.7 and 4.6 are
-  legacy-but-available (same price), used only as deliberate legacy/pinned
-  references. Do not hard-code model recency as quality: 4.8's promotion is an
+- Claude Opus 4.8 (`claude-opus-4-8`) is the frontier Claude lane
+  (GA 2026-05-28). Opus 4.7 and 4.6 are legacy-but-available (same
+  price), used only as deliberate legacy/pinned references. Do not
+  hard-code model recency as quality: 4.8's promotion is an
   evidence-cited decision, not an automatic newest-is-best bump.
 - Claude Sonnet with adaptive behavior, when available in the active surface,
   is a useful first-pass Claude lane for creative/product/design synthesis,
@@ -87,11 +55,8 @@ HasNoBeef's operating preference for this fleet:
   only when the task clearly benefits and availability is confirmed.
 - Weekly usage limits are real scheduling constraints. Route by capability
   fit (Capability Matrix verbs + canonical score), quota/availability, and
-  the need for independent model-family review. Cost is NOT a routing
-  input — the only success metric is excellence and quality of
-  deliverables. Use the whole fleet instead of spending frontier turns on
-  work that `rg`, tests, preflight, or a bounded read-only scan can answer
-  equally well — that is capability fit, not savings.
+  the need for independent model-family review; cost is NOT a routing
+  input (canonical statement: Capability Matrix intro).
 
 ## Fast Mode Policy
 
@@ -102,12 +67,7 @@ a speed-prioritised API configuration, ~2.5x faster at identical quality
 - PERMITTED for interactive Opus 4.8 work where latency matters.
 - MUST NOT be used in automation, CI, or dispatched/batch lanes
   (determinism; dispatched workers run standard effort tiers).
-- Operational notes (owner-facing facts, not routing inputs): 4.8 fast is
-  $10/$50 per MTok; 4.7/4.6 fast is $30/$150 and 4.6 fast is deprecating —
-  prefer 4.8 if fast mode is used at all (deprecation + parity with the
-  frontier lane).
-- Fast mode draws from usage credits, not plan-included usage, and is
-  Team/Enterprise admin-gated. Supported only on Opus 4.8/4.7/4.6.
+- If fast mode is used at all, prefer 4.8 fast.
 
 ## Access Status
 
@@ -134,7 +94,8 @@ fast lane produces an equally excellent deliverable — never that it
 saves money. (Per `specs/2026-06-10-model-capability-matrix/SPEC.md`
 §7.3, owner-binding.)
 
-Snapshot: 2026-06-10 — canonical scores per
+Snapshot: 2026-06-10 scores; status/entitlement refreshed 2026-07-10 (Fable-5
+needs-probe resolved) — canonical scores per
 **AA-Intelligence-Index-v4.0** (Artificial Analysis, vendor-neutral,
 10 independently-run evals, ~50% agentic+coding weight:
 <https://artificialanalysis.ai/evaluations/artificial-analysis-intelligence-index>);
@@ -145,7 +106,7 @@ break canonical ties within ~3 points. Evidence trail:
 
 | Model | Family | Surfaces | Tier | Verbs | Canonical (AA v4.0) | Tiebreaker (Vals SWE-V) | Status |
 |---|---|---|---|---|---|---|---|
-| `claude-fable-5` | claude | claude-code, api | frontier | ORCHESTRATE, IMPLEMENT, OPERATE, SYNTHESIZE, PIONEER | 64.9 | 95.00 | documented, needs-probe (entitlement) |
+| `claude-fable-5` | claude | claude-code, api | frontier | ORCHESTRATE, IMPLEMENT, OPERATE, SYNTHESIZE, PIONEER | 64.9 | 95.00 | documented; entitlement resolved 2026-07-10 (active session model) |
 | `claude-opus-4-8` | claude | claude-code, copilot-cli, api | frontier | IMPLEMENT, ORCHESTRATE, OPERATE, REASON, BACKSTOP | 61 | 88.60 | configured, approved-for-fleet (FRONTIER) |
 | `claude-sonnet-4-6` | claude | claude-code, copilot-cli, api | capable | IMPLEMENT, CONVERSE, ABSTRACT | 52 (adaptive/max effort) | — | documented, needs-probe |
 | `claude-haiku-4-5-20251001` | claude | claude-code, copilot-cli, api | fast | SCAN, RESPOND, IMPLEMENT (bounded) | needs-probe | — | documented, needs-probe |
@@ -153,40 +114,16 @@ break canonical ties within ~3 points. Evidence trail:
 | `gpt-5.4` | gpt | copilot-cli, api | capable | IMPLEMENT, SYNTHESIZE | 57 (xhigh) | — | documented, needs-probe |
 | `gpt-5.4-mini` | gpt | copilot-cli, api | fast | FAN-OUT, IMPLEMENT (bounded) | needs-probe | — | documented, needs-probe |
 
-Verb evidence (every verb cites a public capability source via
+Verb evidence: every verb cites a public capability source —
 `specs/2026-06-10-model-stable-matrix-research/RESEARCH.md` §4;
-cost-framed observations are excluded by contract — the research
-workpad's token-efficiency verb, its price-framed Sonnet/GPT-5.4
-review observations, and its multiplier-framed Haiku fan-out
-observation do not seed this matrix):
+cost-framed observations are excluded by contract.
 
-- `claude-fable-5` — ORCHESTRATE (multi-day autonomous planning +
-  sub-agent delegation, Anthropic announcement); IMPLEMENT
-  (SWE-bench Verified 95.0 system card / 95.00 Vals independent);
-  OPERATE (Terminal-Bench 2.1 84.3, OSWorld 85.0); SYNTHESIZE
-  (GDPval-AA Elo 1932, field-leading); PIONEER (FrontierCode
-  Diamond 29.3 vs Opus 4.8's 13.4).
-- `claude-opus-4-8` — IMPLEMENT (SWE-V 88.6 / 88.60 Vals);
-  ORCHESTRATE (Anthropic-recommended complex-agentic starting
-  point, MCP-Atlas 82.2); OPERATE (OSWorld 83.4, TB 2.1
-  74.6-82.7 config-sensitive); REASON (GPQA Diamond 93.6);
-  BACKSTOP (documented Fable 5 production fallback target).
-- `claude-sonnet-4-6` — IMPLEMENT (SWE-V 79.6); CONVERSE
-  (tau2-bench Telecom 97.9 / Retail 91.7); ABSTRACT (ARC-AGI-2
-  58.3).
-- `claude-haiku-4-5-20251001` — SCAN (built-in Explore subagent
-  lane, Claude Code docs); RESPOND ("fastest model with
-  near-frontier intelligence"); IMPLEMENT bounded (SWE-V 73.3).
-- `gpt-5.5` — OPERATE (Terminal-Bench 2.0 82.7 first-party; top
-  tbench.ai harness pairs all run GPT-5.5); IMPLEMENT (Vals SWE-V
-  82.60 independent); SYNTHESIZE (GDPval 84.9); RETRIEVE (MRCR v2
-  74.0 at 512K-1M vs GPT-5.4's 36.6).
-- `gpt-5.4` — IMPLEMENT (SWE-bench Pro 57.7, TB 2.0 75.1);
-  SYNTHESIZE (GDPval 83).
-- `gpt-5.4-mini` — FAN-OUT (OpenAI's stated subagent lane:
-  "strongest mini model yet for coding, computer use, and
-  subagents"); IMPLEMENT bounded (not yet independently scored —
-  needs-probe).
+Surfaces caveat: for the Claude rows, `copilot-cli` in the Surfaces column
+records where the model is *technically served*, NOT a permitted lane.
+Serving a Claude model through Copilot CLI is FORBIDDEN in lane use — it
+silently voids cross-family validity (see the Copilot Model Catalog below).
+The Claude fleet lane is `claude-code` (or `api`); Copilot CLI is the
+GPT-family lane only.
 
 Row-inclusion rule: a model gets a row iff the fleet can dispatch
 it as a lane today through a configured surface AND it is a live
@@ -205,6 +142,20 @@ AA index values for `gpt-5.4-mini` and `claude-haiku-4-5` are
 needs-probe (tracked by AA, exact values not yet verified);
 Fable 5 is absent from Terminal-Bench/LMArena Text boards
 (launched 2026-06-09 — submission lag).
+
+Status refresh 2026-07-10 (refresh trigger (c), needs-probe resolution):
+Fable-5's entitlement needs-probe is RESOLVED — it is the active model for
+this fleet session, so its row status is updated from `needs-probe`. CAVEAT:
+current access is promotional (through 2026-07-12 per the audit) — treat the
+resolution as time-limited, not permanent availability, and re-probe before
+pinning Fable-5 in any automation or long-running lane. The
+local Claude Code harness additionally references `claude-sonnet-5` /
+`claude-sonnet-5[1m]` model ids while the capable-tier Claude row here is
+`claude-sonnet-4-6` — a probe-candidate for refresh trigger (b); entitlement
+is NOT asserted pending an owner-approved probe. The owner reported a possible
+new flagship GPT model on 2026-07-10; an entitlement probe per Access Status
+was run and REJECTED (`--model gpt-5.6` → "not available" on Copilot CLI
+1.0.70), so it stays needs-probe (follow-up tracked in STATUS.md Owner-pending).
 
 Refresh discipline: re-baseline this matrix on (a) an AA index
 version bump (a v4 → v5 bump is a deliberate re-baselining event
@@ -226,11 +177,6 @@ surfaces; the model name is separate from the serving surface.
 | `gpt-5.4` | documented, needs-probe | Fallback when `gpt-5.5` is unavailable or a workflow is pinned to GPT-5.4. | Replacing `gpt-5.5` for high-risk work when `gpt-5.5` is available. |
 | `gpt-5.4-mini` | documented, needs-probe | Fast read-heavy exploration, parallel document scans, lightweight subagents, low-risk summarization. | Final integration decisions, ambiguous architecture, high-risk edits. |
 
-Official OpenAI guidance says `gpt-5.5` is the starting point for most demanding
-GPT coding tasks when available; `gpt-5.4-mini` is the speed/efficiency option
-for lighter coding tasks and subagents. For BES fleet routing, Copilot is the
-configured CLI surface for these GPT-family assignments.
-
 ## Claude Model Catalog
 
 Verified sources: local Claude config and official Claude Code model docs.
@@ -238,7 +184,8 @@ Verified sources: local Claude config and official Claude Code model docs.
 | Model or alias | Status | Use for | Avoid for |
 | --- | --- | --- | --- |
 | `opus` | configured, documented, approved-for-fleet | Independent architecture/spec review, ambiguity review, high-risk design critique, public-OSS review. | Bounded fanout and routine edits — fast lanes fit those equally well. |
-| `claude-opus-4-8` | configured, documented, approved-for-fleet (FRONTIER) | Frontier Claude lane: cross-validation/review, high-risk implementation review, architecture/spec critique, public-OSS release review, independent second-pass code review. Accepted on Anthropic published evals (first-party): GA 2026-05-28, $5/$25, ~4x less likely to let its own code flaws pass. | Bounded fanout and routine edits — fast lanes fit those equally well. |
+| `claude-opus-4-8` | configured, documented, approved-for-fleet (FRONTIER) | Frontier Claude lane: cross-validation/review, high-risk implementation review, architecture/spec critique, public-OSS release review, independent second-pass code review. | Bounded fanout and routine edits — fast lanes fit those equally well. |
+| `claude-fable-5` | configured, documented; entitlement resolved 2026-07-10 | Top-scored Claude row in the Capability Matrix (AA v4.0 64.9): orchestration, synthesis, high-risk implementation/review, deep multi-step work. Active model for this session. | Cost-driven avoidance (cost is not a routing input); assumes a permanent role before the owner designates one. |
 | `claude-opus-4-7` | documented, approved-for-fleet (LEGACY lane-role) | Legacy-but-available frontier predecessor (same $5/$25). Use only as a deliberate pinned/legacy reference; 4.8 is the frontier lane. | New frontier-lane assignments (use 4.8). |
 | `claude-opus-4-6` | documented, approved-for-fleet (LEGACY lane-role) | Legacy-but-available (same price). Deliberate legacy/pinned use only. | New frontier-lane assignments (use 4.8). |
 | `sonnet` | documented, needs-probe | Creative/product/design synthesis, adaptive first-pass Claude work when configured, daily Claude coding, implementation support, doc synthesis, repo-local work after approved spec. | Highest-risk coding or architecture calls when Opus 4.8 or Copilot-served `gpt-5.5` is available and quota allows. |
@@ -252,12 +199,11 @@ interactive work. Use full model names when reproducibility matters.
 ## Copilot Model Catalog
 
 GitHub Copilot CLI is a co-equal GPT-family SURFACE; the lane's family
-keys on the MODEL served, not the CLI brand
-(`specs/2026-06-05-copilot-cli-cross-validation-lane/SPEC.md` §8).
+keys on the MODEL served, not the CLI brand.
 
 | Model | Status | Use for | Avoid for |
 | --- | --- | --- | --- |
-| `gpt-5.5` (via Copilot CLI) | probed 2026-06-05 (`gh copilot -- -p … --model gpt-5.5` served, rc=0), approved-for-fleet | Cross-validation/review of Claude-authored work; primary GPT-lane dispatch; second independent GPT opinion when the primary author is not GPT-family. | Cross-validating GPT-authored work — same family. |
+| `gpt-5.5` (via Copilot CLI) | approved-for-fleet | Cross-validation/review of Claude-authored work; primary GPT-lane dispatch; second independent GPT opinion when the primary author is not GPT-family. | Cross-validating GPT-authored work — same family. |
 | other GPT models on Copilot | needs-probe | Probe with a pinned `--model` before catalog promotion. | Automation pins before a probe. |
 | non-GPT models on Copilot | FORBIDDEN in lane use | — | Any lane assignment: serving a Claude model through Copilot silently voids cross-family validity. |
 | `--model auto` | FORBIDDEN in lane use | — | Any lane invocation (mechanically blocked by `validate-cli-invocation.sh`). |
@@ -269,8 +215,7 @@ Copilot lane rules:
   `model_route` is GPT-family (SPEC.schema §1.4 different-family rule).
 - GPT-surface choice: Copilot CLI is the GPT-family fleet surface for
   implementation, review/cross-validation of Claude work, and GPT-lane
-  dispatch. Seat quotas are not a constraint (unlimited per the
-  2026-06-05 entitlement receipt).
+  dispatch. Seat quotas are not a constraint.
 - Scripted invocations follow the `cross-agent-cli-invocation` skill
   pattern and are gated by the same PreToolUse hook as claude.
 
@@ -300,25 +245,11 @@ position that the matrix can override in either direction.
 
 ## Approved SPEC Decomposition
 
-Run `/decompose-approved-spec` after a SPEC reaches `status:
-approved` and before agents begin execution. The phase is
-**BLOCKING** for Contract/Task SPECs with ≥ 2 slices in §11
-Execution Plan. The approved SPEC remains the immutable execution
-authority; decomposition emits durable per-slice TASK.md files that
-agents execute directly — no external tracker or dispatcher required
-(`file://agents/skills/approved-spec-decomposition/SKILL.md`,
-`file://agents/specs/SPEC.schema.md` §1.4; the Symphony-required
-aspects are superseded per
-`file://specs/2026-05-28-decouple-symphony-linear/SPEC.md`).
-
-Output: one TASK.md per slice at
-`specs/<spec_id>/tasks/T-NN-<slug>.md` (or
-`.agents/specs/<spec_id>/tasks/...` in child repos). Front-matter
-pins the model lanes (primary `model_route`,
-`cross_validation_lane`, `verification_lane`), the dispatch mode,
-deps, write_scope, and `acceptance_commands`. Body sections are
-Goal, Parent SPEC anchor, Scope, Model dispatch, Acceptance,
-Evidence (executor fills), Stop conditions, and an OPTIONAL dispatch binding.
+The decomposition procedure, TASK.md output contract, cross-family
+refusal, AFK/HITL criteria, owner-only status flips, and the
+integration gate are canonical in
+`file://agents/skills/approved-spec-decomposition/SKILL.md` and
+`file://agents/specs/SPEC.schema.md` §1.4.
 
 Model-lane assignment per task class draws from the Routing Matrix
 above:
@@ -332,28 +263,10 @@ above:
 - `task_class: research` / `docs` → fast read lanes acceptable
   for the primary; cross-family reviewer for high-stakes claims.
 
-`cross_validation_lane` MUST be a different model family from
-`model_route`. The decomposition skill REFUSES to emit a TASK.md
-without cross-family pairing
-(`file://agents/skills/approved-spec-decomposition/SKILL.md` Hard
-Rules).
-
-Mark a slice `AFK` only when ownership is bounded, acceptance
-evidence is explicit, no mid-slice owner judgment is needed, and
-the cross-validation lane is configured. Otherwise mark `HITL`.
-
-Owner alone flips the parent SPEC's status `approved →
-decomposed`. The decomposition skill MUST NOT.
-
-After all TASK.md reach `status: done`, the parent SPEC's full
-`acceptance_commands` run as the integration gate before flipping
-`decomposed → in-execution → verified`.
-
 ## Capacity and Availability
 
-Weekly model limits and surface outages are operational scheduling
-constraints — they shift WHEN and WHERE work runs, never the quality
-bar. These adjustments are capacity management, not cost
+Weekly model limits and surface outages shift WHEN and WHERE work
+runs, never the quality bar — capacity management, not cost
 optimization:
 
 | Pressure | Routing adjustment |
@@ -366,15 +279,10 @@ optimization:
 | Both frontier quotas constrained | Stop parallel frontier fanout. Use fast/read-only models for inventory, then queue owner decisions until frontier capacity returns. |
 | Creative work with low code risk | Prefer Claude Sonnet/adaptive when available, then validate implementation-impacting decisions with Copilot CLI `gpt-5.5` or the frontier Claude lane. |
 
-Be frugal on wasteful PROCESS overhead — redundant back-and-forth,
-over-synthesis, coordination churn on routine or settled work — and on
-tasks a `rg` / tests / preflight / read-only scan can answer. Frugality
-MUST NOT be applied to research: grounding a load-bearing gap from
-primary sources is PROTECTED spend, and correctness-when-it-matters
-outranks token frugality (see
-`file://agents/skills/execution-discipline-cluster/SKILL.md` practice 4 "Ground
-Before You Answer"). Use frontier models for ambiguity, architecture,
-code changes, integration, research, and final calls.
+Be frugal on wasteful PROCESS overhead, never on research
+(`file://agents/skills/execution-discipline-cluster/SKILL.md`
+practice 4). Use frontier models for ambiguity, architecture, code
+changes, integration, research, and final calls.
 
 ## Dispatch Rules
 
@@ -441,7 +349,23 @@ code changes, integration, research, and final calls.
     Adopted 2026-06-10 after four consecutive guardrail SPECs where
     cross-family review caught defects same-family work missed
     (`specs/2026-06-09-mutation-probe-isolation-discipline/SPEC_EVIDENCE.md`
-    SE1; owner-directed).
+    SE1; owner-directed). This is the SINGLE CANONICAL statement of the
+    cross-family rule (WS-GATES,
+    `file://specs/2026-06-30-operating-model-lean-down/SPEC.md` §7); the
+    spec-review, code-review, and verification skills cite it rather than
+    restating it. Classification check (2026-07-02): classify by grepping
+    the diff's touch points against the propagation manifests — the class
+    is touch-point-defined, and intent framing ("machinery", "just docs")
+    is not an exemption; three same-day misclassifications each hid real
+    review-caught defects
+    (`file://specs/2026-07-01-propagation-machinery-fixes/SPEC_EVIDENCE.md`
+    SE-5). There is deliberately NO waiver mechanism (owner-affirmed
+    2026-07-02 against a recorded-waiver alternative: every waived or
+    misclassified review that week hid real defects, while the rule's one
+    hard stop proved correct). If the cross-family lane is unavailable,
+    the work HOLDS; a per-case owner override remains possible only as an
+    explicit in-transcript directive — an owner action, not a rule
+    feature.
 
 ## Standard Prompts
 
@@ -479,10 +403,6 @@ claude -p \
   "Read the named source docs and current diffs. Review only. Return deep technical risks, correctness concerns, missing tests, and decision points. Do not edit files."
 ```
 
-Legacy Opus 4.7/4.6 remain available at the same price as deliberate pinned
-references (swap `--model claude-opus-4-8` for `claude-opus-4-7` /
-`claude-opus-4-6`); 4.8 is the default frontier lane.
-
 Claude creative/product synthesis:
 
 ```bash
@@ -497,7 +417,7 @@ claude -p \
 Copilot read-only review (co-equal GPT lane; scripted):
 
 ```bash
-gh copilot -- -p "$(cat reviews/PROMPT.md)" \
+gh copilot -- -p "$(cat specs/<id>/reviews/PROMPT.md)" \
   --model gpt-5.5 \
   -s \
   --no-custom-instructions \
@@ -506,12 +426,10 @@ gh copilot -- -p "$(cat reviews/PROMPT.md)" \
   < /dev/null
 ```
 
-Copilot's built-in read/search tools need no permission grant
-(probed 2026-06-05: a file-read review completed with deny rules
-only); the deny rules block writes, shell, and network — a
-read-only review posture. Do not add `--allow-all-tools`. Pin `--model` explicitly (`auto` is
-blocked by the validator). The `< /dev/null` redirect is
-RECOMMENDED (no stdin hang observed in the 2026-06-05 probe).
+Deny write/shell/url for read-only review/scan posture; never add
+`--allow-all-tools`. Pin `--model` explicitly (`auto` is blocked by
+the validator). The `< /dev/null` stdin redirect is RECOMMENDED for
+non-interactive scripted invocations.
 
 Copilot GPT repo worker:
 
@@ -534,20 +452,14 @@ gh copilot -- -p "<prompt>" \
   < /dev/null
 ```
 
-The `< /dev/null` redirect is RECOMMENDED for non-interactive scripted
-invocations; deny tools explicitly for read-only review/scan posture.
-
 Treat these as templates. Every actual dispatch prompt must name the repo,
 spec path, allowed files, verification gate, and whether edits are allowed.
 
 ## MCP Note
 
-Model routing does not approve MCP usage. The BES default remains zero active
-MCP servers unless a task spec explicitly approves otherwise and the server is
-entered in `.agents/mcp/approved-defaults.json`.
-
-Current local posture: Claude user-level MCP config has no servers configured.
-Keep using `--strict-mcp-config --mcp-config '{"mcpServers":{}}'` for Claude
+Model routing does not approve MCP usage; the zero-active-MCP
+default is canonical in `.agents/mcp/README.md`. Keep
+`--strict-mcp-config --mcp-config '{"mcpServers":{}}'` for Claude
 dispatch unless a task spec explicitly approves MCP use.
 
 ## Verification Commands

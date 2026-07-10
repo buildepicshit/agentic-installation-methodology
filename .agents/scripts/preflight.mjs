@@ -433,6 +433,14 @@ function validateFleetManifestLock() {
     }
     checked += 1;
     const actual = sha256(absPath);
+    // Self-exemption: preflight.mjs skips its OWN lock entry from the hash
+    // comparison. Rationale: this file is executing now, so a self-check of
+    // the running checker is circular — a tampered preflight could trivially
+    // whitewash its own hash, so the result carries no trust. Residual gap:
+    // a locally-drifted child .agents/scripts/preflight.mjs is invisible to
+    // itself; in the SOURCE repo commit-time coverage comes from
+    // block-stale-derived-artifacts (fleet-selfcheck --check), which runs the
+    // lock generator independently. (Documented 2026-07-10 hygiene sweep.)
     if (actual !== item.sha256 && relPath !== rel(__filename)) {
       reportDrift(`fleet manifest drift: ${relPath} sha256 ${actual} != lock ${item.sha256}`);
       drift += 1;

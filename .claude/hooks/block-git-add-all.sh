@@ -48,7 +48,10 @@ command="$(read_command)"
 fired=0; matched=""
 while IFS= read -r real_cmd; do
     [ -z "$real_cmd" ] && continue
-    if printf '%s' "$real_cmd" | grep -qE '^git[[:space:]]+add[[:space:]]+(\.|--all|-A)([[:space:]]|$)'; then
+    # Tolerate git GLOBAL options (incl. value-carrying -C/-c/--git-dir
+    # forms) between `git` and `add` — same classifier as
+    # block-probe-residue.sh (P4 hook-guardrail-hardening, 2026-07-02).
+    if printf '%s' "$real_cmd" | grep -qE '^git([[:space:]]+(-C[[:space:]]+[^[:space:]]+|-c[[:space:]]+[^[:space:]]+|--(git-dir|work-tree|namespace)([[:space:]]+[^[:space:]]+|=[^[:space:]]*)|--[A-Za-z-]+(=[^[:space:]]*)?|-[A-Za-z]))*[[:space:]]+add[[:space:]]+(\.|--all|-A)([[:space:]]|$)'; then
         fired=1; matched="$real_cmd"; break
     fi
 done < <(printf '%s' "$command" | extract_real_commands)

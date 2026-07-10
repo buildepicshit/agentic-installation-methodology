@@ -17,7 +17,7 @@ set -uo pipefail
 audit_rev() {
     local rev="$1" warns=0
     local msg changed tracked
-    msg="$(git log -1 --format=%B "$rev" 2>/dev/null)" || { echo "ERROR: cannot read $rev" >&2; return 64; }
+    msg="$(git log -1 --format=%B "$rev" 2>/dev/null)" || { echo "ERROR: cannot read $rev" >&2; AUDIT_GIT_ERR=1; return 0; }
     changed="$(git show --name-only --format= "$rev" 2>/dev/null)"
     tracked="$(git ls-tree -r --name-only "$rev" 2>/dev/null)"
     # Path-looking tokens: contain a slash AND end in a short extension.
@@ -34,14 +34,25 @@ audit_rev() {
 }
 
 total=0
+# Git errors are signalled via AUDIT_GIT_ERR (a distinct channel), NOT via a
+# 64 return value — otherwise a commit with exactly 64 overclaimed paths would
+# be misread as a git/usage error, and in --range mode a git error would be
+# silently summed into the warning total instead of aborting.
+AUDIT_GIT_ERR=0
 if [ "${1:-}" = "--range" ]; then
     [ -n "${2:-}" ] || { echo "usage: audit-tracked-paths.sh --range <a>..<b>" >&2; exit 64; }
+    # Capture rev-list output AND status up front — process substitution hides
+    # the exit status, so an invalid range would otherwise iterate zero times
+    # and falsely report clean.
+    revs="$(git rev-list "$2" 2>/dev/null)" || { echo "ERROR: git rev-list failed for range: $2" >&2; exit 64; }
     while IFS= read -r rev; do
+        [ -n "$rev" ] || continue
         audit_rev "$rev"; total=$((total + $?))
-    done < <(git rev-list "$2")
+        [ "$AUDIT_GIT_ERR" = "1" ] && { echo "ERROR: git error during range audit; aborting" >&2; exit 64; }
+    done <<< "$revs"
 else
     audit_rev "${1:-HEAD}"; total=$?
-    [ "$total" = "64" ] && exit 64
+    [ "$AUDIT_GIT_ERR" = "1" ] && exit 64
 fi
 echo "audit-tracked-paths: $total warning(s)"
 [ "$total" -eq 0 ]

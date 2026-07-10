@@ -63,23 +63,33 @@ Companion workflow: `agents/workflows/review-spec.md`
 - `spec_path` — repo-relative path to the artefact under review.
   MUST be either `<spec-folder>/SPEC.md` or
   `<spec-folder>/IDEA.md`.
-- Front-matter is parsed first. The skill REQUIRES:
-  - `type` (`task` | `contract` | `decision`) for SPEC.md, OR
-  - `implies_spec_type` (`task` | `contract` | `decision`) for
-    IDEA.md.
-  If front-matter is missing or malformed, the run aborts with a
-  blocking failure of `criterion: front-matter-parse`.
+- Front-matter is parsed first. `type` (SPEC.md) and
+  `implies_spec_type` (IDEA.md) are OPTIONAL post-lean
+  (SPEC.schema §1.1/§1.2): when present they select the per-type bar;
+  when ABSENT the gate applies the Task bar (bar `b`) as the default
+  and does NOT abort. Only a value outside
+  `task` | `contract` | `decision`, or unterminated / unparseable
+  YAML, aborts with a blocking `criterion: front-matter-parse`.
 
-## Gate selection
+## The review-gate stack (≤5)
 
-Per SPEC §10 and SPEC.schema §5:
+Per the lean-down Decision §7
+(`file://specs/2026-06-30-operating-model-lean-down/SPEC.md`) the review-gate
+stack is FIVE gates, no more: (1) the **IDEA gate**; (2) the **unified SPEC
+gate** — ONE gate with per-type variants (below), not four separate gates;
+(3) **code-review** of execution diffs; (4) **verification**; (5)
+**cross-family review** — stated ONCE, canonically, in
+`file://agents/MODEL_ROUTING.md` Rule 20 (retained, not removed; skill docs
+cite it rather than restate it).
 
-| Artefact | Gate | Bar | Lint requirement |
+The unified SPEC gate dispatches per type (bar + lint vary by variant):
+
+| Variant | Gate | Bar | Lint requirement |
 |---|---|---|---|
-| `IDEA.md` | §10.1 IDEA gate | n/a | RECOMMENDED |
-| `SPEC.md` with `type: task` | §10.2 Task gate | `b` (verifiable) | RECOMMENDED |
-| `SPEC.md` with `type: contract` | §10.3 Contract gate | `c` (Contract-grade) | **REQUIRED** |
-| `SPEC.md` with `type: decision` | §10.4 Decision gate | `b-plus-candidates` | RECOMMENDED |
+| `IDEA.md` | §10.1 IDEA variant | n/a | RECOMMENDED |
+| `SPEC.md` `type: task` | §10.2 Task variant | `b` (verifiable) | RECOMMENDED |
+| `SPEC.md` `type: contract` | §10.3 Contract variant | `c` (Contract-grade) | **REQUIRED** |
+| `SPEC.md` `type: decision` | §10.4 Decision variant | `b-plus-candidates` | RECOMMENDED |
 
 Detailed per-type criteria, including studio-principle additional
 checks: see `references/per-type-gates.md`.
@@ -105,19 +115,22 @@ RECOMMENDED. The skill SHOULD run it and record advisory entries;
 it MUST NOT treat lint exit 1 as blocking for these types unless
 the gate otherwise requires the underlying check.
 
-## Contract capture-after defer-shorthand check (2026-05-17)
+If `agents/scripts/lint-spec.sh` is absent at the time of
+invocation, a Contract SPEC review MUST report
+`criterion: lint-unavailable`, `severity: blocking`.
 
-Per the 2026-05-17 ceremony-weight-refactor Decision SPEC §7,
+## Contract capture-after defer-shorthand check
+
 Contract SPECs landing at `status: verified` via the
 capture-after exception MAY use a one-paragraph defer-shorthand
-in §1 Problem Statement and §13 Test and Validation Matrix. The
+in §1 Problem and §5 Test / Validation. The
 shorthand pattern: a single paragraph whose only substantive
 content is a `file://specs/<id>/IDEA.md` cite pointing at the
-producing IDEA's §1 / §13.
+producing IDEA's Problem / Test-Validation content.
 
 The Contract per-type gate MUST add the following BLOCKING
 check when the SPEC under review has `status: verified` AND
-either §1 or §13 body appears to be defer-shorthand
+either §1 or §5 body appears to be defer-shorthand
 (≤ 3 non-blank non-comment lines, all citation-prefixed,
 including a `file://specs/<id>/IDEA.md` cite):
 
@@ -132,15 +145,13 @@ including a `file://specs/<id>/IDEA.md` cite):
    resolve to substantive content`. Status: `needs-revision`.
 
 For Contracts at any other status (`draft`, `approved`,
-`in-execution`), defer-shorthand in §1 or §13 MUST be rejected
+`in-execution`), defer-shorthand in §1 or §5 MUST be rejected
 with: `capture-after-defer-shorthand: not permitted at status:
 <status>; defer-shorthand requires status: verified`. Status:
 `needs-revision`.
 
 This check is BLOCKING per
-`file://specs/2026-05-17-ceremony-weight-refactor/SPEC.md` §7
-"the Contract per-type gate verifying that any capture-after
-defer-shorthand resolves to a cited IDEA section".
+`file://specs/2026-05-17-ceremony-weight-refactor/SPEC.md` §7.
 
 ## Quality Gate Result
 
@@ -226,10 +237,12 @@ condition. The owner sets `approved` after reviewing the Quality
 Gate Result and the SPEC (SPEC §7.6).
 
 If front-matter status is already a terminal or post-approval
-value (`approved`, `in-execution`, `verified`, `closed`,
-`superseded`), the skill MUST refuse to run with a blocking
-failure of `criterion: status-not-reviewable` and MUST NOT mutate
-the artefact.
+value (`approved`, `decomposed`, `in-execution`, `verified`,
+`closed`, `superseded`), the skill MUST refuse to run with a
+blocking failure of `criterion: status-not-reviewable` and MUST NOT
+mutate the artefact. (`decomposed` is owner-set and post-approval —
+re-running the gate could flip it back to `needs-revision`, a revert
+the schema §1.3 forbids without owner action.)
 
 ## Hard rules
 
@@ -247,22 +260,20 @@ the artefact.
   safety. Editorial polish is advisory at most.
 - Lint exit 1 on a Contract SPEC is blocking even if the gate
   otherwise passes. Lint exit 2 is advisory.
-- **Cross-family review.** When the SPEC was authored primarily by
-  a model in one family (Copilot / Claude), the spec-review pass
-  SHOULD be performed by a model from a different family. Same-
-  family review is structurally weaker. For **fleet-propagating
-  guardrail SPECs** (touch points carried by the propagation
-  manifests — class defined in `file://agents/MODEL_ROUTING.md`
-  Operating Rule 20) cross-family review is REQUIRED: the artefact
-  MUST NOT transition to `approved-pending-owner` on a
-  same-family-only pass. For non-guardrail work, if the only
+- **Cross-family review.** Semantics are stated once in
+  `file://agents/MODEL_ROUTING.md` Rule 20: the spec-review pass
+  SHOULD be cross-family, and for **fleet-propagating guardrail
+  SPECs** (class defined there) cross-family review is REQUIRED —
+  the artefact MUST NOT transition to `approved-pending-owner` on
+  a same-family-only pass. For non-guardrail work, if the only
   available reviewer is from the same family as the author, record
   this in the Quality Gate Result `evidence` field as
   `same-family-review: <model>` and surface it as an `advisory`
-  finding. See `file://agents/MODEL_ROUTING.md` "Routing Matrix"
-  row for Spec review and
-  `file://specs/2026-05-04-agent-parallelism-and-model-routing-v2/SPEC.md`
-  §7.3.
+  finding. Every cross-family review ARTIFACT MUST carry the
+  Tool-Receipt Block (canonical definition:
+  `file://agents/skills/code-review/SKILL.md` "Tool-Receipt Block");
+  a no-receipt review is INVALID for gate purposes — treated as
+  not-run.
 
 ## Output to caller
 
@@ -283,18 +294,5 @@ After running the gate the skill MUST emit, in this order:
 
 ## Cross-references
 
-- Authority:
-  `file://specs/2026-05-01-bes-spec-authoring-procedure-v1/SPEC.md`
-  §10, §11.3, §17.3.
-- Per-type criteria:
-  `file://agents/skills/spec-review/references/per-type-gates.md`.
-- Shared schema: `file://agents/specs/SPEC.schema.md` §5
-  (handoff), §1.3 (state machine), §2 (citation grammar), §3
-  (RFC 2119).
-- Companion workflow: `file://agents/workflows/review-spec.md`.
-- Lint script: `file://agents/scripts/lint-spec.sh` (if absent at
-  the time of invocation, a Contract SPEC review MUST report
-  `criterion: lint-unavailable`, `severity: blocking`).
-- Authoring side: `file://agents/skills/spec-authoring/SKILL.md`.
-- Lifecycle skill:
-  `file://agents/skills/spec-driven-development/SKILL.md`.
+Per-type criteria:
+`file://agents/skills/spec-review/references/per-type-gates.md`.

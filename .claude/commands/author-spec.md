@@ -7,12 +7,16 @@ Pre-conditions (REQUIRED — refuse to proceed otherwise):
 
 - `IDEA.md` exists in the target spec folder.
 - `IDEA.md` front-matter `status: ready-for-spec`.
-- `IDEA.md` front-matter `implies_spec_type:` is one of `task` |
-  `contract` | `decision`.
+- `IDEA.md` front-matter `implies_spec_type:`, IF set, is one of
+  `task` | `contract` | `decision`. It is OPTIONAL / informational
+  post-lean (SPEC.schema §1.1); its absence does NOT block authoring —
+  the unified template is used regardless and `type` flavours optional
+  sections only.
 
 Workflow:
 
-1. Read `AGENTS.md`, `CLAUDE.md`, `STATUS.md`, and the IDEA.md.
+1. Read `AGENTS.md`, `CLAUDE.md`, `STATUS.md`,
+   `.agents/DOCUMENTATION_GUIDE.md` (if present), and the IDEA.md.
 2. Read `agents/specs/SPEC.schema.md` for shared conventions.
 3. Author from the one unified template `agents/specs/SPEC.template.md`
    (`type:` flavours optional sections only).

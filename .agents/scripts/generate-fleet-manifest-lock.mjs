@@ -10,6 +10,35 @@ const __dirname = path.dirname(__filename);
 const root = path.resolve(__dirname, "..", "..");
 const agentsDir = path.join(root, "agents");
 
+// --out <path>: write the lock to an alternate path. Used by
+// fleet-selfcheck.sh generate_lock() so both consumers share this ONE
+// generator (P5 T-03 single-sourcing); default is the canonical lock.
+const cliArgs = process.argv.slice(2);
+let outOverride = null;
+const outIdx = cliArgs.indexOf("--out");
+if (outIdx !== -1) {
+  outOverride = cliArgs[outIdx + 1];
+  if (!outOverride) {
+    console.error("generate-fleet-manifest-lock: --out requires a path");
+    process.exit(1);
+  }
+}
+
+// Child-repo guard: the lock is generated ONLY in the source repo
+// (bes-fleet-policy) and the lock FILE is propagated to children. A
+// sync-receiving repo has no canonical `agents/` tree (it uses `.agents/`),
+// so this generator has nothing to generate here — no-op cleanly (exit 0)
+// instead of throwing "manifest missing", mirroring fleet-selfcheck.sh's
+// off-source behaviour.
+if (!fs.existsSync(path.join(root, "agents", "scripts", "fleet-files.txt"))) {
+  console.error(
+    "generate-fleet-manifest-lock: canonical agents/scripts/fleet-files.txt " +
+      "not found — not the source repo (bes-fleet-policy). The lock is " +
+      "generated at source and propagated; nothing to do here.",
+  );
+  process.exit(0);
+}
+
 function rel(absPath) {
   return path.relative(root, absPath).split(path.sep).join("/");
 }
@@ -136,6 +165,7 @@ entries.push(
     ".claude/scripts/statusline.sh",
   ),
   entry("githook", "agents/githooks/commit-msg", ".githooks/commit-msg"),
+  entry("githook", "agents/githooks/pre-push", ".githooks/pre-push"),
 );
 
 entries.sort((a, b) => {
@@ -157,6 +187,8 @@ const lock = {
   entries,
 };
 
-const outPath = path.join(agentsDir, "fleet-manifest.lock.json");
+const outPath = outOverride
+  ? path.resolve(outOverride)
+  : path.join(agentsDir, "fleet-manifest.lock.json");
 fs.writeFileSync(outPath, `${JSON.stringify(lock, null, 2)}\n`);
-console.log(`wrote ${rel(outPath)} with ${entries.length} entries`);
+console.log(`wrote ${outOverride ? outPath : rel(outPath)} with ${entries.length} entries`);

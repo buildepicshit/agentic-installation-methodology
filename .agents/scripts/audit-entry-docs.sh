@@ -3,7 +3,8 @@
 # WORKFLOW.md against the canonical fleet pattern declared in
 # agents/OPERATING_MODEL.md §"Source Of Truth" and §"Public OSS posture".
 #
-# Run from the studio root to audit all 7 repos, or from any repo
+# Run from the studio root to audit all fleet repos (roster manifests:
+# fleet-internal-repos.txt + fleet-oss-repos.txt), or from any repo
 # root to audit that one repo.
 #
 # Exit codes:

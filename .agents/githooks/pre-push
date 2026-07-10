@@ -8,6 +8,20 @@
 
 set -uo pipefail
 
+# Chain git-lfs FIRST: `git lfs pre-push` consumes the ref list on
+# stdin (the CI-gate section below does not read stdin), and because
+# the fleet sets core.hooksPath=.githooks, LFS's own hook under
+# .git/hooks never fires — without this chain LFS objects are never
+# uploaded and GitHub hard-rejects the first asset push (GH008).
+# No-op where git-lfs is absent or no refs are LFS-tracked. Gated on
+# $# so a MANUAL no-arg invocation still reaches the CI gates —
+# no-arg `git lfs pre-push` aborts with exit 1 (r1 cross-family
+# catch); git itself always passes <remote> <url>.
+# Per specs/2026-07-01-pre-push-lfs-chaining/SPEC.md.
+if [ "$#" -gt 0 ] && command -v git-lfs >/dev/null 2>&1; then
+    git lfs pre-push "$@" || exit $?
+fi
+
 # Fleet-aware resolution: try .agents/ (propagated layout) then
 # agents/ (source-repo layout).
 repo_root="$(git rev-parse --show-toplevel 2>/dev/null || pwd)"
