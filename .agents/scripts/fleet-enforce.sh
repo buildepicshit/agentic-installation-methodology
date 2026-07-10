@@ -82,8 +82,30 @@ resolve_targets() {
         all-oss)
             printf '%s\n' "${PUBLIC_OSS_REPOS[@]}"
             ;;
+        all-local)
+            printf '%s\n' "${LOCAL_ONLY_REPOS[@]}"
+            ;;
         *)
-            printf '%s\n' "$field_val" | tr ',' '\n' | awk '{$1=$1; print}'
+            # Explicit target list: validate EVERY name against the roster
+            # union before emitting any. An unknown / typo'd / non-destination
+            # name (e.g. agentic-ops-framework, which is a curated-SPEC target,
+            # NOT a fleet-sync destination) would otherwise fall through to the
+            # posture loop's `posture=internal` default and be applied as an
+            # internal baseline target. Refuse instead.
+            local -a _names _bad
+            mapfile -t _names < <(printf '%s\n' "$field_val" | tr ',' '\n' | awk 'NF{$1=$1; print}')
+            _bad=()
+            local _n _r _known
+            for _n in "${_names[@]}"; do
+                _known=0
+                for _r in "${ALL_REPOS[@]}"; do [ "$_r" = "$_n" ] && { _known=1; break; }; done
+                [ "$_known" -eq 0 ] && _bad+=("$_n")
+            done
+            if [ "${#_bad[@]}" -gt 0 ]; then
+                echo "fleet-enforce: unknown target repo(s) not in any roster manifest: ${_bad[*]} — refusing (would default to internal posture)" >&2
+                return 1
+            fi
+            printf '%s\n' "${_names[@]}"
             ;;
     esac
 }
@@ -204,8 +226,11 @@ apply_directive() {
 
         echo "  --- $repo ---"
         local posture=internal
-        for r in "${PUBLIC_OSS_REPOS[@]}" "${LOCAL_ONLY_REPOS[@]}"; do
+        for r in "${PUBLIC_OSS_REPOS[@]}"; do
             [ "$r" = "$repo" ] && posture=oss
+        done
+        for r in "${LOCAL_ONLY_REPOS[@]}"; do
+            [ "$r" = "$repo" ] && posture=local
         done
 
         # Execute Action with TARGET + POSTURE env, plus a dispatch-shell substitution

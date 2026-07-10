@@ -16,8 +16,8 @@ Workflow:
 5. Update directly coupled tests/docs only when required by the spec.
 6. Run all `acceptance_commands` from front-matter; record exit codes
    and outputs in §Completion Report.
-7. Prepare the Completion Report requested by the spec (§25 in Contract
-   specs; §17 in Task; §14 in Decision).
+7. Prepare the Completion Report requested by the spec (§6 in the unified
+   `SPEC.template.md`; §5 in fastpath).
 
 Hard rules:
 

@@ -94,6 +94,27 @@ check_mirror() {
     fi
   done < "$expected"
 
+  # Also verify NON-governed resources (known-good/*, tests/*) that sync_mirror
+  # keeps faithful — otherwise a canonical refresh that forgets to re-run --fix
+  # leaves the mirror silently stale with no gate to catch it (2026-07-10
+  # hygiene sweep: the reciprocal of the sync_mirror copy-loop; a present-in-
+  # both file that differs is flagged, a missing mirror file is NOT — CV-3
+  # forbids treating non-governed files as required).
+  read_manifest | while IFS= read -r skill; do
+    [ -n "$skill" ] || continue
+    for sub in known-good tests; do
+      src_dir="$canonical_skills/$skill/$sub"
+      [ -d "$src_dir" ] || continue
+      find "$src_dir" -type f | while IFS= read -r f; do
+        rel="${f#"$canonical_skills/"}"
+        mir="$mirror_skills/$rel"
+        if [ -f "$mir" ] && ! cmp -s "$f" "$mir"; then
+          printf '%s\n' "$rel" >> "$changed"
+        fi
+      done
+    done
+  done
+
   missing=$(new_tmp)
   orphans=$(new_tmp)
   comm -23 "$expected" "$actual" > "$missing"
@@ -134,128 +155,35 @@ sync_mirror() {
     mkdir -p "$(dirname "$dst")"
     cp "$src" "$dst"
   done < "$expected"
+
+  # Also keep NON-governed skill resources (known-good/*, tests/*) faithful in
+  # the mirror. CV-3 forbids DELETING these as orphans; it does not forbid
+  # keeping them in sync. Copy-only (never delete) — otherwise a canonical
+  # refresh (e.g. validate-cli-invocation.sh --refresh-known-good) leaves the
+  # .claude/skills mirror silently stale (2026-07-10 hygiene sweep).
+  read_manifest | while IFS= read -r skill; do
+    [ -n "$skill" ] || continue
+    for sub in known-good tests; do
+      src_dir="$canonical_skills/$skill/$sub"
+      [ -d "$src_dir" ] || continue
+      find "$src_dir" -type f | while IFS= read -r f; do
+        rel="${f#"$canonical_skills/"}"
+        dst="$mirror_skills/$rel"
+        mkdir -p "$(dirname "$dst")"
+        cp "$f" "$dst"
+      done
+    done
+  done
 }
 
+# P5 T-03 single-sourcing: the ONE lock generator is
+# generate-fleet-manifest-lock.mjs; this used to be a hand-maintained
+# embedded duplicate that could silently drift. compare_locks ignores
+# generated_at/source, so the fresh git metadata the generator computes
+# is harmless for --check and more accurate for --fix.
 generate_lock() {
   out=$1
-  node - "$root" "$out" <<'NODE'
-const crypto = require("node:crypto");
-const fs = require("node:fs");
-const path = require("node:path");
-
-const root = process.argv[2];
-const outPath = process.argv[3];
-const agentsDir = path.join(root, "agents");
-const existingLockPath = path.join(agentsDir, "fleet-manifest.lock.json");
-
-function rel(absPath) {
-  return path.relative(root, absPath).split(path.sep).join("/");
-}
-
-function readManifest(relPath) {
-  const absPath = path.join(root, relPath);
-  if (!fs.existsSync(absPath)) {
-    throw new Error(`manifest missing: ${relPath}`);
-  }
-  return fs
-    .readFileSync(absPath, "utf8")
-    .split(/\r?\n/)
-    .map((line) => line.trim())
-    .filter((line) => line.length > 0 && !line.startsWith("#"));
-}
-
-function entry(kind, sourcePath, targetPath) {
-  const absPath = path.join(root, sourcePath);
-  if (!fs.existsSync(absPath)) {
-    throw new Error(`source file missing for ${kind}: ${sourcePath}`);
-  }
-  const bytes = fs.readFileSync(absPath);
-  return {
-    kind,
-    source_path: sourcePath,
-    target_path: targetPath,
-    sha256: crypto.createHash("sha256").update(bytes).digest("hex"),
-    bytes: bytes.length,
-  };
-}
-
-function listMarkdownFiles(absDir) {
-  if (!fs.existsSync(absDir)) return [];
-  return fs
-    .readdirSync(absDir, { withFileTypes: true })
-    .filter((item) => item.isFile() && item.name.endsWith(".md"))
-    .map((item) => path.join(absDir, item.name))
-    .sort();
-}
-
-const manifests = {
-  fleet_files: readManifest("agents/scripts/fleet-files.txt"),
-  fleet_skills: readManifest("agents/scripts/fleet-skills.txt"),
-  fleet_commands: readManifest("agents/scripts/fleet-commands.txt"),
-  fleet_hooks: readManifest("agents/scripts/fleet-hooks.txt"),
-  fleet_hook_fixtures: readManifest("agents/scripts/fleet-hook-fixtures.txt"),
-};
-
-const entries = [];
-
-for (const file of manifests.fleet_files) {
-  if (file === "fleet-manifest.lock.json") continue;
-  entries.push(entry("agents-file", `agents/${file}`, `.agents/${file}`));
-}
-
-for (const command of manifests.fleet_commands) {
-  entries.push(entry("command", `.claude/commands/${command}.md`, `.claude/commands/${command}.md`));
-}
-
-for (const skill of manifests.fleet_skills) {
-  entries.push(entry("skill", `agents/skills/${skill}/SKILL.md`, `.claude/skills/${skill}/SKILL.md`));
-  const referencesDir = path.join(agentsDir, "skills", skill, "references");
-  for (const refPath of listMarkdownFiles(referencesDir)) {
-    const sourcePath = rel(refPath);
-    const referenceName = path.basename(refPath);
-    entries.push(entry("skill-reference", sourcePath, `.claude/skills/${skill}/references/${referenceName}`));
-  }
-}
-
-for (const hook of manifests.fleet_hooks) {
-  entries.push(entry("hook", `.claude/hooks/${hook}`, `.claude/hooks/${hook}`));
-}
-
-entries.push(entry("harness", ".claude/hooks/tests/run-tests.sh", ".claude/hooks/tests/run-tests.sh"));
-
-for (const fixture of manifests.fleet_hook_fixtures) {
-  entries.push(entry("hook-fixture", `.claude/hooks/tests/fixtures/${fixture}`, `.claude/hooks/tests/fixtures/${fixture}`));
-}
-
-entries.push(
-  entry("harness", ".claude/settings.json", ".claude/settings.json"),
-  entry("harness", ".claude/scripts/statusline.sh", ".claude/scripts/statusline.sh"),
-  entry("githook", "agents/githooks/commit-msg", ".githooks/commit-msg"),
-);
-
-entries.sort((a, b) => {
-  const target = a.target_path.localeCompare(b.target_path);
-  if (target !== 0) return target;
-  return a.kind.localeCompare(b.kind);
-});
-
-let previous = {};
-try {
-  previous = JSON.parse(fs.readFileSync(existingLockPath, "utf8"));
-} catch {
-  previous = {};
-}
-
-const lock = {
-  schema_version: 1,
-  generated_at: new Date().toISOString(),
-  source: previous.source || { repo: "bes-fleet-policy", commit: null, dirty: null },
-  manifests,
-  entries,
-};
-
-fs.writeFileSync(outPath, `${JSON.stringify(lock, null, 2)}\n`);
-NODE
+  node "$root/agents/scripts/generate-fleet-manifest-lock.mjs" --out "$out" >/dev/null
 }
 
 compare_locks() {

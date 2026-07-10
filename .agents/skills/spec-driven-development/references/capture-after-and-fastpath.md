@@ -1,14 +1,9 @@
 # Capture-after pattern and the `fastpath` SPEC type
 
-Extracted from
-`file://agents/skills/spec-driven-development/SKILL.md` per the
-references/ progressive-disclosure convention (SE1 capture in
-`file://specs/2026-05-15-inbox-channel-and-skill-references-pattern/SPEC_EVIDENCE.md`).
-
 Authority: `file://agents/specs/SPEC.schema.md` §1.3 "Capture-after
-exception (owner-only)" landed 2026-05-17 (commit 478b89f);
-`file://agents/specs/SPEC.fastpath.template.md` for the retained
-fastpath template and thresholds.
+exception (owner-only)";
+`file://agents/specs/SPEC.fastpath.template.md` for the fastpath
+template and thresholds.
 
 ## When to read this
 
@@ -55,17 +50,6 @@ Capture-after is acceptable ONLY when ALL of:
 - The retroactive SPEC lands at `status: verified` with
   Completion Report filled in the same change set as the
   artefacts (or the next commit), not weeks later.
-
-Reference precedents:
-- First exercised at
-  `file://specs/2026-05-09-symphony-aligned-execution-layer/SPEC_EVIDENCE.md`
-  §1, dispositioned PROMOTED.
-- Codified in
-  `file://specs/2026-05-15-inbox-channel-and-skill-references-pattern/SPEC.md`
-  as the inaugural-capture-after Contract.
-- Formalized in the schema state machine at
-  `file://agents/specs/SPEC.schema.md` §1.3 "Capture-after
-  exception" 2026-05-17.
 
 Use sparingly; the default order exists because it produces
 better artefacts.

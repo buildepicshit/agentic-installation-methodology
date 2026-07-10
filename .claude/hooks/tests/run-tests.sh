@@ -121,7 +121,25 @@ MAIN_WITH_SPEC="$(mktemp -d)"
     && git -c user.email=t@t -c user.name=t add specs/fixture/SPEC.md \
     && git -c user.email=t@t -c user.name=t commit -q -m init )
 
-trap 'rm -rf "$SANDBOX" "$MAIN_NO_SPEC" "$MAIN_WITH_SPEC"' EXIT
+# Fixture: a repo whose ONLY main-direct SPEC is at `decomposed` (owner-set,
+# between approved and in-execution). Proves the branch-policy hooks allow
+# main-direct work during the decomposition window (2026-07-10 hygiene sweep).
+MAIN_WITH_DECOMPOSED="$(mktemp -d)"
+( cd "$MAIN_WITH_DECOMPOSED" \
+    && git init -q \
+    && git symbolic-ref HEAD refs/heads/main \
+    && mkdir -p specs/fixture \
+    && printf -- '---\nid: fixture\ntype: task\nstatus: decomposed\nbranch_policy: main-direct\n---\n' > specs/fixture/SPEC.md \
+    && git -c user.email=t@t -c user.name=t add specs/fixture/SPEC.md \
+    && git -c user.email=t@t -c user.name=t commit -q -m init )
+
+# Fixture: a repo with an in-execution SPEC, for verify-reminder's active-spec
+# branch (verify-reminder scans specs/ for approved|in-execution).
+VR_ACTIVE="$(mktemp -d)"
+( cd "$VR_ACTIVE" && mkdir -p specs/fixture \
+    && printf -- '---\nid: fixture\nstatus: in-execution\n---\n' > specs/fixture/SPEC.md )
+
+trap 'rm -rf "$SANDBOX" "$MAIN_NO_SPEC" "$MAIN_WITH_SPEC" "$MAIN_WITH_DECOMPOSED" "$VR_ACTIVE"' EXIT
 
 JE() {
     # Edit tool envelope. block-edit-on-main.sh reads tool_input.file_path
@@ -134,6 +152,12 @@ JE() {
 run "edit on main allowed (main-direct SPEC)"      block-edit-on-main.sh   0 "$(JE 'foo.md')" "$MAIN_WITH_SPEC"
 run "edit in bes-fleet-policy allowed (main-direct)" block-edit-on-main.sh 0 "$(JE 'STATUS.md')" "$HOOK_DIR/../.."
 run "edit in non-git dir allowed (branch empty)"   block-edit-on-main.sh   0 "$(JE 'foo.md')" "$SANDBOX"
+# decomposed is an owner-set main-direct-eligible status (schema §1.3).
+run "edit on main allowed (decomposed main-direct)" block-edit-on-main.sh  0 "$(JE 'foo.md')" "$MAIN_WITH_DECOMPOSED"
+run "push to main allowed (decomposed main-direct)" block-push-to-main.sh  0 "$(J 'git push origin main')" "$MAIN_WITH_DECOMPOSED"
+# verify-reminder.sh (Stop hook: always exit 0; exercise both branches).
+run "verify-reminder default branch (no active spec)"  verify-reminder.sh  0 '{"hook_event_name":"Stop"}' "$SANDBOX"
+run "verify-reminder active-spec branch (in-execution)" verify-reminder.sh 0 '{"hook_event_name":"Stop"}' "$VR_ACTIVE"
 
 # Path-scope (Decision §7 dimension 2): on the protected branch with no
 # main-direct SPEC, only repo-TRACKED targets are gated; out-of-repo and
@@ -270,8 +294,38 @@ run_settings_absent() {
     fi
 }
 
-run_settings_present "settings routes Bash(copilot *)" "Bash(copilot *)"
-run_settings_present "settings routes Bash(gh copilot *)" "Bash(gh copilot *)"
+# block-bad-cli-invocation.sh is wired UN-GATED on the Bash matcher (no `if`):
+# it self-classifies (greps for claude/copilot, fail-opens otherwise) and must
+# see wrapped invocations (timeout/env/VAR=val prefixes) a name-prefixed matcher
+# would miss (prefilter breadth >= classifier breadth; 2026-07-10 hygiene sweep).
+# block-undeclared-deps.sh stays GATED on package-manager prefixes — un-gating it
+# false-positived on manifest strings in quoted Bash args (reverted after review).
+assert_ungated_bash() {
+    local name="$1" hook_suffix="$2"
+    local settings="$HOOK_DIR/../settings.json"
+    local count
+    count="$(jq -r --arg suf "$hook_suffix" '[.hooks.PreToolUse[]? | select(.matcher=="Bash") | .hooks[]? | select((.command | endswith($suf)) and (has("if") | not))] | length' "$settings")"
+    if [ "$count" -ge 1 ]; then
+        PASS=$((PASS+1)); printf 'PASS %-50s [settings.json]\n' "$name"
+    else
+        FAIL=$((FAIL+1)); FAILURES+=("$name [settings.json]: expected $hook_suffix wired un-gated (no if) on Bash matcher"); printf 'FAIL %-50s [settings.json]\n' "$name"
+    fi
+}
+assert_gated_bash() {
+    local name="$1" hook_suffix="$2" matcher="$3"
+    local settings="$HOOK_DIR/../settings.json"
+    local count
+    count="$(jq -r --arg suf "$hook_suffix" --arg m "$matcher" '[.hooks.PreToolUse[]? | select(.matcher=="Bash") | .hooks[]? | select((.command | endswith($suf)) and (.if == $m))] | length' "$settings")"
+    if [ "$count" -ge 1 ]; then
+        PASS=$((PASS+1)); printf 'PASS %-50s [settings.json]\n' "$name"
+    else
+        FAIL=$((FAIL+1)); FAILURES+=("$name [settings.json]: expected $hook_suffix gated by $matcher"); printf 'FAIL %-50s [settings.json]\n' "$name"
+    fi
+}
+assert_ungated_bash "bad-cli-invocation wired un-gated on Bash" "block-bad-cli-invocation.sh"
+# undeclared-deps stays GATED on package-manager prefixes (un-gating it
+# false-positived on manifest strings in quoted args — 2026-07-10 review).
+assert_gated_bash "undeclared-deps gated on Bash(npm *)" "block-undeclared-deps.sh" "Bash(npm *)"
 retired_matcher="$(printf 'Bash(co%s *)' 'dex')"
 run_settings_absent "settings removed retired CLI matcher" "$retired_matcher"
 unset CLAUDE_PROJECT_DIR
@@ -500,7 +554,170 @@ run_stderr "quoted-pin frontmatter stays silent"      warn-subagent-routing.sh 0
 run_stderr "traversal subagent_type cannot suppress"  warn-subagent-routing.sh 0 "$ADVICE" "$(JT Task '{"prompt":"x","subagent_type":"../plugins/evil"}')" "CLAUDE_PROJECT_DIR=$SUBR_FIX"
 run_stderr "dotted subagent_type cannot suppress"     warn-subagent-routing.sh 0 "$ADVICE" "$(JT Task '{"prompt":"x","subagent_type":"..%2Fplugins%2Fevil"}')" "CLAUDE_PROJECT_DIR=$SUBR_FIX"
 
-trap 'rm -rf "$SANDBOX" "$MAIN_NO_SPEC" "$MAIN_WITH_SPEC" "$RANK_FIX" "$RANK_TIE" "$PROBE_CLEAN" "$PROBE_DIRTY" "$PROBE_DOCS" "$PROBE_UNTRACKED" "$PROBE_HOOKFILE" "$PROBE_EXCL" "$SUBR_FIX" "$SUBR_ERRF"' EXIT
+# --- P4 hook-guardrail-hardening (specs/2026-07-01-hook-guardrail-hardening) ---
+# T-02 classifier hardening (real-trigger + false-positive per fix) +
+# T-01 Edit/Write wiring behaviour of the two self-filtering hooks.
+
+# block-git-add-all.sh: global-option prefix forms must not bypass.
+run "P4 git -C . add . blocked"             block-git-add-all.sh    2 "$(J 'git -C . add .')"
+run "P4 git -c x=y add . blocked"           block-git-add-all.sh    2 "$(J 'git -c x=y add .')"
+run "P4 git -C repo add -A blocked"         block-git-add-all.sh    2 "$(J 'git -C /repo add -A')"
+run "P4 git -C . add file allowed"          block-git-add-all.sh    0 "$(J 'git -C . add foo.txt')"
+run "P4 quoted -C add . mention allowed"    block-git-add-all.sh    0 "$(J 'git commit -m "never git -C . add ."')"
+
+# block-push-to-main.sh: global-option prefix + bare-push HEAD resolution.
+PUSH_MAIN="$(mktemp -d)"; git -C "$PUSH_MAIN" init -q -b main
+PUSH_FEAT="$(mktemp -d)"; git -C "$PUSH_FEAT" init -q -b feature/x
+run "P4 git -c x=y push origin main blocked" block-push-to-main.sh  2 "$(J 'git -c x=y push origin main')" "$SANDBOX"
+run "P4 git -c x=y push feature allowed"    block-push-to-main.sh   0 "$(J 'git -c x=y push origin feature/x')"
+run "P4 bare git push on main blocked"      block-push-to-main.sh   2 "$(J 'git push')" "$PUSH_MAIN"
+run "P4 git push origin on main blocked"    block-push-to-main.sh   2 "$(J 'git push origin')" "$PUSH_MAIN"
+run "P4 bare push -u origin on main blocked" block-push-to-main.sh  2 "$(J 'git push -u origin')" "$PUSH_MAIN"
+run "P4 bare git push on feature allowed"   block-push-to-main.sh   0 "$(J 'git push')" "$PUSH_FEAT"
+run "P4 git push origin on feature allowed" block-push-to-main.sh   0 "$(J 'git push origin')" "$PUSH_FEAT"
+run "P4 bare git push outside repo allowed" block-push-to-main.sh   0 "$(J 'git push')" "$SANDBOX"
+# r2 cross-family catch: DELETE refspecs targeting main.
+run "P4 push :main delete blocked"          block-push-to-main.sh   2 "$(J 'git push origin :main')" "$SANDBOX"
+run "P4 push :refs/heads/main delete blocked" block-push-to-main.sh 2 "$(J 'git push origin :refs/heads/main')" "$SANDBOX"
+run "P4 push +:main delete blocked"         block-push-to-main.sh   2 "$(J 'git push origin +:main')" "$SANDBOX"
+run "P4 push :dead-feature delete allowed"  block-push-to-main.sh   0 "$(J 'git push origin :dead-feature')"
+# r1 cross-family catch: value-carrying push options must not count as refs.
+run "P4 push -o val origin on main blocked" block-push-to-main.sh   2 "$(J 'git push -o ci.skip origin')" "$PUSH_MAIN"
+run "P4 push --push-option val on main blocked" block-push-to-main.sh 2 "$(J 'git push --push-option ci.skip origin')" "$PUSH_MAIN"
+run "P4 push -o val origin feature allowed" block-push-to-main.sh   0 "$(J 'git push -o ci.skip origin')" "$PUSH_FEAT"
+
+# block-verify-bypass.sh: -n / -nm short forms (commit-scoped) +
+# core.hooksPath hook-redirect.
+run "P4 git commit -n blocked"              block-verify-bypass.sh  2 "$(J 'git commit -n')"
+run "P4 git commit -nm x blocked"           block-verify-bypass.sh  2 "$(J 'git commit -nm "x"')"
+run "P4 git commit -anm x blocked"          block-verify-bypass.sh  2 "$(J 'git commit -anm "x"')"
+run "P4 git commit -am allowed"             block-verify-bypass.sh  0 "$(J 'git commit -am "x"')"
+run "P4 git push -n dry-run allowed"        block-verify-bypass.sh  0 "$(J 'git push -n origin feature/x')"
+run "P4 -n in quoted msg allowed"           block-verify-bypass.sh  0 "$(J 'git commit -m "use -n to skip hooks"')"
+run "P4 core.hooksPath commit blocked"      block-verify-bypass.sh  2 "$(J 'git -c core.hooksPath=/dev/null commit -m "x"')"
+run "P4 core.hooksPath quoted-value blocked" block-verify-bypass.sh 2 "$(J 'git -c core.hooksPath="/tmp/h" commit -m "x"')"
+run "P4 core.hooksPath mention in msg allowed" block-verify-bypass.sh 0 "$(J 'git commit -m "core.hooksPath=x is bad"')"
+run "P4 core.hooksPath on status allowed"   block-verify-bypass.sh  0 "$(J 'git -c core.hooksPath=/x status')"
+# r1 cross-family catch: after a `--` pathspec separator, -n is a file name.
+run "P4 commit -- -n pathspec allowed"      block-verify-bypass.sh  0 "$(J 'git commit -m "x" -- -n')"
+run "P4 commit -n before -- still blocked"  block-verify-bypass.sh  2 "$(J 'git commit -n -- file.txt')"
+
+# block-ai-attribution.sh: ALL -m occurrences + --message space-form.
+run "P4 second -m co-author blocked"        block-ai-attribution.sh 2 "$(J 'git commit -m "t" -m "Co-authored-by: X <x@y>"')"
+run "P4 --message space co-author blocked"  block-ai-attribution.sh 2 "$(J 'git commit --message "Co-authored-by: X <x@y>"')"
+run "P4 --message= co-author blocked"       block-ai-attribution.sh 2 "$(J 'git commit --message="Co-authored-by: X <x@y>"')"
+run "P4 two clean -m allowed"               block-ai-attribution.sh 0 "$(J 'git commit -m "first" -m "second"')"
+run "P4 --message space clean allowed"      block-ai-attribution.sh 0 "$(J 'git commit --message "clean msg"')"
+
+# T-01: Edit/Write payloads are handled by the two self-filtering hooks
+# (wired under the Edit|Write matcher in settings.json).
+mkdir -p "$SANDBOX/specs/nodeps"
+cat > "$SANDBOX/specs/nodeps/SPEC.md" <<'EOF_NODEPS'
+---
+id: test-nodeps
+status: in-execution
+type: task
+owner: test
+---
+# fixture
+EOF_NODEPS
+export CLAUDE_PROJECT_DIR="$HOOK_DIR/../.."
+export ACTIVE_SPEC_DIR="$SANDBOX/specs/nodeps"
+run "P4 Edit package.json undeclared blocked" block-undeclared-deps.sh 2 '{"tool_name":"Edit","tool_input":{"file_path":"package.json","old_string":"a","new_string":"b"}}'
+run "P4 Edit README.md allowed (deps)"      block-undeclared-deps.sh 0 '{"tool_name":"Edit","tool_input":{"file_path":"README.md","old_string":"a","new_string":"b"}}'
+unset ACTIVE_SPEC_DIR
+unset CLAUDE_PROJECT_DIR
+run_stderr "P4 Write secret content warns"  warn-security-surface.sh 0 "warn-security-surface" '{"tool_name":"Write","tool_input":{"file_path":"config.py","content":"AWS_KEY=AKIA1234567890ABCDEF"}}' "ACTIVE_SPEC_DIR=$SANDBOX/specs/nodeps CLAUDE_PROJECT_DIR=$HOOK_DIR/../.."
+run_stderr "P4 Write clean content silent"  warn-security-surface.sh 0 "" '{"tool_name":"Write","tool_input":{"file_path":"notes.md","content":"hello world"}}' "CLAUDE_PROJECT_DIR=$HOOK_DIR/../.."
+
+# --- block-fleet-commit-sweep.sh (specs/2026-07-02-fleet-sync-stage-posture) ---
+# Child-repo fixtures, one per git state. Each tracks .agents/f.md (fleet)
+# and src/app.txt (product) so the repo passes the has-fleet-content gate.
+mk_sweep_fixture() {
+    local d; d="$(mktemp -d)"
+    git -C "$d" init -q -b main
+    git -C "$d" config user.email t@t; git -C "$d" config user.name t
+    mkdir -p "$d/.agents" "$d/src"
+    echo fleet > "$d/.agents/f.md"; echo app > "$d/src/app.txt"
+    git -C "$d" add .agents/f.md src/app.txt
+    git -C "$d" commit -qm "init"
+    printf '%s' "$d"
+}
+SWEEP_MIXED="$(mk_sweep_fixture)"   # fleet + product both staged
+echo f2 >> "$SWEEP_MIXED/.agents/f.md"; echo a2 >> "$SWEEP_MIXED/src/app.txt"
+git -C "$SWEEP_MIXED" add .agents/f.md src/app.txt
+SWEEP_FLEET="$(mk_sweep_fixture)"   # fleet only staged
+echo f2 >> "$SWEEP_FLEET/.agents/f.md"; git -C "$SWEEP_FLEET" add .agents/f.md
+SWEEP_PROD="$(mk_sweep_fixture)"    # product only staged
+echo a2 >> "$SWEEP_PROD/src/app.txt"; git -C "$SWEEP_PROD" add src/app.txt
+SWEEP_MOD="$(mk_sweep_fixture)"     # fleet + product MODIFIED, unstaged
+echo f2 >> "$SWEEP_MOD/.agents/f.md"; echo a2 >> "$SWEEP_MOD/src/app.txt"
+SWEEP_CLEAN="$(mk_sweep_fixture)"   # clean tree
+
+run "sweep: mixed staged commit blocked"    block-fleet-commit-sweep.sh 2 "$(J 'git commit -m "feat: x"')" "$SWEEP_MIXED"
+run "sweep: pure fleet + fleet: msg allowed" block-fleet-commit-sweep.sh 0 "$(J 'git commit -m "fleet: sync baseline"')" "$SWEEP_FLEET"
+run "sweep: pure fleet + feat: msg blocked" block-fleet-commit-sweep.sh 2 "$(J 'git commit -m "feat: x"')" "$SWEEP_FLEET"
+run "sweep: product-only staged allowed"    block-fleet-commit-sweep.sh 0 "$(J 'git commit -m "feat: x"')" "$SWEEP_PROD"
+run "sweep: -am over modified mix blocked"  block-fleet-commit-sweep.sh 2 "$(J 'git commit -am "feat: x"')" "$SWEEP_MOD"
+run "sweep: -i mixed include blocked"       block-fleet-commit-sweep.sh 2 "$(J 'git commit -i .agents/f.md src/app.txt -m "feat: x"')" "$SWEEP_CLEAN"
+run "sweep: bare mixed pathspec blocked"    block-fleet-commit-sweep.sh 2 "$(J 'git commit .agents/f.md src/app.txt -m "feat: x"')" "$SWEEP_CLEAN"
+run "sweep: bare fleet pathspec + fleet: msg allowed (index ignored)" block-fleet-commit-sweep.sh 0 "$(J 'git commit .agents/f.md -m "fleet: baseline"')" "$SWEEP_MIXED"
+
+# r3 (ACTOCCATUD launch-day follow-up, owner-directed fix 2026-07-02):
+# .agents/specs/** is CHILD-LOCAL spec-ledger content (fleet-sync.sh
+# header: it "does not propagate ... WILL be swept") — classified as
+# PRODUCT, so spec:-typed lifecycle commits pass while mixing it with
+# real fleet baseline still blocks.
+SWEEP_SPECS="$(mk_sweep_fixture)"
+mkdir -p "$SWEEP_SPECS/.agents/specs/t"
+echo task > "$SWEEP_SPECS/.agents/specs/t/TASK.md"
+git -C "$SWEEP_SPECS" add .agents/specs/t/TASK.md
+run "sweep: staged .agents/specs + spec: msg allowed (child-local ledger)" block-fleet-commit-sweep.sh 0 "$(J 'git commit -m "spec: T-01 -> done"')" "$SWEEP_SPECS"
+run "sweep: bare .agents/specs pathspec + spec: msg allowed"               block-fleet-commit-sweep.sh 0 "$(J 'git commit .agents/specs/t/TASK.md -m "spec: flip"')" "$SWEEP_CLEAN"
+echo f3 >> "$SWEEP_SPECS/.agents/f.md"; git -C "$SWEEP_SPECS" add .agents/f.md
+run "sweep: specs + fleet baseline mixed still blocked"                    block-fleet-commit-sweep.sh 2 "$(J 'git commit -m "spec: x"')" "$SWEEP_SPECS"
+
+# r3: repo context honors -C — a commit TARGETING another repo is
+# classified against THAT repo (incl. the source-repo fail-open), never
+# the invocation cwd's index (the reproduced ACTOCCATUD misfire).
+SWEEP_SOURCE="$(mktemp -d)"
+git -C "$SWEEP_SOURCE" init -q -b main
+git -C "$SWEEP_SOURCE" config user.email t@t; git -C "$SWEEP_SOURCE" config user.name t
+mkdir -p "$SWEEP_SOURCE/agents/scripts"
+echo x > "$SWEEP_SOURCE/agents/scripts/fleet-skills.txt"
+git -C "$SWEEP_SOURCE" add agents/scripts/fleet-skills.txt
+git -C "$SWEEP_SOURCE" commit -qm "init"
+run "sweep: -C source-repo commit fail-opens despite dirty cwd index" block-fleet-commit-sweep.sh 0 "$(J "git -C $SWEEP_SOURCE commit -m \"docs: x\"")" "$SWEEP_MIXED"
+run "sweep: -C child target evaluated from clean cwd (mixed blocked)" block-fleet-commit-sweep.sh 2 "$(J "git -C $SWEEP_MIXED commit -m \"feat: x\"")" "$SWEEP_CLEAN"
+run "sweep: quoted msg does not eat pathspec" block-fleet-commit-sweep.sh 2 "$(J 'git commit -m "feat: x" .agents/f.md')" "$SWEEP_CLEAN"
+run "sweep: unquoted msg value not a pathspec" block-fleet-commit-sweep.sh 0 "$(J 'git commit -m fix src/app.txt')" "$SWEEP_CLEAN"
+run "sweep: fleet path in quoted msg allowed" block-fleet-commit-sweep.sh 0 "$(J 'git commit -m "sweep .agents/ docs"')" "$SWEEP_PROD"
+run "sweep: source repo fail-open"          block-fleet-commit-sweep.sh 0 "$(J 'git commit -m "feat: x"')"
+run "sweep: non-git cwd fail-open"          block-fleet-commit-sweep.sh 0 "$(J 'git commit -m "feat: x"')" "$SANDBOX"
+# gate-2 r1 catches: --pathspec-from-file, --amend --no-edit, .githooks-only repos.
+printf '.agents/f.md\nsrc/app.txt\n' > "$SWEEP_CLEAN/list.txt"
+printf '.agents/f.md\n' > "$SWEEP_CLEAN/fleetlist.txt"
+printf 'src/app.txt\n' > "$SWEEP_CLEAN/prodlist.txt"
+run "sweep: pathspec-from-file mixed blocked" block-fleet-commit-sweep.sh 2 "$(J 'git commit --pathspec-from-file=list.txt -m "feat: x"')" "$SWEEP_CLEAN"
+run "sweep: pathspec-from-file pure fleet + fleet: msg allowed" block-fleet-commit-sweep.sh 0 "$(J 'git commit --pathspec-from-file=fleetlist.txt -m "fleet: baseline"')" "$SWEEP_CLEAN"
+run "sweep: pathspec-from-file stdin blocked" block-fleet-commit-sweep.sh 2 "$(J 'git commit --pathspec-from-file=- -m "feat: x"')" "$SWEEP_CLEAN"
+# gate-2 r2 catches: NUL-delimited pathspec files; per-command psf scoping.
+run "sweep: pathspec-file-nul blocked as unevaluable" block-fleet-commit-sweep.sh 2 "$(J 'git commit --pathspec-from-file=list.txt --pathspec-file-nul -m "feat: x"')" "$SWEEP_CLEAN"
+run "sweep: chained psf uses ITS OWN file (fleet list on 2nd cmd) blocked" block-fleet-commit-sweep.sh 2 "$(J 'git commit --pathspec-from-file=prodlist.txt -m "feat: a" && git commit --pathspec-from-file=list.txt -m "feat: b"')" "$SWEEP_CLEAN"
+run "sweep: amend --no-edit fleet onto product HEAD blocked" block-fleet-commit-sweep.sh 2 "$(J 'git commit --amend --no-edit')" "$SWEEP_FLEET"
+SWEEP_FLEETHEAD="$(mk_sweep_fixture)"  # HEAD is a fleet: commit; more fleet staged
+( cd "$SWEEP_FLEETHEAD" && echo f2 >> .agents/f.md && git add .agents/f.md && git commit -qm "fleet: baseline" && echo f3 >> .agents/f.md && git add .agents/f.md )
+run "sweep: amend --no-edit fleet onto fleet: HEAD allowed" block-fleet-commit-sweep.sh 0 "$(J 'git commit --amend --no-edit')" "$SWEEP_FLEETHEAD"
+SWEEP_GHOOKS="$(mktemp -d)"  # .githooks-only repo (no .agents/.claude/WORKFLOW.md)
+git -C "$SWEEP_GHOOKS" init -q -b main; git -C "$SWEEP_GHOOKS" config user.email t@t; git -C "$SWEEP_GHOOKS" config user.name t
+mkdir -p "$SWEEP_GHOOKS/.githooks" "$SWEEP_GHOOKS/src"
+echo h > "$SWEEP_GHOOKS/.githooks/pre-push"; echo a > "$SWEEP_GHOOKS/src/app.txt"
+git -C "$SWEEP_GHOOKS" add .githooks/pre-push src/app.txt; git -C "$SWEEP_GHOOKS" commit -qm init
+echo h2 >> "$SWEEP_GHOOKS/.githooks/pre-push"; echo a2 >> "$SWEEP_GHOOKS/src/app.txt"
+git -C "$SWEEP_GHOOKS" add .githooks/pre-push src/app.txt
+run "sweep: githooks-only repo mixed blocked" block-fleet-commit-sweep.sh 2 "$(J 'git commit -m "feat: x"')" "$SWEEP_GHOOKS"
+
+trap 'rm -rf "$SANDBOX" "$MAIN_NO_SPEC" "$MAIN_WITH_SPEC" "$MAIN_WITH_DECOMPOSED" "$VR_ACTIVE" "$RANK_FIX" "$RANK_TIE" "$PROBE_CLEAN" "$PROBE_DIRTY" "$PROBE_DOCS" "$PROBE_UNTRACKED" "$PROBE_HOOKFILE" "$PROBE_EXCL" "$SUBR_FIX" "$SUBR_ERRF" "$PUSH_MAIN" "$PUSH_FEAT" "$SWEEP_MIXED" "$SWEEP_FLEET" "$SWEEP_PROD" "$SWEEP_MOD" "$SWEEP_CLEAN" "$SWEEP_FLEETHEAD" "$SWEEP_GHOOKS"' EXIT
 
 printf '\n=== %d pass / %d fail ===\n' "$PASS" "$FAIL"
 if [ "$FAIL" -gt 0 ]; then

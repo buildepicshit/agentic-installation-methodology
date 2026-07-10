@@ -22,7 +22,7 @@ Front-matter:
 id: 2026-05-13-example-directive
 issued_by: bes-fleet-policy
 target_repos: [ACTOCCATUD, Floom, IKTO, UsefulIdiots, Mimir, Wick, Assets, agentic-installation-methodology]
-# or: all-internal | all-oss | all
+# or: all-internal | all-oss | all-local | all
 authority: bes-fleet-policy@<sha>
 # or: file://specs/<spec-id>/SPEC.md
 # or: owner://transcript-<date>
@@ -102,63 +102,6 @@ pending  →  applied  →  expired       (lifecycle complete; archived)
 Owner alone flips `applied → expired` or marks `superseded`.
 fleet-enforce.sh handles `pending → applied`. Audit may flip
 `applied → pending` with failed_targets on drift detection.
-
-## Worked example
-
-Filename: `2026-05-13-recompose-workflow-applicability.md`
-
-```yaml
----
-id: 2026-05-13-recompose-workflow-applicability
-issued_by: bes-fleet-policy
-target_repos: [ACTOCCATUD, Floom, IKTO, UsefulIdiots, Mimir, Wick, Assets, agentic-installation-methodology]
-authority: bes-fleet-policy@bb60488
-type: file-recompose
-status: applied
-created: 2026-05-13
-deadline: null
-supersedes: null
-failed_targets: []
----
-
-# Directive: Recompose WORKFLOW.md with Applicability preamble
-
-## 1. Summary
-
-ACTOCCATUD agents reported that WORKFLOW.md read as a setup
-checklist requiring Linear + Symphony install. The canonical body
-got a new Applicability preamble that clarifies it's the Symphony
-per-issue prompt template, not a setup doc. Per-repo WORKFLOW.md
-must be re-composed with the new body.
-
-## 2. Action
-
-For each target repo:
-
-```bash
-bash bes-fleet-policy/agents/scripts/fleet-sync.sh <target> <posture>
-```
-
-`fleet-sync.sh` auto-recomposes WORKFLOW.md as part of internal
-sync. OSS posture sync lays content in working tree only.
-
-## 3. Compliance check
-
-```bash
-grep -q "^## Applicability" "$TARGET/WORKFLOW.md"
-```
-
-## 4. Authority chain
-
-- `bes-fleet-policy@bb60488` — fleet body update.
-- `owner://transcript-2026-05-13` — owner directive flagging
-  ACTOCCATUD agent complaints.
-
-## 5. Rollback
-
-Issue a new directive that recomposes WORKFLOW.md from the prior
-fleet body. Cite the bes-fleet-policy commit predating bb60488.
-```
 
 ## Hard rules
 

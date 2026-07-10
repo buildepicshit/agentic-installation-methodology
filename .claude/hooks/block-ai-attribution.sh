@@ -63,12 +63,15 @@ done < <(printf '%s' "$command" | extract_real_commands)
 # Pass 2: extract message text.
 msg=""
 
-m_arg=$(printf '%s' "$command" | grep -oE -- '(-m|--message=)[[:space:]]*("[^"]*"|'"'"'[^'"'"']*'"'"'|[^[:space:]"'"'"']+)' | head -1)
-if [ -n "${m_arg:-}" ]; then
-    val=$(printf '%s' "$m_arg" | sed -E 's/^(-m|--message=)[[:space:]]*//; s/^"//; s/"$//; s/^'"'"'//; s/'"'"'$//')
+# Examine EVERY -m/--message occurrence (a co-author trailer hides in the
+# second -m) and accept the --message VALUE space-form as well as
+# --message= (P4 hook-guardrail-hardening, 2026-07-02).
+while IFS= read -r m_arg; do
+    [ -z "${m_arg:-}" ] && continue
+    val=$(printf '%s' "$m_arg" | sed -E 's/^(-m|--message=?)[[:space:]]*//; s/^"//; s/"$//; s/^'"'"'//; s/'"'"'$//')
     msg="${msg}${val}
 "
-fi
+done < <(printf '%s' "$command" | grep -oE -- '(-m|--message=?)[[:space:]]*("[^"]*"|'"'"'[^'"'"']*'"'"'|[^[:space:]"'"'"']+)')
 
 f_arg=$(printf '%s' "$command" | grep -oE -- '-F[[:space:]]+("[^"]*"|'"'"'[^'"'"']*'"'"'|[^[:space:]]+)' | head -1 | sed -E 's/^-F[[:space:]]+//; s/^"(.*)"$/\1/; s/^'"'"'(.*)'"'"'$/\1/')
 if [ -n "${f_arg:-}" ] && [ "$f_arg" != "-" ]; then

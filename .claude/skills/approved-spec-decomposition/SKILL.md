@@ -10,14 +10,16 @@ allowed-tools: []
 metadata:
   bes_provenance:
     origin: internal
-    source_urls: []
-    borrowed_from: []
-    upstream_status: not-applicable
-    last_audited: 2026-06-05
+    source_urls:
+      - https://github.com/mattpocock/skills
+    borrowed_from:
+      - mattpocock/skills to-tickets
+    upstream_status: current
+    last_audited: 2026-07-08
     audit_cadence: annual
-    adoption_status: bes-native
+    adoption_status: adapted
     security_review: not-required
-    notes: "BES fleet-native skill."
+    notes: "BES fleet-native decomposition skill. The Wide-refactor exception (expand–contract) section was adapted 2026-07-08 from mattpocock/skills to-tickets @ d574778 (v1.1.0), placed tracker-free on the existing deps / write_scope substrate; the upstream tracker-native coordination was deliberately NOT imported (Lock L1). No executable or tool surface added. Adoption record: specs/2026-07-08-pocock-v1.1-alignment-rebaseline."
   bes_tool_surface:
     scripts: none
     network: false
@@ -37,12 +39,12 @@ It is no longer a planning aid. It produces durable TASK.md files
 that Copilot and Claude subagents execute against directly. The
 parent SPEC remains the immutable authority (Completion Report
 aside); the TASK.md files are the executable contracts for each
-slice. No external tracker or dispatcher is required to run them.
+slice.
 
 ## When to use
 
-- A SPEC.md has front-matter `status: approved` and contains a §11
-  Execution Plan (Task SPEC) or §11 / §14 / §15 Implementation
+- A SPEC.md has front-matter `status: approved` and contains an
+  Execution Plan (or Interfaces / Implementation) section
   Checklist (Contract SPEC) that names ≥ 2 distinct slices, OR
 - The owner has directed decomposition for parallel execution per
   `file://agents/MODEL_ROUTING.md` "Routing Matrix" (multi-agent
@@ -64,7 +66,7 @@ REFUSE to proceed unless:
 2. `status: approved` (set by owner per
    `file://agents/specs/SPEC.schema.md` §1.3).
 3. Acceptance commands present, OR explicit explanation of empty
-   list in §12 Acceptance Criteria.
+   list in §4 Acceptance Criteria.
 4. Open Questions resolved.
 5. Write ownership can be bounded (each slice has disjoint
    `owned_files` per
@@ -79,8 +81,8 @@ file/line citation. Do NOT emit TASK.md files.
 1. Read the approved SPEC end-to-end.
 2. Read `file://agents/MODEL_ROUTING.md` "Routing Matrix" to map task
    classes to model lanes.
-3. Read the parent SPEC's §11 Execution Plan (Task) or §11/§14/§15
-   (Contract). Each slice in the plan becomes one TASK.md.
+3. Read the parent SPEC's Execution Plan (or Interfaces /
+   Implementation) section. Each slice in the plan becomes one TASK.md.
    Prefer thin vertical slices: each TASK should deliver a complete,
    independently verifiable path through the relevant layers instead
    of a horizontal "all schema", "all UI", or "all tests" bucket.
@@ -90,17 +92,14 @@ file/line citation. Do NOT emit TASK.md files.
    - `parent_spec` — the SPEC's id.
    - `status` — `todo`.
    - `owner` — `unassigned`.
-   - `model_route` — primary lane from MODEL_ROUTING.md routing
-     matrix for the slice's `task_class` (research,
-     implementation, code-review, verification, docs, planning).
-     Default frontier lanes: Copilot `gpt-5.5` for implementation;
-     Claude Opus 4.8 for spec-compliance review.
-   - `cross_validation_lane` — DIFFERENT family from `model_route`.
-     If primary is Copilot, pick Claude Opus 4.8. If primary is
-     Claude, pick Copilot `gpt-5.5`. This is the
-     `Different model family required` rule from
-     `file://agents/MODEL_ROUTING.md` "Routing Matrix" green-room
-     row generalized to every implementation slice.
+   - `model_route` — primary lane from the
+     `file://agents/MODEL_ROUTING.md` "Routing Matrix" for the
+     slice's `task_class` (research, implementation, code-review,
+     verification, docs, planning). Lane defaults per task class
+     live in MODEL_ROUTING.md, not here.
+   - `cross_validation_lane` — DIFFERENT model family from
+     `model_route`; pick the counterpart family's lane from the
+     Routing Matrix.
    - `verification_lane` — same family as primary for mechanical
      verification (lint, test); different family for behavioral
      verification (does the change actually do what the SPEC says).
@@ -124,14 +123,17 @@ file/line citation. Do NOT emit TASK.md files.
    - §5 Acceptance (commands + criteria)
    - §6 Evidence (left blank for executor)
    - §7 Stop conditions
-   - §8 Dispatch binding (OPTIONAL — only if a tracker is in use)
 6. Compute integration order. If any slice has `deps`, it cannot
    start before its dependencies reach `done`. Record the
-   topological order in the parent SPEC's §17 Completion Report
-   (Task) or §19 Completion Report (Contract) as a Decomposition
+   topological order in the parent SPEC's §6 Completion Report
+   as a Decomposition
    Index that lists `T-NN: <title>` in execution order.
 7. Run `cmd://bash agents/scripts/lint-spec.sh
-   specs/<parent_spec_id>/SPEC.md` and confirm exit 0.
+   specs/<parent_spec_id>/SPEC.md` and confirm it does not FAIL:
+   exit 0 (clean) or exit 2 (advisory warnings only) both pass; exit 1
+   is blocking. (Exit 2 is advisory per the lint's own contract and the
+   canonical exit-code mapping — an approved SPEC carrying only advisory
+   warnings is not dead-stopped at decomposition.)
 8. Surface the decomposition to the owner with the Decomposition
    Index and the Parallelism Decision Record (Decision: `fanout` |
    `local`; Rationale: …; Lanes: …) per
@@ -144,9 +146,7 @@ file/line citation. Do NOT emit TASK.md files.
    `superseded` / `closed` class from
    `file://agents/specs/SPEC.schema.md` §1.3).
 10. After owner approval, agents may dispatch and execute tasks
-    directly (own branch/worktree per slice). No external tracker or
-    dispatcher is required. If one is ever in use, the task may be
-    mirrored to it — optional, never a precondition.
+    directly (own branch/worktree per slice).
 
 ## AFK Eligibility (per task)
 
@@ -172,14 +172,51 @@ Each TASK.md should be:
   phases;
 - marked `HITL` when owner judgment, design choice, or architecture
   approval is still needed.
+- written without concrete file paths or code snippets in the §1/§2
+  narrative (they go stale fast) — the sole exception is a
+  prototype-produced snippet that encodes a decision more precisely than
+  prose (a state machine, reducer, schema, or type shape); the §3
+  `owned_files` scope block is exempt and names files explicitly.
+
+## Wide-refactor exception (expand–contract)
+
+Vertical slicing is the default. The exception is a **wide refactor**:
+one mechanical change (rename a shared column, retype a shared symbol)
+whose **blast radius** fans across the codebase so that no single vertical
+slice can land green. Do not force it into a vertical TASK; sequence it as
+expand–contract across TASK.md files wired by `deps`:
+
+1. **Expand** — `T-01`: add the new form beside the old so nothing breaks.
+   `deps: []`.
+2. **Migrate** — `T-02..T-0k`: migrate call sites in batches sized by
+   blast radius (per package / per directory). Each batch is its own TASK
+   with `deps: [T-01]` and `write_scope: disjoint` where the batches touch
+   non-overlapping trees. Acceptance stays green batch-to-batch because the
+   old form still exists.
+3. **Contract** — `T-final`: delete the old form once no caller remains.
+   `deps: [T-02, …, T-0k]` (every migrate batch).
+4. **When batches cannot stay green alone** — keep the sequence but mark
+   the migrate batches `write_scope: overlap`, dispatch them serially on a
+   shared integration branch, and add a final integrate-and-verify TASK
+   that runs the parent SPEC's full `acceptance_commands` as the
+   integration gate. Green is promised only at that gate; the migrate
+   TASKs' own acceptance MAY be limited to typecheck / compile.
+
+This reuses the existing `deps`, `write_scope: disjoint|overlap`, and
+integration-gate machinery — expand–contract is the pattern that machinery
+was built for; it is named here. Prefer prefactoring first ("make the
+change easy, then make the easy change"). Adapted from `mattpocock/skills`
+`skills/engineering/to-tickets` @ `d574778` (v1.1.0), placed tracker-free
+on our `deps` substrate per
+`file://specs/2026-07-08-pocock-v1.1-alignment-rebaseline/SPEC.md` §11 T2
+(Lock L1 — the upstream tracker-native coordination is NOT imported).
 
 ## Cross-validation pattern
 
-Every TASK.md MUST name a `cross_validation_lane` of a different
-model family from `model_route`. The lane runs between
-`in-progress` and `in-review`. Procedure, executor skills, and
-the same-family-proxy fallback (SE2) when cross-family dispatch
-is unavailable:
+The cross-validation lane runs between `in-progress` and
+`in-review` (different-family rule: Hard Rules below). Procedure,
+executor skills, and the same-family-proxy fallback when
+cross-family dispatch is unavailable:
 [`references/cross-validation-lanes.md`](references/cross-validation-lanes.md).
 
 ## Hard Rules
@@ -198,8 +235,6 @@ is unavailable:
   `done`, the parent SPEC's full acceptance_commands run as the
   integration gate before flipping to `verified`.
 - Do not dispatch AFK work with unresolved owner questions.
-- Do not let cross-validation be performed by the same model family
-  that authored the implementation.
 
 ## Output shape
 
@@ -222,7 +257,7 @@ The parent SPEC's Completion Report gains a Decomposition Index:
 
 Topological execution order (deps respected):
 
-1. T-01-<slug> (mode: HITL, lanes: gpt-5.5 / claude-opus-4-8)
-2. T-02-<slug> (mode: AFK, lanes: claude-opus-4-8 / gpt-5.5)
-3. T-03-<slug> (mode: AFK, deps: [T-01], lanes: gpt-5.5 / claude-opus-4-8)
+1. T-01-<slug> (mode: HITL, lanes: <primary> / <cross-family>)
+2. T-02-<slug> (mode: AFK, lanes: <primary> / <cross-family>)
+3. T-03-<slug> (mode: AFK, deps: [T-01], lanes: <primary> / <cross-family>)
 ```

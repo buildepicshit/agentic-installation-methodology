@@ -52,9 +52,12 @@ Pick the lightest route that preserves fleet authority:
 
 ## Lifecycle Map
 
-Preflight -> Orient -> Predict failures -> Ideate -> Author SPEC ->
-Review SPEC -> Owner approve -> Decompose when needed -> Dispatch ->
-Execute -> Cross-validate -> Verify -> Report/close.
+5-gate default: **Align** (Preflight / Orient / Predict) → **Spec** (Ideate /
+Author SPEC) → **Approve** (Review / Owner approve) → **Execute** →
+**Verify** (Verify / Report). High-risk or multi-agent work MAY insert
+Decompose → Dispatch → Cross-validate between Approve and Execute (see
+`references/lifecycle-router.md`), but that full path is NOT the default
+(`file://specs/2026-06-30-operating-model-lean-down/SPEC.md` §7).
 
 ## Phase Routing
 
@@ -72,10 +75,15 @@ Execute -> Cross-validate -> Verify -> Report/close.
 
 - Owner alone sets `approved`, `decomposed`, `superseded`, and `closed`.
 - `approved-pending-owner` is not execution permission.
-- Do not execute a multi-slice Task or Contract SPEC before durable
-  decomposition.
+- When work takes the decomposition path (high-risk / multi-agent),
+  do not execute its slices before durable per-slice TASK.md
+  decomposition lands. Decomposition is the exception, not the 5-gate
+  default — see the Lifecycle Map above.
 - Do not silently revise the contract when scope drifts.
 - Do not claim completion without fresh verification.
+- An operating-model change is complete only when its same-wave
+  doc-reconciliation sweep of the propagating corpus lands
+  (`file://specs/2026-07-01-leandown-doc-reconciliation/SPEC_EVIDENCE.md` SE-1).
 - Do not run multiple owner-interactive planning tracks in parallel.
 - For delegation, model-specific work, or non-trivial planning, read
   `file://agents/MODEL_ROUTING.md`.

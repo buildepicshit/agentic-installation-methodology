@@ -30,14 +30,8 @@ metadata:
 # Cross-Agent CLI Invocation
 
 Use this skill whenever you intend to invoke another agent's CLI
-from Bash. Failure to read it has cost real session time:
-documented wrong-flag-combination on `claude` calls from scripted
-contexts (ACTOCCATUD 2026-05-25 observation), and Copilot lane
-invocations must pin an explicit GPT-family model to preserve
-cross-family validity.
-
-The fleet-canonical contract for this skill is at
-`specs/2026-05-25-agent-cli-invocation-craft/SPEC.md`.
+from Bash
+(`file://specs/2026-05-25-agent-cli-invocation-craft/SPEC.md`).
 
 ## When to Use
 
@@ -79,12 +73,12 @@ Using any of these without `--print` is BLOCKED by the validator.
 
 ### Claude -> copilot (the co-equal GPT lane)
 
-Adopted per `specs/2026-06-05-copilot-cli-cross-validation-lane/SPEC.md`
-(bes-fleet-policy). The executable resolves as bare `copilot` when on
-PATH, else the `gh copilot --` wrapper (the common case on BES boxes).
+The executable resolves as bare `copilot` when on PATH, else the
+`gh copilot --` wrapper (the common case on BES boxes;
+`file://specs/2026-06-05-copilot-cli-cross-validation-lane/SPEC.md`).
 
 ```bash
-gh copilot -- -p "$(cat reviews/PROMPT.md)" \
+gh copilot -- -p "$(cat specs/<id>/reviews/PROMPT.md)" \
   --model gpt-5.5 \
   -s \
   --no-custom-instructions \
@@ -104,12 +98,11 @@ Recommended (validator WARNs when missing):
 - `--no-custom-instructions` and `--disable-builtin-mcps` — fleet
   zero-MCP default; don't let target-repo instructions steer a lane
   reviewer.
-- Permission scoping: built-in read/search tools need no grant
-  (probed 2026-06-05); `--deny-tool write --deny-tool shell
-  --deny-tool url` alone yields a read-only review posture. Deny
-  rules beat any allow rule (per `copilot help permissions`). A
-  bare `--allow-all*` grant without deny/availability scoping draws
-  a WARN.
+- Permission scoping: `--deny-tool write --deny-tool shell
+  --deny-tool url` alone yields a read-only review posture (built-in
+  read/search tools need no grant). Deny rules beat any allow rule
+  (per `copilot help permissions`). A bare `--allow-all*` grant
+  without deny/availability scoping draws a WARN.
 - `< /dev/null` stdin redirect — WARN-level hygiene for scripted use.
 
 Family rule: Copilot-on-GPT MUST NOT be the `cross_validation_lane`
@@ -145,26 +138,20 @@ blocks the call.
 
 ## Long-running / retrying calls — background them
 
-An external agent CLI can foreground-BLOCK for a very long wall-clock time.
-API-error retries with backoff, a slow model turn, or a machine suspend can
-stall a single invocation for minutes to HOURS even when the actual token
-work is seconds. A foreground Bash call with a generous timeout does NOT
-protect you — it just holds the session hostage on dead air.
-
-Rules:
+An external agent CLI can foreground-block for hours (API-retry
+backoff, slow model turn, machine suspend) for seconds of real work;
+a generous foreground timeout just holds the session hostage
+(`file://specs/2026-06-30-lean-skill-consolidation/SPEC_EVIDENCE.md`
+SE-8). Rules:
 
 - Run review / validation lane calls in the BACKGROUND (background Bash /
   `run_in_background`), or with a HARD short timeout plus an explicit retry —
   never as an open-ended foreground block.
-- Capture stdout to a file (`… > reviews/<id>.txt 2>&1`) and pick up the
+- Capture stdout to a file (`… > specs/<id>/reviews/<lane>.txt 2>&1`) and pick up the
   result on completion rather than blocking on the pipe.
 - If a call runs past a sane bound (a few minutes for a review), treat it as
   the escalation-rubric loop signal: stop it, then retry or surface — do not
   sit on dead air.
-
-Evidence: a Copilot diff-review invocation once foreground-blocked ~4¾h on
-API-retry / machine-suspend for seconds of real work
-(`file://specs/2026-06-30-lean-skill-consolidation/SPEC_EVIDENCE.md` SE-8).
 
 ## Scope boundary
 
@@ -251,8 +238,5 @@ reviewer against `warn-subagent-routing.sh` and fixed same-day).
 
 ## Helper output as evidence
 
-The validator's PASS/WARN/FAIL output is structured. When a
-completion-phase skill (`verification`,
-`spec-evidence-governance`) cites helper output as evidence, paste
-the helper's exact stdout/stderr rather than paraphrasing — that
-makes the receipt auditable.
+Validator stdout is a receipt — paste it verbatim, never paraphrase;
+see `execution-discipline-cluster` Practice 1 (tool receipts).

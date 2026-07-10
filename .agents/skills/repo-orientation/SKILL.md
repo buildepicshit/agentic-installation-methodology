@@ -36,15 +36,13 @@ Use this before planning or editing.
 1. Read the nearest `AGENTS.md`.
 2. If present, read `CLAUDE.md`, `STATUS.md`,
    `.agents/DOCUMENTATION_GUIDE.md`, and the docs linked by `AGENTS.md`.
-   `WORKFLOW.md` is the per-repo engagement contract. Its Section 1
-   (Universal) applies to every agent and is the part you read. The
-   fleet uses no external tracker or dispatcher; if a historical
-   optional dispatch appendix exists, ignore it unless one is ever
-   wired up.
+   `WORKFLOW.md` is the per-repo engagement contract; read its
+   Section 1 (Universal) — it is the whole contract for every agent.
 3. Read `SESSION_JOURNAL.md` at the repo root (last 3 entries).
    It tells you what the previous agent did, what was left dirty,
    and what to pick up. If absent, copy from
-   `.agents/templates/SESSION_JOURNAL.template.md`.
+   `agents/templates/SESSION_JOURNAL.template.md` (or the propagated
+   `.agents/templates/SESSION_JOURNAL.template.md` in a child repo).
 4. Before dispatch, delegation, model-specific work, or
    multi-agent review, read `agents/MODEL_ROUTING.md` or the
    propagated `.agents/MODEL_ROUTING.md`.

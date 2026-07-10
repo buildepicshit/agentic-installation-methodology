@@ -1,21 +1,8 @@
 # Cross-validation lane assignment
 
-Extracted from
-`file://agents/skills/approved-spec-decomposition/SKILL.md` per
-the references/ progressive-disclosure convention (SE1 capture
-in
-`file://specs/2026-05-15-inbox-channel-and-skill-references-pattern/SPEC_EVIDENCE.md`).
-
-## When to read this
-
-Fires only when:
-- you are emitting TASK.md slices during decomposition AND
-- you are choosing the per-slice `cross_validation_lane` model
-  family (BLOCKING rule per the parent skill).
-
-For routine decomposition orchestration, read the spine of
-`file://agents/skills/approved-spec-decomposition/SKILL.md`;
-this reference covers only the cross-validation lane mechanics.
+Read this when choosing a per-slice `cross_validation_lane`
+during decomposition (BLOCKING different-family rule per the
+parent skill).
 
 ## Pattern
 
@@ -34,10 +21,10 @@ runs between `in-progress` and `in-review`:
      `file://agents/skills/code-review/references/multi-agent-review.md`
      — isolated worktrees only, never the shared tree.)
 3. Findings are recorded in the workpad `Validation` section.
-4. Primary agent addresses findings (code/test/docs) or posts
-   explicit pushback per the PR feedback sweep protocol in
-   `file://agents/templates/WORKFLOW.body.md` "PR feedback
-   sweep protocol".
+4. Primary agent addresses each finding (code/test/docs) or posts
+   explicit justified pushback, per
+   `file://agents/templates/WORKFLOW.body.md` Section 1 "Step 3 —
+   Cross-family cross-validation".
 5. Only after cross-validation findings are resolved does the
    task flip `in-progress → in-review`.
 
@@ -59,3 +46,12 @@ Claude Code only spawns Claude-family subagents), the honest
 path is same-family proxy + clearly-labelled deferral. This
 fallback applies to TASK.md execution too; strict cross-family
 pass deferred to owner-triggered external runner.
+
+**Exception — Rule 20 guardrail work has NO same-family fallback.**
+For a fleet-propagating guardrail SPEC (touch points carried by the
+propagation manifests), cross-family review is REQUIRED with NO waiver:
+if the cross-family lane is unavailable the work HOLDS; a per-case
+override exists only as an explicit owner in-transcript directive, never
+as an agent-initiated proxy (`file://agents/MODEL_ROUTING.md` Rule 20,
+owner-affirmed strict 2026-07-02). The proxy+deferral path above applies
+only to non-guardrail work.

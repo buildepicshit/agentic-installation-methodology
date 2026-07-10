@@ -57,7 +57,7 @@ read_manifest() {
     awk '
         /^[[:space:]]*#/ { next }
         /^[[:space:]]*$/ { next }
-        { print }
+        { sub(/[[:space:]]+#.*$/, ""); print }
     ' "$manifest"
 }
 

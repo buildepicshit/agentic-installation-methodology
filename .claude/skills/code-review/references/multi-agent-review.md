@@ -6,11 +6,7 @@ mutation-probe mechanics; every other fleet surface carries a
 one-line pointer here and MUST NOT restate them.
 
 Authority:
-`file://specs/2026-06-09-mutation-probe-isolation-discipline/SPEC.md`
-(bes-fleet-policy). Origin incident receipts: ACTOCCATUD
-`AGENT_FEEDBACK.md` 2026-06-09 18:55 entry;
-`.agents/specs/2026-06-09-c1-c2-catalog-effects/tasks/T-02-effects-resolver-store.md`
-§6; `.agents/specs/2026-06-09-b4-state-machine/SPEC.md` §19.5 C2.
+`file://specs/2026-06-09-mutation-probe-isolation-discipline/SPEC.md`.
 
 ## When to read this
 
@@ -42,14 +38,11 @@ which touches files.
   `git worktree add` the probe itself creates as its FIRST action.
 - A mutation probe MUST NOT write to the orchestrating session's
   working tree. Prompt-level isolation instructions are NOT
-  enforcement — in the originating incident the probe prompts
-  explicitly ordered isolated worktrees and a dying probe mutated
-  the real tree anyway, leaving a live semantics mutant that a
-  171-test suite passed over.
+  enforcement — prompt-level isolation has already failed in
+  production (see the authority SPEC).
 - The isolation invariant MUST hold even if the probe dies
-  mid-flight (a session usage limit killed 10/21 agents including
-  both probes in the originating incident): restore steps cannot
-  be trusted to run, so the PRIMARY tree must never need restoring.
+  mid-flight: restore steps cannot be trusted to run, so the
+  PRIMARY tree must never need restoring.
 - Mutation-probe agents are write-capable BY DEFINITION — never
   dispatch one as a "read-only reviewer" sharing the checkout.
 
@@ -57,8 +50,7 @@ which touches files.
 
 Per mutant: save the original → mutate → run the suite → restore →
 verify zero git delta (`git diff --exit-code`). Digest-verified
-restore (sha256 of saved original vs restored file) is RECOMMENDED
-(B4-day participant attestation; not a spec receipt).
+restore (sha256 of saved original vs restored file) is RECOMMENDED.
 
 Marker convention: every injected mutation MUST carry the literal
 `MUTATION PROBE` (uppercase, exact) in a comment on or adjacent to

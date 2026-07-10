@@ -1,12 +1,18 @@
-# refreshed: 2026-05-25
-# cli-version: 2.1.150 (Claude Code)
+# refreshed: 2026-07-10
+# cli-version: 2.1.206 (Claude Code)
 # help-source: claude --help
+# refresh-cadence: re-diff against `claude --help` on any CLI minor-version
+#   bump. ADD-ONLY: never remove entries — a MISSING flag false-blocks a legit
+#   call, a stale (removed) flag only under-blocks, so the safe direction is to
+#   union in new flags (2026-07-10-fleet-policy-hygiene-sweep).
 --add-dir
 --agent
 --agents
 --allow-dangerously-skip-permissions
 --allowedTools | --allowed-tools
 --append-system-prompt
+--ax-screen-reader
+--background | --bg
 --bare
 --betas
 --brief
@@ -41,10 +47,12 @@
 --plugin-dir
 --plugin-url
 --print | -p
+--prompt-suggestions
 --remote-control
 --remote-control-session-name-prefix
 --replay-user-messages
 --resume | -r
+--safe-mode
 --session-id
 --setting-sources
 --settings

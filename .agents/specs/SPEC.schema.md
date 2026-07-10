@@ -5,9 +5,10 @@ Authority: `file://specs/2026-05-01-bes-spec-authoring-procedure-v1/SPEC.md`
 §6.1, §8, §10.
 
 This document is the single source of truth for cross-template
-conventions used by IDEA.md and the three SPEC.md types
-(Task / Contract / Decision). The three SPEC templates and the IDEA
-template reference this schema instead of duplicating it.
+conventions used by IDEA.md and SPEC.md (the unified
+`SPEC.template.md` with task / contract / decision flavours, plus
+`SPEC.fastpath.template.md`). The SPEC and IDEA templates reference
+this schema instead of duplicating it.
 
 ## Normative Language
 
@@ -38,19 +39,8 @@ delimited by `---` on its own line.
 | `brainstormed_on` | date | REQUIRED | ISO-8601 date | e.g. `2026-05-01` |
 | `implies_spec_type` | enum | OPTIONAL | `task` \| `contract` \| `decision` | informational only post-WS-SPEC-lean; all specs use the one unified `SPEC.template.md` |
 
-Example:
-
-```yaml
----
-id: bes-spec-authoring-procedure-v1
-spec_id: 2026-05-01-bes-spec-authoring-procedure-v1
-status: ready-for-spec
-owner: HasNoBeef
-brainstormed_by: copilot-gpt-5.5  # or claude-opus-4-8-1m, etc. — any model:lane label
-brainstormed_on: 2026-05-01
-implies_spec_type: contract
----
-```
+Literal example: the front-matter block of
+`agents/specs/IDEA.template.md` (the file authors copy from).
 
 ### 1.2 SPEC.md front-matter (shared across all three types)
 
@@ -58,36 +48,19 @@ implies_spec_type: contract
 |---|---|---|---|---|
 | `id` | string | REQUIRED | `<YYYY-MM-DD>-<topic>` | folder name MUST equal id |
 | `status` | enum | REQUIRED | `draft` \| `needs-revision` \| `owner-blocking` \| `approved-pending-owner` \| `approved` \| `decomposed` \| `in-execution` \| `verified` \| `closed` \| `superseded` | state machine; only owner sets `approved`, `decomposed`, `superseded`, and `closed` |
-| `type` | enum | REQUIRED | `task` \| `contract` \| `decision` | determines which template was used |
+| `type` | enum | OPTIONAL | `task` \| `contract` \| `decision` \| `fastpath` | informational post-lean; flavours which OPTIONAL sections apply — all specs use the unified `SPEC.template.md` (fastpath uses `SPEC.fastpath.template.md`) |
 | `owner` | string | REQUIRED | owner identifier | |
 | `repo` | string | REQUIRED | repo name | e.g. `bes-fleet-policy` |
 | `branch_policy` | enum | REQUIRED | `worktree-preferred` \| `main-direct` | matches OPERATING_MODEL Workspace Policy |
 | `risk` | enum | REQUIRED | `low` \| `medium` \| `high` | |
 | `requires_network` | boolean | REQUIRED | `true` \| `false` | |
 | `requires_secrets` | list[string] | REQUIRED | env-var names or `[]` | |
-| `acceptance_commands` | list[string] | REQUIRED | runnable commands | non-empty OR explicitly `[]` with reason in Acceptance Criteria section |
-| `ideated_in` | string | REQUIRED | repo-relative path | path to producing IDEA.md |
+| `acceptance_commands` | list[string] | REQUIRED | runnable commands | non-empty OR explicitly `[]` with reason in Acceptance Criteria section; `type: fastpath` MAY use `[]` with the checks inline in the fastpath §4 Acceptance-commands section |
+| `ideated_in` | string | REQUIRED | repo-relative path OR `null` | path to producing IDEA.md; `null` is valid ONLY for `type: fastpath` (which skips the IDEA phase) |
 | `superseded_by` | string | OPTIONAL | spec id or citation-grammar string | REQUIRED at `status: superseded` unless the superseding authority is stated in the spec body (a commit message alone is NOT sufficient); empty string invalid |
 
-Example (Contract SPEC):
-
-```yaml
----
-id: 2026-05-01-bes-spec-authoring-procedure-v1
-status: approved
-type: contract
-owner: HasNoBeef
-repo: bes-fleet-policy
-branch_policy: main-direct
-risk: medium
-requires_network: false
-requires_secrets: []
-ideated_in: specs/2026-05-01-bes-spec-authoring-procedure-v1/IDEA.md
-acceptance_commands:
-  - test -f agents/specs/SPEC.task.template.md
-  - bash agents/scripts/lint-spec.sh specs/<id>/SPEC.md
----
-```
+Literal example: the front-matter block of
+`agents/specs/SPEC.template.md` (the file authors copy from).
 
 ### 1.3 Status state machine
 
@@ -156,30 +129,41 @@ Owner alone sets `approved`, `decomposed`, `superseded`, and `closed`. The
 `spec-evidence-governance` skill MUST NOT set `closed`. Skills MAY set
 `approved-pending-owner` on a clean gate result.
 
-**Capture-after exception (owner-only).** A Contract or Decision
-SPEC MAY land directly at `status: verified` in the same
+**Capture-after exception (owner-only).** A Task, Contract, or
+Decision SPEC MAY land directly at `status: verified` in the same
 change-set as the work it specifies, when the work was implemented
 before the SPEC was authored under explicit owner directive
 (`owner://transcript-<date>`). The per-type quality gate
 (`spec-review`) and citation grammar remain REQUIRED; only the
-temporal precedence of SPEC-before-work is waived. Reference
-precedent: `file://specs/2026-05-15-inbox-channel-and-skill-references-pattern/SPEC.md`
-and capture SE3 at
-`file://specs/2026-05-15-inbox-channel-and-skill-references-pattern/SPEC_EVIDENCE.md`.
-Capture-after is an exception path; routine work follows the
-normal lifecycle so the BLOCKING review gate runs before
-approval.
+temporal precedence of SPEC-before-work is waived
+(`file://specs/2026-05-15-inbox-channel-and-skill-references-pattern/SPEC.md`;
+extended from Contract/Decision to Task per
+`file://specs/2026-07-10-fleet-policy-hygiene-sweep/SPEC.md`,
+owner-directed — `owner://transcript-2026-07-10` "Codify practice in
+schema"). Capture-after is an exception path; routine work follows the
+normal lifecycle so the BLOCKING review gate runs before approval.
+
+**Fastpath carve-out (owner-only).** A `type: fastpath` SPEC
+(`file://agents/specs/SPEC.fastpath.template.md`) MAY land directly at
+`status: closed` in the same commit as the work it records, WITHOUT the
+IDEA / blocking-review / decomposition / cross-validation phases, when
+ALL fastpath thresholds hold (≤1 file, ≤50 lines, one component, no
+public-contract or persisted-state impact, reversible in one commit)
+AND an explicit owner directive authorises it (cited in the fastpath
+§3). That owner directive supplies the owner action the `closed` flip
+requires; the inline commit message is the approval. Fastpath is the
+ONLY path that lands at `closed` without first traversing `verified`;
+if any threshold fails, escalate to Task/Contract/Decision. (Codified
+per `file://specs/2026-07-10-fleet-policy-hygiene-sweep/SPEC.md`,
+`owner://transcript-2026-07-10`.)
 
 ### 1.4 TASK.md front-matter
 
 TASK.md is the per-slice executable artefact emitted by the
-`approved-spec-decomposition` skill from an approved SPEC's §11
-Execution Plan (Task) or §11 / §14 / §15 (Contract). TASK.md is the
-dispatchable unit and is executed directly by agents; no external
-tracker (e.g. Linear) and no dispatcher (e.g. Symphony) is required —
-the fleet has never run either, and neither is a precondition for
-task creation. The parent SPEC remains the immutable execution
-authority; TASK.md files are NOT peer authorities.
+`approved-spec-decomposition` skill from an approved SPEC's
+Execution Plan. TASK.md is the dispatchable unit, executed directly
+by agents; the parent SPEC remains the immutable execution
+authority — TASK.md files are NOT peer authorities.
 
 | Field | Type | Required | Allowed values | Notes |
 |---|---|---|---|---|
@@ -195,7 +179,6 @@ authority; TASK.md files are NOT peer authorities.
 | `write_scope` | enum | REQUIRED | `none` \| `disjoint` \| `overlap` | parallel writes require `disjoint` |
 | `parallelism_evaluated` | boolean | REQUIRED | `true` | MUST be `true`; records evaluation per `2026-05-04-agent-parallelism-and-model-routing-v2` §7.1 |
 | `acceptance_commands` | list[string] | REQUIRED | runnable commands or `[]` with reason in §5 | subset of parent SPEC's plus task-local checks |
-| `tracker_ref` | string \| null | OPTIONAL | external tracker id (e.g. `BES-123`) or absent | OPTIONAL — present only if an external tracker is in use; no tracker is required and none is run by default |
 
 TASK.md status state machine:
 
@@ -212,24 +195,28 @@ only reverse edge from `in-progress`.
 Cross-validation gate: `in-progress → in-review` requires findings
 from `cross_validation_lane` to be addressed (or explicit
 justified pushback) per `agents/skills/code-review/SKILL.md` and
-`agents/skills/spec-review/SKILL.md`.
+`agents/skills/spec-review/SKILL.md`. The review artifact itself
+MUST carry the Tool-Receipt Block (canonical definition:
+`agents/skills/code-review/SKILL.md`); an artifact without receipts
+is INVALID for this gate — treated as not-run
+(`specs/2026-07-01-cross-val-tool-receipts/SPEC.md`).
 
 Integration gate: when ALL TASK.md in a parent SPEC's `tasks/`
 directory reach `done`, the parent SPEC MAY flip
 `decomposed → in-execution → verified` after running the parent's
-full `acceptance_commands`. The parent SPEC's §17 / §19 Completion
+full `acceptance_commands`. The parent SPEC's §6 Completion
 Report aggregates per-task evidence.
 
 ## 2. Evidence gate
 
-WS-SPEC lean (2026-07-01, `file://specs/2026-07-01-ws-spec-system-lean/SPEC.md`):
-the heavy per-claim six-prefix grammar + section-inheritance heuristic is
-replaced by a lighter SECTION-LEVEL evidence gate. `lint-spec.sh` requires
-that every evidence-bearing section (Authority Map, Current System Facts,
-Substance Citations, Code/Docs Reality Check, Decision Criteria, Candidate
-Options) carries at least one SOURCE TOKEN. Memory and training are NOT
-citable evidence (per OPERATING_MODEL Memory Policy). Enforcement is
-RETAINED — it is not downgraded to convention.
+The evidence gate is SECTION-LEVEL
+(`file://specs/2026-07-01-ws-spec-system-lean/SPEC.md`):
+`lint-spec.sh` requires that every evidence-bearing section
+(Authority Map, Current System Facts, Substance Citations,
+Code/Docs Reality Check, Decision Criteria, Candidate Options)
+carries at least one SOURCE TOKEN. Memory and training are NOT
+citable evidence (per OPERATING_MODEL Memory Policy). Enforcement
+is RETAINED — it is not downgraded to convention.
 
 ### 2.1 Accepted source tokens
 
@@ -248,134 +235,67 @@ RECOMMENDED, most auditable form:
 
 Repo-relative `file://` paths are RECOMMENDED. Absolute paths are
 RECOMMENDED only when the cited file is outside the repo
-(e.g. `file:///tmp/ikto-refs/symphony-spec.md`).
+(e.g. `file:///tmp/refs/external-source.md`).
 
 ### 2.2 What constitutes a citable claim
 
 A *citable claim* is any statement of fact, constraint, decision,
-behavior, or requirement that an executor or verifier MUST rely on.
-Examples: counts, file paths, line numbers, owner directives,
-constraints, behavioral requirements, design decisions.
+behavior, or requirement that an executor or verifier MUST rely on
+(counts, file paths, owner directives, behavioral requirements,
+design decisions).
 
 ### 2.3 What does NOT require citation
 
-The following SHALL NOT be flagged as missing citations:
-
-- **Section headers and document structure** — `## 1. Problem` is not
-  a claim.
-- **Editorial framing and transitions** — "The following sections
-  specify ...", "We now turn to ...".
-- **Restatements within a paragraph of an already-cited claim** —
-  one citation at the source statement; subsequent references in the
-  same paragraph or list inherit it.
-- **Definitions internal to the spec** — when the spec defines a
-  term, the definition does not need an external citation.
-- **References to other sections of the same document** — "see §7.6"
-  is not a claim.
-- **Pseudocode and reference algorithms** — line-level pseudocode
-  does not require per-line citation; the algorithm as a whole is
-  authored synthesis.
-- **Domain model field declarations** — once declared in the Domain
-  Model section, downstream sections may reference fields without
-  citation.
+Section headers and document structure, editorial framing and
+transitions, restatements of an already-cited claim, definitions
+internal to the spec, internal cross-references ("see §7.6"),
+pseudocode, and declared domain-model fields.
 
 ### 2.4 Examples
 
-**Positive — citation REQUIRED:**
-
-1. "The studio-root `/.agents/` is gitignored." → `cmd://git -C
-   /var/home/hasnobeef/buildepicshit check-ignore -v .agents/`
-   (output excerpt MUST follow).
-2. "Owner directed local-only repo." → `owner://transcript-2026-05-01`
-   (verbatim quote MUST follow).
-3. "Symphony spec is 2169 lines." → `cmd://wc -l
-   /tmp/ikto-refs/symphony-spec.md` (output MUST follow).
-4. "OPERATING_MODEL was last updated 2026-04-29." →
-   `file://agents/OPERATING_MODEL.md` (heading line citation
-   acceptable).
-5. "Three failure modes follow." → `file://specs/2026-05-01-bes-spec-authoring-procedure-v1/IDEA.md`
-   §1 (the producing IDEA.md is the source).
-
-**Negative — citation NOT required:**
-
-1. `## 6. Domain Model` — section header.
-2. "The following entities are defined below." — editorial framing.
-3. "An IDEA artefact has front-matter and a body." — internal
-   definition.
-4. "See §7.6 for the state machine." — internal cross-reference.
-5. "The algorithm above iterates until convergence." — internal
-   reference to in-document pseudocode.
+Worked per-claim examples were retired with the per-claim lint
+(`file://specs/2026-07-01-ws-spec-system-lean/SPEC.md`); any closed
+spec under `specs/` is a live example.
 
 ### 2.5 Suppression escape hatch
 
-Where the lint script flags a claim that is in fact an editorial
-sentence, the author MAY append the HTML comment
-`<!-- lint-ok: no-citation -->` to the offending line. Suppression
-comments SHALL be sparing; pervasive suppression is itself a quality
-signal and SHOULD be raised in spec review.
-
-The companion marker `<!-- lint-ok: no-rfc -->` silences the lint's
-lowercase-RFC-2119 warning for a single line; use this where a
-lowercase keyword appears in unambiguously non-normative prose
-(for example, a verbatim block-quote of an external source). Both
-markers are line-local: `no-citation` applies to the paragraph
-containing the marker, `no-rfc` applies to the line containing it.
+Where the lint flags an evidence-bearing section that is in fact
+editorial, the author MAY place the HTML comment
+`<!-- lint-ok: no-citation -->` anywhere in that section; it
+silences that SECTION's evidence audit. Suppression SHALL be
+sparing; pervasive suppression is itself a quality signal and
+SHOULD be raised in spec review.
 
 ## 3. RFC 2119 usage
 
-WS-SPEC lean (2026-07-01): per-section scope enforcement is REMOVED. RFC
-2119 keywords carry normative force wherever they appear UPPERCASE;
-lowercase variants are ordinary English. `lint-spec.sh` no longer scopes
-keywords to specific sections and no longer emits per-section RFC warnings.
-A `## Normative Language` preamble is OPTIONAL (RECOMMENDED for specs that
-lean heavily on normative keywords).
+RFC 2119 keywords carry normative force wherever they appear
+UPPERCASE; lowercase variants are ordinary English — there is no
+per-section scoping (`file://specs/2026-07-01-ws-spec-system-lean/SPEC.md`).
+A `## Normative Language` preamble is OPTIONAL (RECOMMENDED for
+specs that lean heavily on normative keywords).
 
 ## 4. Section naming conventions
 
-- Top-level sections: `## N. Title` with Arabic numerals.
-- Sub-sections: `### N.M Title`.
-- Sub-sub-sections (RECOMMENDED only when needed): `#### N.M.K Title`.
-- Section titles in the shared skeleton MUST match verbatim across
-  the three SPEC templates and IDEA template (e.g. "Authority Map"
-  is identical wording wherever it appears).
+- Top-level sections: `## N. Title` with Arabic numerals;
+  sub-sections `### N.M Title`.
 - Front-matter `id` MUST equal the spec folder name.
-- Spec id format: `<YYYY-MM-DD>-<kebab-case-topic>`.
-
-### 4.1 Shared section skeleton
-
-The following sections, when present, MUST have identical titles
-across all spec types (Task / Contract / Decision):
-
-- `## Normative Language` (preamble, RECOMMENDED in IDEA, REQUIRED in SPECs)
-- `## Authority Map`
-- `## Code/Docs Reality Check`
-- `## Open Questions`
-- `## Acceptance Criteria`
-- `## Rollback Plan` (REQUIRED in Task, Contract; OPTIONAL in Decision)
-- `## Completion Report`
-
-Type-specific sections (e.g. Domain Model, State Specification,
-Failure Model, Trade-off Comparison, Locks, Reversal Plan) appear
-only in the templates that REQUIRE them; their titles are also
-fixed across templates that include them.
+- Spec id format: `<YYYY-MM-DD>-<kebab-case-topic>`. Pre-schema specs
+  authored before this format (the `2026-04-29-*` set and `BES-CP-*`)
+  are grandfathered un-migrated as historical record per
+  `file://specs/2026-05-01-bes-spec-authoring-procedure-v1/SPEC.md`
+  §21.1; they are exempt from the id==folder and `branch_policy`-enum
+  rules and MUST NOT be retro-fitted.
+- `lint-spec.sh` enforces presence of `Problem`, `Acceptance
+  Criteria`, and `Completion Report` (`Recommendation` for IDEA;
+  `Problem` + `Completion Report` for fastpath). Other section
+  names follow the templates.
 
 ## 5. Quality-gate handoff to `spec-review`
 
-When `/review-spec` runs:
-
-1. Reads front-matter `type`.
-2. Selects the per-type quality gate
-   (`task` → bar b, `contract` → bar c, `decision` → bar b + candidates).
-3. Runs `lint-spec.sh` on the artefact (REQUIRED for `contract`,
-   RECOMMENDED for `task` and `decision`).
-4. Produces a structured Quality Gate Result with `pass`, `failures`
-   (with `criterion`, `evidence`, `severity`).
-5. Sets `status: needs-revision` on any blocking failure;
-   `status: approved-pending-owner` on a clean pass.
-6. Owner sets `status: approved` after reviewing the Quality Gate
-   Result and the SPEC.
-
-The `spec-review` skill MUST NOT set `status: approved`.
+The review gate is the `spec-review` skill (BLOCKING) — see
+`agents/skills/spec-review/SKILL.md` and
+`agents/workflows/review-spec.md`. It MUST NOT set
+`status: approved` (owner-only; §1.3).
 
 ## 6. Cross-references
 

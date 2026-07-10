@@ -1,12 +1,6 @@
 # Orient
 
-Use this workflow before planning or editing.
-
-1. Read `AGENTS.md`.
-2. Read `WORKFLOW.md`, `CLAUDE.md`, `STATUS.md`, and linked docs when present.
-3. Run `git status --short --branch`.
-4. Identify current branch, local changes, likely files, and verification gate.
-5. Report verified facts, risks, and open questions.
-
-Use the `repo-orientation` skill.
-
+Single source: the `/orient` slash-command
+(`.claude/commands/orient.md`) is the invocation surface; the
+`repo-orientation` skill (`agents/skills/repo-orientation/SKILL.md`)
+owns the mechanics.

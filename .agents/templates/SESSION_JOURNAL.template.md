@@ -8,19 +8,14 @@ writes its handoff here.
 agents. This journal is read in Step 0 orientation by ALL agents and
 appended on session end.
 
-**Authority:**
-`file://agents/templates/WORKFLOW.body.md` "Section 1 — Universal";
-`file://agents/skills/repo-orientation/SKILL.md` Step 2.
-
 ## How to use
 
 **On session start (every agent):** read the last 3 entries. They
 tell you what the previous agent did, what was left dirty, what the
 next agent should pick up.
 
-**On session end (every agent):** append a new entry using the
-template below. Run via `/log-session` slash-command, or write
-manually.
+**On session end (every agent):** append a new entry at the BOTTOM
+of the Entries section using the template below.
 
 If the dirty-tree state changed during your session, you MUST log.
 If your session was read-only (no edits), logging is OPTIONAL but
@@ -64,4 +59,4 @@ question Z.]
 
 ## Entries
 
-<!-- Newest entries at the top. -->
+<!-- Append newest entries at the BOTTOM (chronological order). -->

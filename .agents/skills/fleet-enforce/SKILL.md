@@ -1,6 +1,6 @@
 ---
 name: fleet-enforce
-description: "BLOCKING. Use ONLY from bes-fleet-policy. Issues structured fleet directives to one or more child repos, then applies them via fleet-enforce.sh, commits, and pushes. This is the cross-repo enforcement channel — when fleet rules change in bes-fleet-policy, this skill drives compliance across the 9 fleet locations rather than waiting for manual per-repo sync. Owner alone authorises new directives; the skill executes them."
+description: "BLOCKING. Use ONLY from bes-fleet-policy. Issues structured fleet directives to one or more child repos, then applies them via fleet-enforce.sh, commits, and pushes. This is the cross-repo enforcement channel — when fleet rules change in bes-fleet-policy, this skill drives compliance across every fleet location named in the roster manifests rather than waiting for manual per-repo sync. Owner alone authorises new directives; the skill executes them."
 license: internal-only
 compatibility:
   - copilot
@@ -61,31 +61,10 @@ Do NOT use for:
 ## Directive format
 
 Each directive is a markdown file at
-`agents/fleet-directives/<YYYY-MM-DD>-<slug>.md` with front-matter:
-
-```yaml
----
-id: 2026-05-13-recompose-workflow-applicability
-issued_by: bes-fleet-policy
-target_repos: [ACTOCCATUD, Floom, IKTO, UsefulIdiots, Mimir, Wick, Assets, agentic-installation-methodology]
-authority: bes-fleet-policy@<sha>
-type: file-recompose | manifest-update | hook-config | spec-status-flip | other
-status: pending | applied | expired | superseded
-created: 2026-05-13
-deadline: 2026-05-20    # optional
----
-```
-
-Body sections:
-
-1. **Action** — concrete steps the enforcer takes per target.
-2. **Compliance check** — a shell expression that exits 0 when
-   the target is in compliance.
-3. **Authority chain** — links back to the owner directive / SPEC
-   / feedback entry that authorised the directive.
-
-See `file://agents/fleet-directives/README.md` for full format
-spec and worked examples.
+`agents/fleet-directives/<YYYY-MM-DD>-<slug>.md`. The canonical
+format spec (front-matter fields, body sections, status lifecycle)
+is `file://agents/fleet-directives/README.md` — author from it,
+not from memory.
 
 ## Procedure
 
@@ -137,10 +116,8 @@ checks invoked by the studio-root preflight.
 - Directives that flip artefact state in bulk MUST carry a
   MECHANICAL selector (front-matter predicate, date boundary) plus
   an expected-count assertion; prose boundaries ("evidence-only per
-  STATUS.md") are not decidable. Proven on the 26-spec ACTOCCATUD
-  backfill
-  (`file://specs/2026-06-09-superseded-terminal-status/SPEC_EVIDENCE.md`
-  SE2, dispositioned ACCEPT).
+  STATUS.md") are not decidable
+  (`file://specs/2026-06-09-superseded-terminal-status/SPEC_EVIDENCE.md`).
 - Directives that fail their compliance check after apply MUST
   be flipped back to `pending` with a `failed_targets` field
   listing which repos failed and why.

@@ -62,6 +62,7 @@ resolve_targets() {
         all) printf '%s\n' "${ALL_REPOS[@]}" ;;
         all-internal) printf '%s\n' "${INTERNAL_REPOS[@]}" ;;
         all-oss) printf '%s\n' "${PUBLIC_OSS_REPOS[@]}" ;;
+        all-local) printf '%s\n' "${LOCAL_ONLY_REPOS[@]}" ;;
         *) printf '%s\n' "$field_val" | tr ',' '\n' | awk '{$1=$1; print}' ;;
     esac
 }

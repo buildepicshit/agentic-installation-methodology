@@ -7,6 +7,17 @@ These standards apply across every active fleet repo
 regardless of language. Per-language overlays live under
 `agents/standards/lint/<language>/`.
 
+> **Enforcement status (2026-07-10).** These standards define the
+> TARGET engineering bar. Actual mechanical enforcement is PARTIAL:
+> only the dependency-hygiene gate is wired into CI today
+> (`file://agents/ci/gates.txt`). The per-language lint overlays and
+> the CI gates named per-rule below (U6, U11, U12, U14, …) describe the
+> intended mechanism; full standards enforcement is deferred to a
+> standards-V2 SPEC
+> (`file://specs/2026-05-25-fleet-engineering-excellence-standards/SPEC.md`).
+> Read a rule's tool/CI line as the target, not a live gate, unless it
+> appears in `gates.txt`.
+
 ## The rules (universal)
 
 ### U1 — Cognitive complexity per function ≤ 15
@@ -105,8 +116,9 @@ a lock pin. Overlaps fleet-dependency-hygiene CI gate.
 ### U12 — PR diff-size gate
 
 Per classical SmartBear/Cisco evidence: 400 LoC warn,
-1000 LoC block. Implemented at the CI level via the
-fleet-ci-bootstrap channel.
+1000 LoC block. TARGET enforcement is CI-level via the
+fleet-ci-bootstrap channel, but this gate is NOT yet wired
+(see the enforcement-status note at the top of this file).
 
 ### U13 — Public-symbol docstring requirement
 

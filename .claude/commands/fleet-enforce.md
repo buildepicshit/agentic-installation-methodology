@@ -4,14 +4,21 @@
 target child repos under owner authority.
 
 Use the `fleet-enforce` skill at
-`.agents/skills/fleet-enforce/SKILL.md`.
+`agents/skills/fleet-enforce/SKILL.md` (mirror:
+`.claude/skills/fleet-enforce/SKILL.md`).
+
+Arguments: `<directive_id>` (kebab-case, date-prefixed slug),
+`<target_repos>` (subset of fleet locations or `all`), `<authority>`
+(`file://` SPEC reference, `bes-fleet-policy@<sha>`,
+`owner://transcript-<date>`, or a triaged
+`AGENT_FEEDBACK://<repo>/<entry-id>` — valid authority grammar per
+`agents/scripts/fleet-enforce.sh`).
 
 ## Prerequisites
 
 - Operating from `bes-fleet-policy` (not a child repo).
-- Owner has approved a fleet rule change (closed SPEC, explicit
-  `owner://transcript-<date>`, or legacy triaged AGENT_FEEDBACK
-  entry).
+- Owner has approved the fleet rule change; authority is named and
+  verifiable (one of the forms above).
 - Action is bounded, scriptable, idempotent.
 - Compliance check is a read-only shell expression.
 
@@ -31,11 +38,8 @@ Use the `fleet-enforce` skill at
    target repos, runs action steps, runs compliance check, stages
    explicitly, commits, pushes.
 5. Audit: `bash agents/scripts/audit-fleet-compliance.sh`.
-6. On success, flip directive status `pending → applied`,
-   commit + push.
-7. Update any legacy AGENT_FEEDBACK entries this directive resolves
-   (append Status line citing the bes-fleet-policy directive
-   commit).
+6. On success, flip directive status `pending → applied` and resolve
+   any AGENT_FEEDBACK entries the directive closes; commit + push.
 
 ## Hard rules
 

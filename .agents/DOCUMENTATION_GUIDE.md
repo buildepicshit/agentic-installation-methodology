@@ -107,6 +107,26 @@ must be approved first.
 Post-pivot work should first clarify whether older docs are historical,
 superseded, or still active.
 
+### bes-fleet-runtime
+
+| Path | Use for |
+|---|---|
+| `.agents/specs/` | Agent audit and task-control specs |
+| `src/`, `test/`, `bin/` | Runtime product source, tests, entry scripts |
+| `README.md` | Product overview and usage |
+
+Durable architecture docs follow the repo's own layout; consult its
+`AGENTS.md` / `README.md` before placing new docs.
+
+### agentic-installation-methodology
+
+| Path | Use for |
+|---|---|
+| `.agents/specs/` | Agent audit and task-control specs |
+
+Private repo (owner-directed 2026-06-30). Durable-doc placement follows
+its own `AGENTS.md`; consult it before creating docs.
+
 ### Wick
 
 Public OSS caution applies.
@@ -136,9 +156,9 @@ Public OSS caution applies.
 | `docs/launch-posting-plan.md` | Public launch/posting plan |
 | `.planning/planning/` | Historical planning archive |
 
-Mimir product docs may mention memory, hooks, and checkpoint features. BES
-fleet operating docs must not use Mimir hooks or raw memory as authority until
-a new spec-authority integration is approved.
+Mimir product docs may mention memory, hooks, and checkpoint features;
+Mimir is not the operating-layer memory authority (see OPERATING_MODEL
+Memory Policy).
 
 ## Promotion Rules
 
@@ -147,7 +167,12 @@ Use this promotion path:
 1. Start with `.agents/specs/<date>-<task>/SPEC.md` for task control.
 2. If the work creates durable product knowledge, add or update the repo-native
    docs path listed above.
-3. Keep audit notes and completion evidence in the task spec.
+3. Keep audit notes and completion evidence in the task spec. Committed
+   cross-family review / cross-validation artifacts belong at
+   `specs/<id>/reviews/*` per the tool-receipts contract
+   (`file://specs/2026-07-01-cross-val-tool-receipts/SPEC.md`). The
+   repo-root `reviews/` directory is a LEGACY pre-contract location
+   retained as history only; do not add new review artifacts there.
 4. Do not move audit prose wholesale into public docs. Rewrite it for the
    intended audience.
 5. Public OSS repos require owner approval before publishing agent workflow or
@@ -165,8 +190,5 @@ Use this promotion path:
 
 ## Memory And Evidence
 
-Raw chat history, Claude memory, Copilot memory, Mimir drafts, and old agent notes
-are evidence only. They do not decide document placement.
-
-Durable rules must cite a checked-in file, approved spec, command output, issue,
-PR, or direct owner instruction.
+Memory never decides placement: raw chat history, agent memories, and
+old agent notes are evidence only. See OPERATING_MODEL Memory Policy.

@@ -69,6 +69,21 @@ case "$TYPE" in
     *) emit_warn "front-matter" "$fm_end" "unknown type: $TYPE" ;;
 esac
 
+# ideated_in advisory (non-blocking): schema §1.2 REQUIRES a repo-relative
+# path for non-fastpath SPECs; `null` is valid ONLY for type: fastpath.
+# Surface drift (absent / literal null / non-path) as advisory, not blocking,
+# so the REQUIRED field stops silently drifting without dead-stopping work.
+if [[ "$ARTEFACT" == "spec" && "$TYPE" != "fastpath" ]]; then
+    iv="${FM[ideated_in]:-}"
+    if [[ -z "$iv" ]]; then
+        emit_warn "front-matter" "$fm_end" "ideated_in absent (schema §1.2 REQUIRES a repo-relative path for non-fastpath specs)"
+    elif [[ "$iv" == "null" ]]; then
+        emit_warn "front-matter" "$fm_end" "ideated_in is 'null' (allowed only for type: fastpath)"
+    elif [[ "$iv" != */* ]]; then
+        emit_warn "front-matter" "$fm_end" "ideated_in '$iv' is not a repo-relative path (schema §1.2)"
+    fi
+fi
+
 # ---------- Required-section presence (unified core) ----------
 # WS-SPEC lean: one flexible spec format. The linter enforces only the
 # universal CORE sections; the unified template RECOMMENDS the fuller set
@@ -143,7 +158,14 @@ has_evidence() {
     [[ "$buf" =~ (file://|cmd://|url://|owner://|judgment://|https?://) ]] && return 0
     [[ "$buf" =~ \`[^\`]*[/.][^\`]*\` ]] && return 0
     [[ "$buf" =~ \`(git|bash|grep|node|npm|sh|cd|rm|cp|mv|cat|sed|awk|test|diff|chmod|find|ls|mkdir|jq|python3?|bats|shellcheck|gh)[[:space:]] ]] && return 0
+    # Any backticked multi-word token (command with args, not only the
+    # allowlist above) — schema §2.1 accepts "a backticked path/file or
+    # command" generically (e.g. `make lint`, `cargo test`).
+    [[ "$buf" =~ \`[^\`]+[[:space:]][^\`]+\` ]] && return 0
     [[ "$buf" =~ \"[^\"]{25,}\" ]] && return 0
+    # A markdown blockquote carrying a substantial (>=25-char) verbatim /
+    # owner quote — the form the IDEA/SPEC templates model for owner quotes.
+    [[ "$buf" =~ \>[[:space:]][^\`]{25,} ]] && return 0
     return 1
 }
 
