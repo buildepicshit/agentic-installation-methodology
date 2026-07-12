@@ -1,9 +1,9 @@
 {
   "schema_version": 1,
-  "generated_at": "2026-07-10T22:30:36.540Z",
+  "generated_at": "2026-07-12T17:07:10.009Z",
   "source": {
     "repo": "bes-fleet-policy",
-    "commit": "7711d9cbda6805fef91082a11d0fefd7067185fd",
+    "commit": "d7eb66ce1f105b3268a7020e46c974751003bf32",
     "dirty": true
   },
   "manifests": {
@@ -221,8 +221,8 @@
       "kind": "agents-file",
       "source_path": "agents/githooks/pre-push",
       "target_path": ".agents/githooks/pre-push",
-      "sha256": "40c7786eee2907d97b273e92716175918f105005c738dc6f70f580f08cfa76ae",
-      "bytes": 1657
+      "sha256": "2e302f1f5159f4c8ab49d01470fee5c15a219d87525ccc6a4c6a517d970db957",
+      "bytes": 2426
     },
     {
       "kind": "agents-file",
@@ -256,8 +256,8 @@
       "kind": "agents-file",
       "source_path": "agents/OPERATING_MODEL.md",
       "target_path": ".agents/OPERATING_MODEL.md",
-      "sha256": "2e8f3e1f46c8129edc1208df84460f5efc4a6aae33330aaf3cbe48ad2087bfda",
-      "bytes": 23940
+      "sha256": "6b2f6ebd7ac01e3aabd36298c63fa365ce4315de77a5e6a65da2d8cb4e019c93",
+      "bytes": 26551
     },
     {
       "kind": "agents-file",
@@ -669,8 +669,8 @@
       "kind": "agents-file",
       "source_path": "agents/skills/repo-orientation/SKILL.md",
       "target_path": ".agents/skills/repo-orientation/SKILL.md",
-      "sha256": "a7efabf41c03f3ef590bb817b533368372ccf798af6924bf4fd8aeb0d74bbb6f",
-      "bytes": 2664
+      "sha256": "3d405023c06e4e078411cbe22d99dc370aa4b6cec7b69a56fa39dc38a7274bfb",
+      "bytes": 3094
     },
     {
       "kind": "agents-file",
@@ -1061,8 +1061,8 @@
       "kind": "hook",
       "source_path": ".claude/hooks/session-start-context.sh",
       "target_path": ".claude/hooks/session-start-context.sh",
-      "sha256": "674df628b7398d27178546d523786dbd7a2709122a1c51d34dc89a03d88e5c33",
-      "bytes": 4071
+      "sha256": "ad2a73b16026028eb5f3a0d70054fea025ceac3e761ce43b447996ec1aa24b8a",
+      "bytes": 4403
     },
     {
       "kind": "hook-fixture",
@@ -1194,8 +1194,8 @@
       "kind": "skill",
       "source_path": "agents/skills/repo-orientation/SKILL.md",
       "target_path": ".claude/skills/repo-orientation/SKILL.md",
-      "sha256": "a7efabf41c03f3ef590bb817b533368372ccf798af6924bf4fd8aeb0d74bbb6f",
-      "bytes": 2664
+      "sha256": "3d405023c06e4e078411cbe22d99dc370aa4b6cec7b69a56fa39dc38a7274bfb",
+      "bytes": 3094
     },
     {
       "kind": "skill-reference",
@@ -1292,8 +1292,8 @@
       "kind": "githook",
       "source_path": "agents/githooks/pre-push",
       "target_path": ".githooks/pre-push",
-      "sha256": "40c7786eee2907d97b273e92716175918f105005c738dc6f70f580f08cfa76ae",
-      "bytes": 1657
+      "sha256": "2e302f1f5159f4c8ab49d01470fee5c15a219d87525ccc6a4c6a517d970db957",
+      "bytes": 2426
     }
   ]
 }

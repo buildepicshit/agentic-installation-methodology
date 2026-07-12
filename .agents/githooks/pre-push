@@ -36,10 +36,22 @@ do
     fi
 done
 
+# F-117: fail CLOSED. A missing runner means broken .agents/ propagation, not "no gates" —
+# refuse the push rather than silently letting an ungated commit through.
 if [ -z "$runner" ]; then
-    echo "BES pre-push: run-ci-gates.sh not found; skipping CI gates" >&2
-    exit 0
+    echo "BES pre-push: run-ci-gates.sh not found — refusing to push (fail-closed, F-117)" >&2
+    exit 1
 fi
 
-CLAUDE_PROJECT_DIR="$repo_root" bash "$runner"
-exit $?
+CLAUDE_PROJECT_DIR="$repo_root" bash "$runner" || exit $?
+
+# F-36: also run the repo-local verification gate when the repo ships one. The fleet CI manifest
+# (gates.txt) is cross-repo-shared and cannot carry a repo-specific gate — e.g. ACTOCCATUD's Rust
+# fmt/clippy/determinism/nextest/deny gate — so the repo-local gate rides the hook here.
+# Fail-closed: a present-but-failing gate blocks the push. Repos without one skip this (no-op).
+local_gate="$repo_root/.githooks/verify-local.sh"
+if [ -x "$local_gate" ]; then
+    echo "BES pre-push: running repo-local gate ($local_gate)" >&2
+    bash "$local_gate" || exit $?
+fi
+exit 0
