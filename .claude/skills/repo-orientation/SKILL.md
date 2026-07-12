@@ -66,11 +66,16 @@ Use this before planning or editing.
 - One-layer-up module/caller map when the area is unfamiliar.
 - Verification commands.
 - Documentation placement constraints for this task.
-- Local changes that must be preserved.
-- Open questions before implementation.
+- Local changes that must be preserved — REAL content changes only. A
+  stat-dirty file (mtime touched, identical to HEAD) is clean; say nothing.
+- Open questions — only a genuine owner DECISION that blocks the task. If
+  none, say "none" and proceed. Do not manufacture questions to fill the slot.
 
 ## Hard Rules
 
 - Do not edit during orientation.
 - Do not rely on memory when repo docs can answer the question.
 - If instructions conflict, stop and report the conflict.
+- A clean tree with nothing owed is the success state, not a prompt to find
+  something to flag. Report it in one line and move to the task
+  (`agents/OPERATING_MODEL.md` "Standing Autonomy and Concision").

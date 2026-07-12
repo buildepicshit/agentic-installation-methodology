@@ -21,6 +21,12 @@ cat >/dev/null 2>&1 || true
 repo_root="$(git rev-parse --show-toplevel 2>/dev/null || echo .)"
 cd "$repo_root" 2>/dev/null || true
 
+# Refresh the index so stat-dirty-but-identical files (mtime touched,
+# content matches HEAD) are NOT reported below as modifications. Without
+# this, `git ls-files -m` lists phantom "changes" that the agent then
+# treats as real loose ends — a manufactured-issue generator.
+git update-index -q --refresh >/dev/null 2>&1 || true
+
 repo_name="$(basename "$repo_root")"
 branch="$(git rev-parse --abbrev-ref HEAD 2>/dev/null || echo unknown)"
 

@@ -50,6 +50,7 @@ bes:
 
 
 
+
 # agentic-installation-methodology Workflow
 
 This is the **public OSS** repo for the agentic installation
@@ -66,43 +67,23 @@ any public CI churn.
 Fleet-baseline WORKFLOW.md prompt body. Authored once in
 bes-fleet-policy at agents/templates/WORKFLOW.body.md and propagated
 to each product repo's WORKFLOW.md (after the YAML front matter and
-the per-repo intro paragraph).
-
-This body is structured into two sections:
-
-  Section 1 — Universal (applies to every agent in this repo,
-              regardless of dispatch surface).
-  Section 2 — OPTIONAL dispatch appendix (dormant; NOT in use —
-              the fleet runs no external dispatcher or tracker).
-
-If an external dispatcher were ever wired up (none is, and none ever
-has been), it would render this body using Liquid-style variables
-({{ issue.* }}, {% if attempt %}). Per-repo
-customization belongs ABOVE this body (intro paragraph naming the
-repo, repo-specific posture notes, repo-specific verification
-command). This body is fleet-uniform.
+the per-repo intro paragraph). Per-repo customization belongs ABOVE
+this body; the body itself is fleet-uniform.
 -->
 
 ## Applicability
 
 This file is the **per-repo engagement contract**, not a setup
 checklist. It applies to every agent operating in this repo
-regardless of dispatch surface; Section 1 below is universal.
-Section 1 below is the whole contract. Section 2 is a dormant,
-optional appendix that is NOT in use.
-
-- **Every session (Claude Code or Copilot CLI):** Section 1 applies.
-  **The fleet uses no external tracker or dispatcher — do not install
-  Symphony, Linear, or any tracker; none is configured.** Use the v1
-  SPEC procedure via the `/idea-capture`, `/author-spec`,
-  `/review-spec`, `/execute-spec`, `/verify-spec` slash-commands (see
-  `.agents/skills/spec-driven-development/SKILL.md`). For small
-  owner-directed work, evaluate the fastpath route through
-  `.agents/skills/spec-authoring/SKILL.md` and
-  `.agents/specs/SPEC.fastpath.template.md`.
-- **Section 2** would apply ONLY if someone later wired up an
-  external dispatcher (none exists, and the fleet has never used
-  one). Ignore it otherwise.
+regardless of dispatch surface; Section 1 below is the whole
+contract. **The fleet uses no external tracker or dispatcher — do
+not install one; none is configured.** Use the v1 SPEC procedure via
+the `/idea-capture`, `/author-spec`, `/review-spec`, `/execute-spec`,
+`/verify-spec` slash-commands (see
+`.agents/skills/spec-driven-development/SKILL.md`). For small
+owner-directed work, evaluate the fastpath route through
+`.agents/skills/spec-authoring/SKILL.md` and
+`.agents/specs/SPEC.fastpath.template.md`.
 
 ---
 
@@ -116,16 +97,15 @@ compliance and not unbounded action
 (`.agents/specs/2026-06-20-agent-canon-bounded-autonomy-voice/SPEC.md`
 §7).
 
-1. **Citation discipline & ground before you answer.** Every factual
-   claim you write into a `SPEC.md`, `TASK.md`, `Completion Report`,
-   or `SESSION_JOURNAL.md` MUST carry a citation prefix: `file://`,
-   `cmd://`, `url://`, `owner://`, `judgment://owner`,
-   `judgment://agent-synthesis`. Agent memory is INPUT, never
-   EVIDENCE. The same standard governs any answer: on a load-bearing
-   external-world gap (a tool, API, library, product, current fact),
-   **research, do not speculate** — find primary sources, become the
-   SME, then cite what you fetched or say "unverified". See
-   `.agents/specs/SPEC.schema.md` §2 and
+1. **Citation discipline & ground before you answer.** Every
+   evidence-bearing section you write into a `SPEC.md`, `TASK.md`,
+   `Completion Report`, or `SESSION_JOURNAL.md` MUST carry at least
+   one source token (`.agents/specs/SPEC.schema.md` §2.1). Agent
+   memory is INPUT, never EVIDENCE. The same standard governs any
+   answer: on a load-bearing external-world gap (a tool, API,
+   library, product, current fact), **research, do not speculate** —
+   find primary sources, become the SME, then cite what you fetched
+   or say "unverified". See `.agents/specs/SPEC.schema.md` §2 and
    `.agents/skills/execution-discipline-cluster/SKILL.md` practice 4.
 2. **Owner authority is non-negotiable.** Owner alone sets
    `status: approved`, `status: decomposed`, `status: superseded`,
@@ -204,7 +184,7 @@ Three minutes of reading, no edits:
    `.agents/templates/SESSION_JOURNAL.template.md`.
 3. The active TASK.md (if dispatched) or the SPEC you're
    operating against. The parent SPEC is immutable except for its
-   §17 Completion Report.
+   §6 Completion Report.
 
 ## Step 1 — Pick the procedure
 
@@ -354,223 +334,5 @@ Before ending your session (or as Stop-hook reminds you):
 
 ## Related skills
 
-Available in `.agents/skills/`:
-
-- `repo-orientation` — what to read, in what order, before editing.
-- `spec-driven-development` — the v1 IDEA→SPEC→tasks→execute
-  pipeline.
-- `spec-authoring` — produce typed SPECs (task / contract /
-  decision / fastpath).
-- `spec-review` — BLOCKING quality gate.
-- `approved-spec-decomposition` — post-approval SPEC → TASK.md
-  emission.
-- `implementation-execution` — scoped edits without surprise.
-- `code-review` — review your own diff before push; cross-family
-  reviewer for TASK.md execution.
-- `verification` — fresh evidence before completion claim.
-- `tdd` — test-driven development for new behavior.
-- `diagnosis` — systematic debugging when something breaks.
-- `fleet-enforce` — (bes-fleet-policy only) cross-repo directives.
-
-Entry-doc drift is checked by
-`.agents/scripts/audit-entry-docs.sh`.
-
----
-
-# Section 2 — OPTIONAL dispatch appendix (NOT in use)
-
-> **The fleet does not use Linear or Symphony, and never has.** This
-> appendix is a dormant, optional template kept ONLY for the
-> hypothetical case that someone later chooses to wire up an external
-> dispatcher. It is never active in normal operation and is NOT a
-> requirement. Interactive and CLI agents: ignore this section
-> entirely — Section 1 is the whole contract. Do not install Linear or
-> Symphony or any tracker; none is configured.
-
-## Dispatch context (only if an external dispatcher is ever wired up)
-
-If — and only if — an external dispatcher is ever configured, it would
-render this body with its own variables. In that hypothetical case the
-`TASK.md` artefact in
-`.agents/specs/<parent_spec_id>/tasks/` remains the contract and the
-parent SPEC.md the authority. No dispatcher is configured today and
-the rest of this section is inert.
-
-{% if attempt %}
-**Continuation context:**
-
-- This is retry attempt #{{ attempt }} because the ticket is still
-  in an active state.
-- Resume from the current workspace state instead of restarting
-  from scratch.
-- Do not repeat already-completed investigation or validation
-  unless needed for new code changes.
-- Do not end the turn while the issue remains in an active state
-  unless blocked by missing required permissions/secrets.
-{% endif %}
-
-## Issue context
-
-- Identifier: `{{ issue.identifier }}`
-- Title: `{{ issue.title }}`
-- Current status: `{{ issue.state }}`
-- Priority: `{{ issue.priority }}`
-- Labels: `{{ issue.labels }}`
-- URL: `{{ issue.url }}`
-
-Description:
-{% if issue.description %}
-{{ issue.description }}
-{% else %}
-No description provided. The TASK.md in the repo is the source of
-truth — locate it before writing any code.
-{% endif %}
-
-## Symphony Step 0 — Route by Linear state
-
-- `Backlog` → out of scope; do not modify; stop.
-- `Todo` → transition to `In Progress`, ensure `## Copilot Workpad`
-  comment exists, then continue to Symphony Step 1.
-- `In Progress` → continue from current workpad.
-- `Human Review` → poll only; do not change ticket content.
-- `Merging` → run the `land` skill flow; do not call `gh pr merge`
-  directly.
-- `Rework` → full reset (Symphony Step 4 — Rework).
-- `Done` → terminal; shut down.
-
-## Symphony Step 1 — Workpad bootstrap
-
-1. Search Linear comments for a `## Copilot Workpad` marker. If
-   found and unresolved, reuse that comment ID. If not found,
-   create one. **One workpad per issue.** Persist its ID and
-   write all progress updates to that single comment.
-2. Reconcile the workpad before any new edits (check off done
-   items; expand plan; ensure Acceptance Criteria + Validation
-   reflect TASK.md `acceptance_commands` + ticket-provided
-   Validation/Test Plan/Testing sections).
-3. Stamp the workpad header: `<host>:<abs-workdir>@<short-sha>`.
-4. Capture a reproduction signal and record it in `Notes`.
-5. Sync with `origin/main` before code edits; record the sync
-   result in `Notes`.
-
-## Symphony Step 2 — Execute
-
-(Follow Section 1 Step 2 subagent dispatch + Step 3
-cross-validation. Symphony-specific differences:)
-
-1. Open a PR (or attach an existing one). Add the `symphony`
-   label. Link the PR to the issue via attachment.
-2. Run the **PR feedback sweep protocol** (below) before any
-   transition to `Human Review`.
-3. Update the workpad with final checklist status, validation
-   evidence, cross-validation findings + resolutions, and a
-   `### Confusions` section if anything was unclear. Do not post
-   separate "done"/"summary" comments.
-
-## Symphony Step 3 — Human Review handoff
-
-Transition to `Human Review` only when **Completion Bar** below
-is satisfied. After transition, do not change ticket content;
-poll only.
-
-## Symphony Step 4 — Rework
-
-1. Treat `Rework` as a full approach reset.
-2. Close the existing PR.
-3. Remove the existing `## Copilot Workpad` comment.
-4. Create a fresh branch from `origin/main`.
-5. Restart from Symphony Step 0.
-
-## Symphony Step 5 — Land
-
-When the issue reaches `Merging`:
-
-1. Open and follow the `land` skill flow. Do not call
-   `gh pr merge` directly.
-2. After merge, move the issue to `Done`.
-3. Append the TASK.md's evidence to the parent SPEC's §17
-   Completion Report (the only section a subagent may modify).
-
-## PR feedback sweep protocol
-
-Before any transition to `Human Review` on a ticket with an
-attached PR:
-
-1. Identify the PR number from issue attachments.
-2. Gather all feedback channels:
-   - Top-level PR comments (`gh pr view --comments`)
-   - Inline review comments (`gh api repos/<owner>/<repo>/pulls/<pr>/comments`)
-   - Review summaries/states (`gh pr view --json reviews`)
-3. Treat every actionable reviewer comment (human or bot,
-   including inline) as blocking until either (a) code/tests/docs
-   updated to address it, or (b) explicit justified pushback
-   reply posted on that thread.
-4. Update workpad plan/checklist with each feedback item +
-   resolution status.
-5. Re-run validation after feedback-driven changes; push updates.
-6. Repeat until no outstanding actionable comments remain.
-
-## Blocked-access escape hatch (Symphony only)
-
-Use only when blocked by missing required tools or auth that
-cannot be resolved in-session.
-
-- GitHub auth is NOT a valid blocker by default; exhaust fallback
-  remotes/auth modes first.
-- For non-GitHub blockers, move ticket to `Human Review` with a
-  workpad blocker brief: what is missing, why it blocks
-  acceptance, exact human action needed.
-
-## Completion bar before Human Review
-
-- Symphony Step 1/2 checklist fully complete and reflected in
-  workpad.
-- TASK.md `acceptance_commands` exit 0; SPEC §12 Acceptance
-  Criteria in-scope for this task all PASS.
-- Ticket-provided `Validation`/`Test Plan` items all complete.
-- Cross-family cross-validation findings addressed (Section 1
-  Step 3).
-- PR feedback sweep complete; no outstanding actionable comments.
-- PR checks green; branch pushed; PR linked on issue with
-  `symphony` label.
-- If app-touching: runtime validation/media requirements complete.
-
-## Symphony workpad template
-
-Use this exact structure for the persistent Linear-comment
-workpad and keep it updated in place throughout execution:
-
-````md
-## Copilot Workpad
-
-```text
-<hostname>:<abs-path>@<short-sha>
-```
-
-### Plan
-
-- [ ] 1\. Parent task
-  - [ ] 1.1 Child task
-- [ ] 2\. Parent task
-
-### Acceptance Criteria
-
-- [ ] Criterion 1
-- [ ] Criterion 2
-
-### Validation
-
-- [ ] targeted tests: `<command>`
-- [ ] SPEC acceptance: `<command from parent SPEC.md>`
-- [ ] TASK acceptance: `<command from this TASK.md>`
-
-### Notes
-
-- <short progress note with timestamp>
-
-### Confusions
-
-- <only include when something was confusing during execution>
-````
-
----
+See `.agents/SKILL_REGISTRY.md` for the canonical skill catalogue.
+Entry-doc drift is checked by `.agents/scripts/audit-entry-docs.sh`.

@@ -191,6 +191,56 @@ These modes trim ceremony further for the smallest work, below the
 5-gate default. They are NOT escape hatches for laziness — thresholds
 are objective and lint-enforced.
 
+## Standing Autonomy and Concision
+
+Agents default to ACTING on routine, reversible work and reporting
+tersely. Routine hygiene is pre-authorized here — it never needed a
+per-instance owner turn, and treating it as if it did is the failure
+mode this section removes: agents that narrate, re-list, or invent work
+to look diligent instead of finishing it.
+
+### Pre-authorized routine hygiene
+
+A write-capable agent DOES the following on its own, when the action is
+reversible and backed by evidence in the tree — no owner turn required:
+
+- Commit its own verified, in-scope work on a working branch.
+- Treat a stat-dirty file (mtime touched, content identical to HEAD) as
+  clean — refresh the index and move on. It is not a change.
+- Delete a local branch whose tip is already contained in `main`
+  (`git log <branch> --not main` prints nothing).
+- Clear a recorded follow-up once the tree proves it done, and drop it
+  from the every-session read path (STATUS, journal).
+- Complete the mechanical step a prior session named as owed and left
+  only for lack of a turn — merge an already-green PR, run a sync, remove
+  probe residue.
+
+Owner-only actions are unchanged and still require an owner turn: flipping
+a SPEC to `approved`/`verified`/`closed`, pushing to a protected branch
+outside the `main-direct` allowance, reclassifying a repo, publishing to a
+public OSS surface, deleting user work not proven stale, or any
+irreversible or scope-expanding change. When a genuine owner DECISION
+blocks progress — a trade-off the code and docs cannot answer — surface
+that one decision and proceed on everything else.
+
+### Report tersely
+
+- A clean tree with nothing owed is the success state. Say so in one line
+  and take the next real task; do not hunt for something to flag.
+- Report state that is REAL and load-bearing. A phantom stat-dirty file, a
+  follow-up already recorded in STATUS, or a branch already merged is not
+  an issue — do not present one as if it were.
+- Apply the fleet's own adopted authoring craft to your own prose
+  (`file://specs/2026-07-08-pocock-v1.1-alignment-rebaseline/ADOPTION_PACK.md`
+  T4, Pocock v1.1 `d574778`): delete no-op sentences whole; a completion
+  report that restates template headings with nothing under them is a
+  no-op — collapse it. Terse and complete beats exhaustive and padded.
+
+This MODULATES the Required Work Model and the Completion Report Format;
+it does not replace them. Substantive spec work still reports in full. The
+change: routine work is done and reported in one pass, not described back
+to the owner for permission it already has.
+
 ## Capability Boundary
 
 BES is a fleet operating framework, not an orchestration product.
