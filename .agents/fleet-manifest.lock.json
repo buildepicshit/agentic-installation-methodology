@@ -1,9 +1,9 @@
 {
   "schema_version": 1,
-  "generated_at": "2026-07-12T17:07:10.009Z",
+  "generated_at": "2026-07-16T16:28:08.222Z",
   "source": {
     "repo": "bes-fleet-policy",
-    "commit": "d7eb66ce1f105b3268a7020e46c974751003bf32",
+    "commit": "822e171706b47f6beaa217de5ddeedda13579a71",
     "dirty": true
   },
   "manifests": {
@@ -249,8 +249,8 @@
       "kind": "agents-file",
       "source_path": "agents/MODEL_ROUTING.md",
       "target_path": ".agents/MODEL_ROUTING.md",
-      "sha256": "e9212054d82999f606d72a868ebdaa27b9334a699211df7c4ff9c3acb67bd351",
-      "bytes": 28228
+      "sha256": "9d9a3a1ac2648d8d83e5419e6e6db43d43d5684de4d8131315427d7daa9d3c6a",
+      "bytes": 30993
     },
     {
       "kind": "agents-file",
