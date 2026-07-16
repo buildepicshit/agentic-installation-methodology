@@ -17,7 +17,7 @@ automation pin or long-running multi-agent dispatch. Live sources:
 - Opus 4.8 GA: <https://www.anthropic.com/news/claude-opus-4-8>
 - Copilot-served models:
   <https://docs.github.com/en/copilot/reference/ai-models/supported-models>
-- Canonical scores: AA Intelligence Index v4.0 + Vals SWE-bench
+- Canonical scores: AA Intelligence Index v4.1 + Vals SWE-bench
   Verified — URLs in the Capability Matrix snapshot below.
 
 Evidence trail:
@@ -33,9 +33,11 @@ unlimited enterprise seat), zero MCP servers — receipts in
 
 HasNoBeef's operating preference for this fleet:
 
-- `gpt-5.5` is the strongest general-purpose OpenAI GPT model currently
-  routed for BES. Copilot is the GPT agent surface; `gpt-5.5` is the model.
-  Do not refer to a separate "Copilot 5.5" model.
+- `gpt-5.6-sol` is the strongest OpenAI GPT model routed for BES on the
+  canonical index (AA v4.1: 59 vs `gpt-5.5`'s 55; owner-accepted
+  2026-07-16). `gpt-5.5` remains the incumbent Routing Matrix default
+  GPT lane until the owner re-baselines default lanes. Copilot is the
+  GPT agent surface; do not refer to a separate "Copilot" model.
 - Claude Opus 4.8 (`claude-opus-4-8`) is the frontier Claude lane
   (GA 2026-05-28). Opus 4.7 and 4.6 are legacy-but-available (same
   price), used only as deliberate legacy/pinned references. Do not
@@ -94,29 +96,39 @@ fast lane produces an equally excellent deliverable — never that it
 saves money. (Per `specs/2026-06-10-model-capability-matrix/SPEC.md`
 §7.3, owner-binding.)
 
-Snapshot: 2026-06-10 scores; status/entitlement refreshed 2026-07-10 (Fable-5
-needs-probe resolved) — canonical scores per
-**AA-Intelligence-Index-v4.0** (Artificial Analysis, vendor-neutral,
-10 independently-run evals, ~50% agentic+coding weight:
+Snapshot: 2026-07-16 — canonical scores re-baselined to
+**AA-Intelligence-Index-v4.1** (Artificial Analysis, vendor-neutral,
+9 independently-run evals:
 <https://artificialanalysis.ai/evaluations/artificial-analysis-intelligence-index>);
-tiebreaker per **Vals AI SWE-bench Verified** independent re-run,
-2026-06-09 (<https://www.vals.ai/benchmarks/swebench>), used to
-break canonical ties within ~3 points. Evidence trail:
-`specs/2026-06-10-model-stable-matrix-research/RESEARCH.md` §3-§4.
+refresh triggers (a) v4.0→v4.1 index bump + (b) GPT-5.6 family GA +
+(c) GPT-5.6 needs-probe resolution, owner-directed in-session
+2026-07-16. Tiebreaker per **Vals AI SWE-bench Verified** independent
+re-run, board updated 2026-07-14 (<https://www.vals.ai/benchmarks/swebench>),
+used to break canonical ties within ~3 points. Evidence trail:
+`specs/2026-06-10-model-stable-matrix-research/RESEARCH.md` §3-§4;
+`specs/2026-07-16-gpt-5-6-matrix-refresh/SPEC.md` (v4.1 values + probe).
 
-| Model | Family | Surfaces | Tier | Verbs | Canonical (AA v4.0) | Tiebreaker (Vals SWE-V) | Status |
+| Model | Family | Surfaces | Tier | Verbs | Canonical (AA v4.1) | Tiebreaker (Vals SWE-V) | Status |
 |---|---|---|---|---|---|---|---|
-| `claude-fable-5` | claude | claude-code, api | frontier | ORCHESTRATE, IMPLEMENT, OPERATE, SYNTHESIZE, PIONEER | 64.9 | 95.00 | documented; entitlement resolved 2026-07-10 (active session model) |
-| `claude-opus-4-8` | claude | claude-code, copilot-cli, api | frontier | IMPLEMENT, ORCHESTRATE, OPERATE, REASON, BACKSTOP | 61 | 88.60 | configured, approved-for-fleet (FRONTIER) |
-| `claude-sonnet-4-6` | claude | claude-code, copilot-cli, api | capable | IMPLEMENT, CONVERSE, ABSTRACT | 52 (adaptive/max effort) | — | documented, needs-probe |
+| `claude-fable-5` | claude | claude-code, api | frontier | ORCHESTRATE, IMPLEMENT, OPERATE, SYNTHESIZE, PIONEER | 60 (adaptive/max) | 95.00 | documented; entitlement resolved 2026-07-10; still the active session model 2026-07-16 (past promo window) |
+| `claude-opus-4-8` | claude | claude-code, copilot-cli, api | frontier | IMPLEMENT, ORCHESTRATE, OPERATE, REASON, BACKSTOP | 56 (adaptive/max) | 88.60 | configured, approved-for-fleet (FRONTIER) |
+| `claude-sonnet-4-6` | claude | claude-code, copilot-cli, api | capable | IMPLEMENT, CONVERSE, ABSTRACT | 36 (non-reasoning/high; adaptive value pending) | — | documented, needs-probe (AA now lists Sonnet 5 as successor) |
 | `claude-haiku-4-5-20251001` | claude | claude-code, copilot-cli, api | fast | SCAN, RESPOND, IMPLEMENT (bounded) | needs-probe | — | documented, needs-probe |
-| `gpt-5.5` | gpt | copilot-cli, api | frontier | OPERATE, IMPLEMENT, SYNTHESIZE, RETRIEVE | 60 (xhigh) | 82.60 | configured, approved-for-fleet |
-| `gpt-5.4` | gpt | copilot-cli, api | capable | IMPLEMENT, SYNTHESIZE | 57 (xhigh) | — | documented, needs-probe |
+| `gpt-5.6-sol` | gpt | copilot-cli, api | frontier | REASON, OPERATE, IMPLEMENT, SYNTHESIZE | 59 (max; 58 xhigh) | — (no GPT-5.6 datum on the 2026-07-14 board) | documented (GA 2026-07-09), probe-validated 2026-07-16, approved-for-fleet (owner-directed 2026-07-16) |
+| `gpt-5.6-terra` | gpt | copilot-cli, api | capable | IMPLEMENT, OPERATE, CONVERSE | 55 (max) | — | documented (GA 2026-07-09), probe-validated 2026-07-16, approved-for-fleet (owner-directed 2026-07-16) |
+| `gpt-5.6-luna` | gpt | copilot-cli, api | fast | SCAN, RESPOND, IMPLEMENT (bounded) | 51 (max) | — | documented (GA 2026-07-09), probe-validated 2026-07-16 |
+| `gpt-5.5` | gpt | copilot-cli, api | frontier | OPERATE, IMPLEMENT, SYNTHESIZE, RETRIEVE | 55 (xhigh) | 82.60 | configured, approved-for-fleet |
+| `gpt-5.4` | gpt | copilot-cli, api | capable | IMPLEMENT, SYNTHESIZE | 51 (xhigh) | — | documented, needs-probe |
 | `gpt-5.4-mini` | gpt | copilot-cli, api | fast | FAN-OUT, IMPLEMENT (bounded) | needs-probe | — | documented, needs-probe |
 
 Verb evidence: every verb cites a public capability source —
 `specs/2026-06-10-model-stable-matrix-research/RESEARCH.md` §4;
-cost-framed observations are excluded by contract.
+cost-framed observations are excluded by contract. GPT-5.6 verbs per
+the GitHub changelog 2026-07-09 (Sol: "complex reasoning over large
+codebases and demanding, long-running agentic work"; Terra: "everyday
+interactive and agentic coding"; Luna: "smaller, faster tasks") and
+the AA Coding Agent Index (Sol 80 / Terra 77 / Luna 75, in-Codex
+harness) — `specs/2026-07-16-gpt-5-6-matrix-refresh/SPEC.md` §5.
 
 Surfaces caveat: for the Claude rows, `copilot-cli` in the Surfaces column
 records where the model is *technically served*, NOT a permitted lane.
@@ -140,22 +152,27 @@ BYOK endpoints.
 Known gaps (explicit, per RESEARCH.md §7 — do not paper over):
 AA index values for `gpt-5.4-mini` and `claude-haiku-4-5` are
 needs-probe (tracked by AA, exact values not yet verified);
-Fable 5 is absent from Terminal-Bench/LMArena Text boards
-(launched 2026-06-09 — submission lag).
+`claude-sonnet-4-6` v4.1 adaptive/max value not yet published (only
+the non-reasoning variant is scored). The GPT-5.6 family has NO Vals
+SWE-V datum on the 2026-07-14 board (GA-uptake lag) — so the Sol-vs-
+Fable 1-point canonical gap sits inside the ~3-point tie band with
+the tiebreaker UNRESOLVED: "Sol rivals Fable/Opus" holds on the
+aggregate v4.1 index (59 vs 60 / 56) but is NOT yet evidenced on
+SWE-V, where Fable 5 leads at 95.00.
 
-Status refresh 2026-07-10 (refresh trigger (c), needs-probe resolution):
-Fable-5's entitlement needs-probe is RESOLVED — it is the active model for
-this fleet session, so its row status is updated from `needs-probe`. CAVEAT:
-current access is promotional (through 2026-07-12 per the audit) — treat the
-resolution as time-limited, not permanent availability, and re-probe before
-pinning Fable-5 in any automation or long-running lane. The
-local Claude Code harness additionally references `claude-sonnet-5` /
-`claude-sonnet-5[1m]` model ids while the capable-tier Claude row here is
-`claude-sonnet-4-6` — a probe-candidate for refresh trigger (b); entitlement
-is NOT asserted pending an owner-approved probe. The owner reported a possible
-new flagship GPT model on 2026-07-10; an entitlement probe per Access Status
-was run and REJECTED (`--model gpt-5.6` → "not available" on Copilot CLI
-1.0.70), so it stays needs-probe (follow-up tracked in STATUS.md Owner-pending).
+Status refresh 2026-07-16 (triggers (a)+(b)+(c)): the 2026-07-10
+GPT-5.6 REJECTED probe is now RESOLVED — after `copilot update`
+(1.0.70 → 1.0.71), pinned probes served real turns on `gpt-5.6-sol`,
+`gpt-5.6-terra`, and `gpt-5.6-luna` on this seat (verbatim receipts:
+`specs/2026-07-16-gpt-5-6-matrix-refresh/receipts/`); bare `gpt-5.6`
+is NOT a valid id. Owner directive 2026-07-16 accepts Sol and Terra
+as fit-selection options (Sol especially). Fable-5 caveat update: the
+promo window was "through 2026-07-12", yet Fable-5 is the active
+session model on 2026-07-16 — entitlement is continuing; the
+re-probe-before-pinning-in-automation caveat stands. Sonnet-5: AA now
+lists Claude Sonnet 5 publicly (documented) and the local harness
+references `claude-sonnet-5` ids, but BES entitlement is still NOT
+asserted — probe-candidate, unchanged.
 
 Refresh discipline: re-baseline this matrix on (a) an AA index
 version bump (a v4 → v5 bump is a deliberate re-baselining event
@@ -173,7 +190,10 @@ surfaces; the model name is separate from the serving surface.
 
 | Model | Status | Use for | Avoid for |
 | --- | --- | --- | --- |
-| `gpt-5.5` | configured, documented, approved-for-fleet | Default GPT-family lane for root fleet management, non-trivial specs, complex implementation, integration, risky verification, final synthesis, and strongest OpenAI all-scenario calls. | Bounded fanout scans where depth is not needed — a fast lane delivers the same quality (fit, not savings). |
+| `gpt-5.6-sol` | documented, probe-validated 2026-07-16, approved-for-fleet (owner-directed) | Strongest OpenAI lane on AA v4.1 (59): deep reasoning over large codebases, demanding long-running agentic work, high-risk review/cross-validation of Claude-authored work. | Automation pins before more operational history accrues (GA 2026-07-09); SWE-V-tiebreaker-sensitive calls until a Vals datum lands. |
+| `gpt-5.6-terra` | documented, probe-validated 2026-07-16, approved-for-fleet (owner-directed) | Balanced everyday interactive/agentic coding lane; GPT-family implementation at capable tier. | Highest-risk architecture/integration calls when Sol or `gpt-5.5` fits. |
+| `gpt-5.6-luna` | documented, probe-validated 2026-07-16 | Fast bounded scans, lightweight subagents, low-risk summarization. | Final integration decisions, ambiguous architecture, high-risk edits. |
+| `gpt-5.5` | configured, documented, approved-for-fleet | Incumbent default GPT-family lane for root fleet management, non-trivial specs, complex implementation, integration, risky verification, and final synthesis (Routing Matrix default until the owner re-baselines lanes). | Bounded fanout scans where depth is not needed — a fast lane delivers the same quality (fit, not savings). |
 | `gpt-5.4` | documented, needs-probe | Fallback when `gpt-5.5` is unavailable or a workflow is pinned to GPT-5.4. | Replacing `gpt-5.5` for high-risk work when `gpt-5.5` is available. |
 | `gpt-5.4-mini` | documented, needs-probe | Fast read-heavy exploration, parallel document scans, lightweight subagents, low-risk summarization. | Final integration decisions, ambiguous architecture, high-risk edits. |
 
@@ -185,7 +205,7 @@ Verified sources: local Claude config and official Claude Code model docs.
 | --- | --- | --- | --- |
 | `opus` | configured, documented, approved-for-fleet | Independent architecture/spec review, ambiguity review, high-risk design critique, public-OSS review. | Bounded fanout and routine edits — fast lanes fit those equally well. |
 | `claude-opus-4-8` | configured, documented, approved-for-fleet (FRONTIER) | Frontier Claude lane: cross-validation/review, high-risk implementation review, architecture/spec critique, public-OSS release review, independent second-pass code review. | Bounded fanout and routine edits — fast lanes fit those equally well. |
-| `claude-fable-5` | configured, documented; entitlement resolved 2026-07-10 | Top-scored Claude row in the Capability Matrix (AA v4.0 64.9): orchestration, synthesis, high-risk implementation/review, deep multi-step work. Active model for this session. | Cost-driven avoidance (cost is not a routing input); assumes a permanent role before the owner designates one. |
+| `claude-fable-5` | configured, documented; entitlement resolved 2026-07-10 | Top-scored Claude row in the Capability Matrix (AA v4.1: 60): orchestration, synthesis, high-risk implementation/review, deep multi-step work. Active model for this session. | Cost-driven avoidance (cost is not a routing input); assumes a permanent role before the owner designates one. |
 | `claude-opus-4-7` | documented, approved-for-fleet (LEGACY lane-role) | Legacy-but-available frontier predecessor (same $5/$25). Use only as a deliberate pinned/legacy reference; 4.8 is the frontier lane. | New frontier-lane assignments (use 4.8). |
 | `claude-opus-4-6` | documented, approved-for-fleet (LEGACY lane-role) | Legacy-but-available (same price). Deliberate legacy/pinned use only. | New frontier-lane assignments (use 4.8). |
 | `sonnet` | documented, needs-probe | Creative/product/design synthesis, adaptive first-pass Claude work when configured, daily Claude coding, implementation support, doc synthesis, repo-local work after approved spec. | Highest-risk coding or architecture calls when Opus 4.8 or Copilot-served `gpt-5.5` is available and quota allows. |
@@ -204,7 +224,8 @@ keys on the MODEL served, not the CLI brand.
 | Model | Status | Use for | Avoid for |
 | --- | --- | --- | --- |
 | `gpt-5.5` (via Copilot CLI) | approved-for-fleet | Cross-validation/review of Claude-authored work; primary GPT-lane dispatch; second independent GPT opinion when the primary author is not GPT-family. | Cross-validating GPT-authored work — same family. |
-| other GPT models on Copilot | needs-probe | Probe with a pinned `--model` before catalog promotion. | Automation pins before a probe. |
+| `gpt-5.6-sol` / `gpt-5.6-terra` / `gpt-5.6-luna` (via Copilot CLI) | probe-validated 2026-07-16 | Per the GPT Model Catalog rows above; same lane rules as `gpt-5.5`. | Cross-validating GPT-authored work — same family. |
+| other unlisted/unprobed GPT models on Copilot | needs-probe | Probe with a pinned `--model` before catalog promotion. | Automation pins before a probe. |
 | non-GPT models on Copilot | FORBIDDEN in lane use | — | Any lane assignment: serving a Claude model through Copilot silently voids cross-family validity. |
 | `--model auto` | FORBIDDEN in lane use | — | Any lane invocation (mechanically blocked by `validate-cli-invocation.sh`). |
 
