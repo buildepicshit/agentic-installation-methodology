@@ -227,7 +227,7 @@ written, so evidence is not lost.
   itemising what actually passed.
 - Do not delete or rewrite an in-flight failure note
   during a later commit; failure notes are durable
-  evidence per `spec-evidence-governance`.
+  evidence per `spec-evidence`.
 - Do not accept a review finding without verifying its
   evidence; do not push back without primary-source
   counter-evidence.
@@ -242,7 +242,7 @@ written, so evidence is not lost.
 
 ## Cross-references
 
-- `file://agents/skills/verification/SKILL.md` (the gates the
+- `file://agents/skills/verify-spec/SKILL.md` (the gates the
   tool-receipts practice extends) and
-  `file://agents/skills/code-review/SKILL.md` (the giving side
+  `file://agents/skills/review-diff/SKILL.md` (the giving side
   of receiving-code-review).

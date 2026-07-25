@@ -5,7 +5,7 @@
 #
 # Origin: ACTOCCATUD 2026-06-02 — a .gitignore rule silently swallowed
 # a source file while the commit message claimed it for two days.
-# Practice codified in agents/skills/verification/SKILL.md
+# Practice codified in agents/skills/verify-spec/SKILL.md
 # "Tracked-Path Claims"; this is the mechanical sweep.
 #
 # usage: audit-tracked-paths.sh [<rev>]        (default HEAD)

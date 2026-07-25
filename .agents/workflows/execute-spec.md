@@ -1,7 +1,5 @@
 # Execute Spec
 
-Single source: the `/execute-spec` slash-command
-(`.claude/commands/execute-spec.md`) is the invocation surface; the
-`implementation-execution` skill
-(`agents/skills/implementation-execution/SKILL.md`) owns the
+Single source: `/execute-spec` is served by the `execute-spec` skill
+(`agents/skills/execute-spec/SKILL.md`), which owns the
 mechanics.

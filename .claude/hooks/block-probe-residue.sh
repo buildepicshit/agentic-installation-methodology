@@ -2,7 +2,7 @@
 # PreToolUse(Bash): block real `git commit` while the working tree carries
 # mutation-probe residue (the literal marker "MUTATION PROBE" in swept code
 # surfaces). Mechanical backstop for the post-workflow tree-hygiene gate per
-# agents/skills/code-review/references/multi-agent-review.md and
+# agents/skills/review-diff/references/multi-agent-review.md and
 # specs/2026-06-09-mutation-probe-isolation-discipline/SPEC.md (bes-fleet-policy).
 #
 # Layer separation: this hook is the CODE-surface gate. Markdown and spec
@@ -138,7 +138,7 @@ IFS="$old_ifs"
 if [ -n "$all_residue" ]; then
     {
         printf 'block-probe-residue: working tree carries mutation-probe residue; restore before committing.\n'
-        printf 'Mechanics: agents/skills/code-review/references/multi-agent-review.md (or .agents/... in child repos).\n'
+        printf 'Mechanics: agents/skills/review-diff/references/multi-agent-review.md (or .agents/... in child repos).\n'
         printf 'Residue in:\n'
         printf '%s' "$all_residue"
     } >&2

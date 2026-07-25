@@ -32,9 +32,9 @@ the default.
    + relevant approved specs); and predict likely failure modes, scope
    drift, and ambiguous owner intent.
 2. **Spec** - ideate (constraints, type, approaches, owner questions,
-   recommendation) then author via `spec-authoring` (`/author-spec` consumes
+   recommendation) then author via `author-spec` (`/author-spec` consumes
    a ready IDEA unless the route is fastpath).
-3. **Approve** - `spec-review` sets `approved-pending-owner` or
+3. **Approve** - `review-spec` sets `approved-pending-owner` or
    `needs-revision` (never `approved`); owner alone sets `status: approved`.
 4. **Execute** - implementation follows the approved SPEC.
 5. **Verify** - run acceptance commands, record evidence, fill the
@@ -43,7 +43,7 @@ the default.
 ### Full path (high-risk / multi-agent exception)
 
 Insert between Approve and Execute: **Decompose** (multi-slice Task /
-Contract SPECs use `approved-spec-decomposition` to emit durable TASK.md),
+Contract SPECs use `decompose-approved-spec` to emit durable TASK.md),
 **Dispatch** (each TASK.md anchors one executable slice), and
 **Cross-validate** (review on a different model family where required).
 
@@ -60,7 +60,7 @@ reopens scope.
 ## Type Routing
 
 Fastpath / Task / Contract / Decision selection is owned by
-`file://agents/skills/spec-authoring/SKILL.md` "Type Selection";
+`file://agents/skills/author-spec/SKILL.md` "Type Selection";
 fastpath thresholds live in
 `file://agents/specs/SPEC.fastpath.template.md`. Use a research
 workpad for evidence gathering when the problem is not yet crisp
@@ -75,7 +75,7 @@ grammar in `file://agents/specs/SPEC.schema.md` §2.
 
 Multi-slice mechanics (durable per-slice TASK.md, model lanes,
 integration order) are owned by
-`file://agents/skills/approved-spec-decomposition/SKILL.md`.
+`file://agents/skills/decompose-approved-spec/SKILL.md`.
 Cross-family review semantics are stated once in
 `file://agents/MODEL_ROUTING.md` Rule 20; read MODEL_ROUTING before
 dispatch, delegation, model-specific work, or non-trivial planning.

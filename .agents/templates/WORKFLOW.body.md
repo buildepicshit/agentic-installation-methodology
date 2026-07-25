@@ -17,7 +17,7 @@ the `/idea-capture`, `/author-spec`, `/review-spec`, `/execute-spec`,
 `/verify-spec` slash-commands (see
 `.agents/skills/spec-driven-development/SKILL.md`). For small
 owner-directed work, evaluate the fastpath route through
-`.agents/skills/spec-authoring/SKILL.md` and
+`.agents/skills/author-spec/SKILL.md` and
 `.agents/specs/SPEC.fastpath.template.md`.
 
 ---
@@ -124,7 +124,7 @@ Three minutes of reading, no edits:
 ## Step 1 — Pick the procedure
 
 - **Tiny non-trivial work under explicit owner directive**
-  (≤ 1 file, ≤ 50 lines, single component, reversible,
+  (≤ 5 files, ≤ 300 lines, single component, reversible, no manifest-carried paths,
   owner-cited): produce a fastpath SPEC from
   `.agents/specs/SPEC.fastpath.template.md` at `status: closed`.
   No IDEA, no review gate, no decomposition.
@@ -146,7 +146,7 @@ When a TASK.md is in scope, its front-matter names three model
 lanes:
 
 - `model_route` — primary execution lane (you).
-- `cross_validation_lane` — different model family; runs the
+- `cross_validation_lane` — Rule-20 guardrail slices only; different model family; runs the
   cross-validation review (BLOCKING before in-review).
 - `verification_lane` — runs behavioral verification when needed
   (different family preferred for behavioral checks).
@@ -183,17 +183,16 @@ Dispatch model:
   workflow that dispatched them the orchestrator MUST pass the
   tree-hygiene gate (diff vs pre-workflow state + probe-marker
   sweep) BEFORE any commit or golden operation — mechanics in
-  `.agents/skills/code-review/references/multi-agent-review.md`.
+  `.agents/skills/review-diff/references/multi-agent-review.md`.
 - Record a Parallelism Decision Record in the workpad before
   dispatch:
 
   ```yaml
-  parallelism_evaluated: true
   decision: fanout | local | owner-check
   rationale: <why this shape>
   agents_or_models:
-    - copilot:gpt-5.5
-    - claude:claude-opus-4-8
+    - copilot:gpt-5.6-sol
+    - claude:claude-opus-5
   ```
 
 For cross-repo work, do NOT dispatch subagents across repo
@@ -209,7 +208,7 @@ model family than the implementer. The reviewer:
 
 - Runs read-only against the diff and parent SPEC. (Mutation
   probes, if the review uses them, run only in isolated worktrees
-  per `.agents/skills/code-review/references/multi-agent-review.md`
+  per `.agents/skills/review-diff/references/multi-agent-review.md`
   — the primary tree stays untouched.)
 - Emits findings ordered by severity with file/line citations.
 - Returns the report to the workpad / SESSION_JOURNAL.md
@@ -217,7 +216,7 @@ model family than the implementer. The reviewer:
 
 Address each finding in code/tests/docs OR post a justified
 pushback reply. Same-family review is structurally weaker; see
-`.agents/skills/code-review/SKILL.md` "Hard Rules" for the
+`.agents/skills/review-diff/SKILL.md` "Hard Rules" for the
 `same-family-review` escape hatch when cross-family is
 unavailable.
 
@@ -229,7 +228,7 @@ working against an `approved` SPEC with ≥ 2 slices and no
 
 1. Stop coding.
 2. Run `/decompose-approved-spec <parent_spec_id>` (see
-   `.agents/skills/approved-spec-decomposition/SKILL.md`).
+   `.agents/skills/decompose-approved-spec/SKILL.md`).
 3. Owner reviews + approves the decomposition (one-shot, not
    per-task). Owner alone flips `approved → decomposed`.
 4. Tasks become trackable; proceed.

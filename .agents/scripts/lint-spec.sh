@@ -69,18 +69,117 @@ case "$TYPE" in
     *) emit_warn "front-matter" "$fm_end" "unknown type: $TYPE" ;;
 esac
 
+# ---------- Owner-sealed records are exempt from FIELD advisories ----------
+# `approved`, `decomposed`, `closed` and `superseded` are owner-only flips
+# (schema §1.3). Once the owner has sealed a record, its front-matter is
+# settled history: a warning that a field is missing or `null` is then a true
+# statement about WHEN the SPEC was written, not a defect anyone will fix —
+# because policy forbids editing a landed SPEC to satisfy a rule introduced
+# after it (OPERATING_MODEL "Capture-after"). Nagging about it every run trains
+# readers to ignore lint, which is the harm this exemption removes.
+#
+# Measured at introduction: 18 SPECs warned on `ideated_in`; 17 were `closed`
+# and 1 `approved`. Every one predated the field it was being judged against.
+# `ideated_in` entered the schema 2026-05-01 (`884d683`); nine of the warning
+# SPECs are dated 2026-04-29.
+#
+# An agent CANNOT use this to silence itself: all four statuses are owner-only.
+# A `draft` / `needs-revision` / `in-execution` / `verified` SPEC is still
+# fully checked — which is exactly while it is still being authored.
+# Authority: file://specs/2026-07-24-owner-sealed-field-advisories/SPEC.md
+OWNER_SEALED=0
+st_raw="${FM[status]:-}"
+st_raw="${st_raw%"${st_raw##*[![:space:]]}"}"   # trim trailing whitespace
+case "$st_raw" in approved|decomposed|closed|superseded) OWNER_SEALED=1 ;; esac
+
 # ideated_in advisory (non-blocking): schema §1.2 REQUIRES a repo-relative
-# path for non-fastpath SPECs; `null` is valid ONLY for type: fastpath.
-# Surface drift (absent / literal null / non-path) as advisory, not blocking,
-# so the REQUIRED field stops silently drifting without dead-stopping work.
-if [[ "$ARTEFACT" == "spec" && "$TYPE" != "fastpath" ]]; then
+# path for non-fastpath SPECs. `null` is valid for type: fastpath (which skips
+# the IDEA phase) and for a DECLARED capture-after SPEC (which also skips it —
+# the work is landed first under owner directive, so no IDEA ever existed).
+#
+# The declaration is what makes the second case checkable. Before it existed,
+# the OPERATING_MODEL capture-after precondition ("lint-spec.sh exit 0") was
+# unsatisfiable by construction: capture-after has no IDEA, so ideated_in had
+# to be null, so lint always exited 2. Measured 6 of 6 such SPECs, five of
+# them already closed — a gate that always fires teaches the fleet to ignore
+# gates. Authority: file://specs/2026-07-24-capture-after-lint-declaration/SPEC.md
+#
+# `capture_after` must carry an owner citation, not a bare `true`: the
+# OPERATING_MODEL condition is an EXPLICIT owner directive, so an
+# unattributable declaration would let any agent self-authorise the skip.
+if [[ "$ARTEFACT" == "spec" && "$TYPE" != "fastpath" && $OWNER_SEALED -eq 0 ]]; then
     iv="${FM[ideated_in]:-}"
+    ca="${FM[capture_after]:-}"
+    ca="${ca%"${ca##*[![:space:]]}"}"   # trim trailing whitespace
+    if [[ -n "$ca" && ! "$ca" =~ ^owner://[A-Za-z0-9][A-Za-z0-9._/-]*$ ]]; then
+        emit_warn "front-matter" "$fm_end" "capture_after '$ca' must be an owner citation with a non-empty reference (owner://<ref>), not a bare scheme or flag (schema §1.2)"
+    fi
     if [[ -z "$iv" ]]; then
         emit_warn "front-matter" "$fm_end" "ideated_in absent (schema §1.2 REQUIRES a repo-relative path for non-fastpath specs)"
+    elif [[ "$iv" == "no-decision" ]]; then
+        : # ideation happened, produced no decision, so no artefact — schema §1.2
     elif [[ "$iv" == "null" ]]; then
-        emit_warn "front-matter" "$fm_end" "ideated_in is 'null' (allowed only for type: fastpath)"
+        if [[ -z "$ca" ]]; then
+            emit_warn "front-matter" "$fm_end" "ideated_in is 'null' (allowed only for type: fastpath, or a capture-after spec declaring capture_after: owner://<ref>)"
+        fi
     elif [[ "$iv" != */* ]]; then
         emit_warn "front-matter" "$fm_end" "ideated_in '$iv' is not a repo-relative path (schema §1.2)"
+    fi
+fi
+
+# ---------- Fastpath may NEVER carry guardrail paths (mechanical) ----------
+# Fastpath lands at `status: closed`, so it passes through NEITHER Rule 20 gate
+# (`approved-pending-owner`, `verified`). Prose alone therefore cannot hold this
+# line: an author who misclassifies touch points would land a fleet-propagating
+# change with no cross-family review at all. So it is enforced here, on the
+# declared file list, as an ERROR rather than an advisory.
+# Found by the r2 cross-family reviewer after the prose-only version shipped
+# (`file://specs/2026-07-24-lifecycle-lean-execution/SPEC.md` §9).
+# The rule has an EPOCH. Ten fastpath SPECs landed before 2026-07-24 naming
+# manifest-carried paths, which was permitted then; policy forbids editing a
+# landed record to satisfy a later rule (OPERATING_MODEL "Capture-after"), so
+# they are read under the schema in force when they were written.
+#
+# The owner-sealed exemption CANNOT be reused here: a fastpath SPEC is authored
+# at `status: closed` by design, so keying on seal would disable the guardrail
+# on exactly the SPECs it must stop. The id date is the discriminator instead.
+# An unparseable id fails SAFE (enforce).
+_FP_EPOCH=20260724
+_fp_enforce=1
+if [[ "${FM[id]:-}" =~ ^([0-9]{4})-([0-9]{2})-([0-9]{2})- ]]; then
+    _fp_date="${BASH_REMATCH[1]}${BASH_REMATCH[2]}${BASH_REMATCH[3]}"
+    (( _fp_date < _FP_EPOCH )) && _fp_enforce=0
+fi
+if [[ "$ARTEFACT" == "spec" && "$TYPE" == "fastpath" && $_fp_enforce -eq 1 ]]; then
+    _mf_root="$(cd "$(dirname "$(readlink -f "$0")")/.." && pwd)"
+    _manifests=()
+    for _m in fleet-files.txt fleet-hooks.txt fleet-skills.txt; do
+        [[ -f "$_mf_root/scripts/$_m" ]] && _manifests+=("$_mf_root/scripts/$_m")
+    done
+    if (( ${#_manifests[@]} > 0 )); then
+        # Collect backticked paths from the whole SPEC body: the declared file
+        # list lives in "## 2. Files changed" but authors also name paths inline,
+        # and over-collecting is the fail-safe direction here.
+        while read -r _cand; do
+            [[ -z "$_cand" ]] && continue
+            # Match ONLY "a manifest entry is a path-boundary suffix of the
+            # candidate". The reverse direction over-rejects: a bare `README.md`
+            # matched the manifest's scripts/audit-entry-docs-fixtures/README.md
+            # and blocked an innocent fastpath. Caught by this check's own
+            # false-positive test row, not by review.
+            for _mf in "${_manifests[@]}"; do
+                if awk -v c="$_cand" '
+                        /^[[:space:]]*(#|$)/ {next}
+                        { e=$1
+                          if (c==e) {found=1; exit}
+                          n=length(c)-length(e)
+                          if (n>0 && substr(c,n+1)==e && substr(c,n,1)=="/") {found=1; exit} }
+                        END{exit(found?0:1)}' "$_mf" 2>/dev/null; then
+                    emit_err "fastpath" "$fm_end" "type: fastpath names a manifest-carried path ('$_cand') — that is Rule-20 guardrail work and fastpath skips BOTH cross-family gates. Escalate to a task/contract/decision SPEC (schema fastpath thresholds)."
+                    break 2
+                fi
+            done
+        done < <(grep -oE '`[A-Za-z0-9_./-]+\.(md|sh|json|mjs|txt|ya?ml)`' "$TARGET" | tr -d '`' | sort -u)
     fi
 fi
 

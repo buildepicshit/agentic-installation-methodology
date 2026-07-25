@@ -126,9 +126,22 @@ When sources conflict, use this order:
 
 ## Required Work Model
 
-Non-trivial work starts with a spec. A task is non-trivial if it changes
-architecture, behavior, public docs, workflows, guardrails, data models,
-memory policy, CI, or multiple files.
+Non-trivial work starts with a spec. The trigger is an ENUMERATED
+list, inverted 2026-07-24 (owner-directed) — a task is non-trivial ONLY
+if it changes one of:
+
+- a public contract, API, or published interface
+- persisted state, a data model, or a migration
+- a guardrail: a hook, a lint, or any manifest-carried policy path
+- CI, release, or propagation machinery
+- a security surface or secrets handling
+- an internal architecture or operational-workflow replacement, even
+  with no public-interface or persisted-state change
+- fleet-propagating policy (see "Fleet Rule Origination")
+
+Everything else — ordinary implementation, refactors, tests, bug fixes,
+repo-local docs — takes the light lane. Inverted from an open-ended list
+2026-07-24; rationale in `file://specs/2026-07-24-lifecycle-lean-execution/SPEC.md` §1.
 
 The DEFAULT lifecycle is a 5-gate flow
 (`file://specs/2026-06-30-operating-model-lean-down/SPEC.md` §7):
@@ -143,7 +156,13 @@ The DEFAULT lifecycle is a 5-gate flow
    behavior — and put the predictions in the prompt or SPEC so workers
    can classify failures as expected, new, or owner-blocking.
 2. **Spec**: conduct an IDEA conversation between the owner and the
-   primary agent. The conversation MUST resolve the implied spec type
+   primary agent. **The IDEA ARTEFACT is required only when the
+   conversation yields a DECISION** — a chosen approach among considered
+   alternatives, or a resolved owner-blocking question. When the grill
+   produces no decision (the approach was never in doubt), skip the
+   artefact and set `ideated_in: no-decision`; the conversation still
+   happens, it just is not filed as contract-grade evidence (`file://specs/2026-07-24-lifecycle-lean-execution/SPEC.md` §1).
+   When an IDEA IS filed, the conversation MUST resolve the implied spec type
    (task / contract / decision), constraints, 2-3 considered
    approaches, a recommendation, and any owner-blocking questions.
    Capture it as `IDEA.md` at `.agents/specs/<id>/IDEA.md` via
@@ -156,7 +175,7 @@ The DEFAULT lifecycle is a 5-gate flow
    for fastpath work); the `type` front-matter is informational
    post-lean and, if set, SHOULD match the IDEA's `implies_spec_type`.
 3. **Approve**: run the blocking per-type quality gate via the
-   `spec-review` skill. Do not implement until the owner or
+   `review-spec` skill. Do not implement until the owner or
    controlling workflow marks the spec approved.
 4. **Execute**: implement only the approved spec. Do not expand scope
    silently.
@@ -171,11 +190,16 @@ MAY be used for high-risk or multi-agent work but MUST NOT be the
 default posture. Two further lightweight modes coexist:
 
 **Fastpath SPEC type** (`agents/specs/SPEC.fastpath.template.md`)
-applies when ALL of: ≤ 1 file changed, ≤ 50 lines, single
-component, no public-contract / persisted-state impact,
-reversible in one commit, explicit owner directive. Skips IDEA,
-review, decomposition, cross-validation; lands at `status: closed`
-in same commit as work. See
+applies when ALL of: **≤ 5 files changed, ≤ 300 lines**, single
+component, no public-contract / persisted-state impact, reversible
+in one commit. Skips IDEA, review, decomposition,
+cross-validation; lands at `status: closed` in same commit as work.
+
+Widened 2026-07-24 from ≤ 1 file / ≤ 50 lines; the
+explicit-owner-directive precondition is REMOVED (`file://specs/2026-07-24-lifecycle-lean-execution/SPEC.md` §1).
+Fastpath does NOT override Rule 20 — a ≤ 5-file change touching a
+manifest-carried path is still a fleet-propagating guardrail SPEC
+requiring cross-family review. See
 `file://agents/specs/SPEC.fastpath.template.md` for the retained
 template and thresholds.
 If ANY threshold fails, escalate to task/contract/decision.
@@ -183,8 +207,34 @@ If ANY threshold fails, escalate to task/contract/decision.
 **Capture-after** on task/contract/decision SPECs is permitted
 under explicit owner directive when (a) the artefacts pass lint
 and gate, (b) the SPEC is filed before the next change to the
-affected surface, and (c) the SPEC lands at `status: verified`
-with Completion Report. Reference:
+affected surface, (c) the SPEC lands at `status: verified`
+with Completion Report, and (d) the SPEC declares
+`capture_after: owner://<ref>` in front-matter, citing that
+directive.
+Condition (d) binds SPECs authored from 2026-07-24 onward only.
+**Never add it to an already-landed SPEC.** A schema addition
+applies from its introduction forward; artefacts that landed under
+an earlier schema are read under that schema, and a lint warning on
+a historical artefact is a true statement about history, not a
+defect to edit away. Five pre-2026-07-24 capture-after SPECs warn
+permanently and correctly. The precondition binds the SPEC *being
+landed*, never the archive.
+
+This generalises beyond `capture_after`: **do not edit a landed
+SPEC to satisfy any rule introduced after it landed.** The cost is
+not to that document but to the whole corpus — once one record has
+been restated, no reader can trust any record without diffing git
+history. If a retrospective edit is ever unavoidable, it MUST
+annotate itself in-document with its date and authorising SPEC —
+a disclosed retrospective edit is a footnote a reader can price in.
+Three pre-rule instances are recorded in
+`file://specs/2026-07-24-capture-after-lint-declaration/SPEC.md`
+§10 and are NOT reopened; the rule is forward-looking and implies
+no re-validation of existing SPECs. Condition (d) is what makes (a) satisfiable at all:
+capture-after skips the IDEA phase, so `ideated_in` must be
+`null`, and without the declaration lint warns every time — the
+precondition could never be met by the SPEC class it governs.
+Reference:
 `file://agents/skills/spec-driven-development/SKILL.md`
 "Exception: capture-after".
 
@@ -293,7 +343,7 @@ one unified template at `.agents/specs/SPEC.template.md` (plus
 `SPEC.fastpath.template.md` for fastpath work). Shared front-matter,
 citation grammar, RFC 2119 conventions, and the per-type blocking
 quality bars live in `.agents/specs/SPEC.schema.md`, enforced by the
-`spec-review` skill as a blocking gate. A spec MUST NOT advance to
+`review-spec` skill as a blocking gate. A spec MUST NOT advance to
 `approved` while any blocking criterion fails.
 
 ## Content And Creative Authority
@@ -370,7 +420,7 @@ on session end.
 
 Template: `file://agents/templates/SESSION_JOURNAL.template.md`.
 Authority: `file://agents/templates/WORKFLOW.body.md` Section 1
-Step 5; `file://agents/skills/repo-orientation/SKILL.md` Step 3.
+Step 5; `file://agents/skills/orient/SKILL.md` Step 3.
 
 Append-only. Owner alone archives entries older than 90 days to
 `SESSION_JOURNAL.archive.md`.
@@ -463,7 +513,7 @@ verifier-output-is-not-owner-approval rules.
 Use `.agents/SKILL_REGISTRY.md` to choose the correct procedure — it is
 the single source of truth for the fleet skill set (core lifecycle +
 tactical/craft skills). Do NOT maintain a parallel enumerated list here;
-a duplicated list drifts from the registry. `spec-authoring` owns
+a duplicated list drifts from the registry. `author-spec` owns
 templates, schema, and structured IDEA capture (invoked by
 `/idea-capture` and `/author-spec`); `fleet-enforce` is policy-repo-only.
 
@@ -474,10 +524,11 @@ spec or current session.
 
 The fleet is spec-first. Memory is supporting evidence.
 
-- Do not treat raw Claude/Copilot/Cursor/Gemini memories as authoritative.
-- Do not promote agent-authored imperatives into durable rules without review.
-- Do not keep duplicate memory stores in inactive repos.
-- Durable facts must cite their source: file path, spec, command output, issue,
+- Authority lives in checked-in artefacts. Raw Claude / Copilot / Cursor /
+  Gemini memories are inputs to reasoning.
+- An agent-authored imperative becomes a durable rule after review, not before.
+- Keep one memory store, in the active repo.
+- Durable facts cite their source: file path, spec, command output, issue,
   PR, or owner statement.
 - Mimir integration is paused for this operating layer. Until a new spec
   authority design is approved, keep durable project instructions in repo docs,
@@ -499,7 +550,7 @@ training are NOT citable evidence.
   worktree boundary.
 - The worktree boundary also binds SINGLE-agent file-mutating probes
   (mutation/ablation testing): mechanical isolation, never prompt prose —
-  see `agents/skills/code-review/references/multi-agent-review.md`.
+  see `agents/skills/review-diff/references/multi-agent-review.md`.
 - Stage files explicitly. Do not use `git add .` unless the repo explicitly
   allows it for a generated batch and the owner approves.
 - Keep generated scratch, old memories, and tool caches out of repos.
@@ -516,18 +567,25 @@ training are NOT citable evidence.
 
 ## Safety Invariants
 
-- Do not bypass repo hooks or verification gates without explicit owner
-  approval.
-- Do not delete user work, branches, or untracked project files without first
-  proving they are stale agent artifacts.
-- Do not commit AI attribution in commits, PRs, docs, or generated output.
-- Do not use raw memories to override checked-in instructions.
-- Do not let local MCP config drift into tracked source control.
-- Do not claim completion without fresh verification output.
-- Do not commit or regenerate goldens from a tree that has not passed the
-  probe-residue hygiene gate after file-mutating probes ran
-  (`agents/skills/code-review/references/multi-agent-review.md`); orphan
-  probe worktrees are agent artifacts and their cleanup is sanctioned.
+**Mechanically enforced — this list does not restate them.** PreToolUse hooks
+block verify-gate bypass, AI attribution, bulk staging, pushes to a protected
+branch, commits over probe residue, undeclared dependency changes, and stale
+derived artefacts. The hook IS the rule; see `.claude/hooks/` and the manifest
+at `agents/scripts/fleet-hooks.txt`.
+
+What no hook can check, stated as the standard to meet:
+
+- Prove an artefact is stale agent output BEFORE deleting user work, branches,
+  or untracked project files. Absent that proof, leave it and ask.
+- Claim completion only with fresh verification output in hand.
+- Checked-in instructions outrank memory. On a conflict, stop and report it
+  rather than picking the convenient rule.
+- Keep local MCP config out of tracked source control (`.mcp.json` is ignored).
+- After file-mutating probes run, pass the probe-residue hygiene gate before
+  committing or regenerating goldens
+  (`agents/skills/review-diff/references/multi-agent-review.md`). Orphan probe
+  worktrees are agent artifacts; cleaning them up is sanctioned.
+- Bypassing a hook or gate needs explicit owner approval, per instance.
 
 ## Completion Report Format
 

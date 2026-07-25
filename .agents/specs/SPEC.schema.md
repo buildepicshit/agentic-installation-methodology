@@ -35,7 +35,7 @@ delimited by `---` on its own line.
 | `spec_id` | string | REQUIRED | `<YYYY-MM-DD>-<id>` | id of the SPEC this IDEA feeds |
 | `status` | enum | REQUIRED | `draft` \| `ready-for-spec` \| `owner-blocking` \| `archived` | initial value `draft` |
 | `owner` | string | REQUIRED | owner identifier | e.g. `HasNoBeef` |
-| `brainstormed_by` | string | REQUIRED | agent identifier | e.g. `copilot-gpt-5.5`, `claude-opus-4-8-1m`, or any other model:lane label |
+| `brainstormed_by` | string | REQUIRED | agent identifier | e.g. `copilot-gpt-5.6-sol`, `claude-opus-5-1m`, or any other model:lane label |
 | `brainstormed_on` | date | REQUIRED | ISO-8601 date | e.g. `2026-05-01` |
 | `implies_spec_type` | enum | OPTIONAL | `task` \| `contract` \| `decision` | informational only post-WS-SPEC-lean; all specs use the one unified `SPEC.template.md` |
 
@@ -56,7 +56,9 @@ Literal example: the front-matter block of
 | `requires_network` | boolean | REQUIRED | `true` \| `false` | |
 | `requires_secrets` | list[string] | REQUIRED | env-var names or `[]` | |
 | `acceptance_commands` | list[string] | REQUIRED | runnable commands | non-empty OR explicitly `[]` with reason in Acceptance Criteria section; `type: fastpath` MAY use `[]` with the checks inline in the fastpath §4 Acceptance-commands section |
-| `ideated_in` | string | REQUIRED | repo-relative path OR `null` | path to producing IDEA.md; `null` is valid ONLY for `type: fastpath` (which skips the IDEA phase) |
+| `ideated_in` | string | REQUIRED | repo-relative path, `no-decision`, OR `null` | path to producing IDEA.md. `null` is valid for `type: fastpath` and for a SPEC declaring `capture_after`. **`no-decision`** records that the ideation conversation happened and yielded no decision — no approach chosen among alternatives, no owner-blocking question resolved — so no artefact was filed (`file://agents/OPERATING_MODEL.md` Required Work Model step 2). Added 2026-07-24: conditional IDEA otherwise had no honest encoding, and the only way to lint clean was to falsely declare `capture_after`. A rule that forces a false declaration is worse than the ceremony it replaced. |
+| `capture_after` | string | OPTIONAL | `owner://<ref>` | REQUIRED to use `ideated_in: null` on a non-fastpath SPEC. Declares that the work landed BEFORE the SPEC was filed under an explicit owner directive, per `file://agents/OPERATING_MODEL.md` "Capture-after" — so no IDEA ever existed. MUST match `owner://<ref>` with a non-empty reference starting alphanumeric — never a bare `true` and never a bare scheme: capture-after requires an *explicit* owner directive, and an unattributable flag would let an agent self-authorise skipping the IDEA phase. |
+| — | — | — | — | **Owner-sealed exemption.** At `status: approved`, `decomposed`, `closed` or `superseded`, `lint-spec.sh` skips the `ideated_in` / `capture_after` advisories entirely. Those four are owner-only flips (§1.3), so an agent cannot self-exempt; everything pre-seal is fully checked. Rationale: a landed record MUST NOT be edited to satisfy a rule introduced after it (`file://agents/OPERATING_MODEL.md` "Capture-after"), so warning about it forever is noise that teaches readers to ignore lint. |
 | `superseded_by` | string | OPTIONAL | spec id or citation-grammar string | REQUIRED at `status: superseded` unless the superseding authority is stated in the spec body (a commit message alone is NOT sufficient); empty string invalid |
 
 Literal example: the front-matter block of
@@ -124,9 +126,9 @@ Idempotency: status transitions are monotonic except for the explicit
 `needs-revision` and `owner-blocking` reverse edges. `approved`,
 `decomposed`, `closed`, and `superseded` MUST NOT revert without owner action.
 Owner alone sets `approved`, `decomposed`, `superseded`, and `closed`. The
-`spec-review` skill MUST NOT set `approved`. The
-`approved-spec-decomposition` skill MUST NOT set `decomposed`. The
-`spec-evidence-governance` skill MUST NOT set `closed`. Skills MAY set
+`review-spec` skill MUST NOT set `approved`. The
+`decompose-approved-spec` skill MUST NOT set `decomposed`. The
+`spec-evidence` skill MUST NOT set `closed`. Skills MAY set
 `approved-pending-owner` on a clean gate result.
 
 **Capture-after exception (owner-only).** A Task, Contract, or
@@ -134,7 +136,7 @@ Decision SPEC MAY land directly at `status: verified` in the same
 change-set as the work it specifies, when the work was implemented
 before the SPEC was authored under explicit owner directive
 (`owner://transcript-<date>`). The per-type quality gate
-(`spec-review`) and citation grammar remain REQUIRED; only the
+(`review-spec`) and citation grammar remain REQUIRED; only the
 temporal precedence of SPEC-before-work is waived
 (`file://specs/2026-05-15-inbox-channel-and-skill-references-pattern/SPEC.md`;
 extended from Contract/Decision to Task per
@@ -147,7 +149,7 @@ normal lifecycle so the BLOCKING review gate runs before approval.
 (`file://agents/specs/SPEC.fastpath.template.md`) MAY land directly at
 `status: closed` in the same commit as the work it records, WITHOUT the
 IDEA / blocking-review / decomposition / cross-validation phases, when
-ALL fastpath thresholds hold (≤1 file, ≤50 lines, one component, no
+ALL fastpath thresholds hold (≤ 5 files, ≤ 300 lines, one component, no manifest-carried touch points, no
 public-contract or persisted-state impact, reversible in one commit)
 AND an explicit owner directive authorises it (cited in the fastpath
 §3). That owner directive supplies the owner action the `closed` flip
@@ -160,7 +162,7 @@ per `file://specs/2026-07-10-fleet-policy-hygiene-sweep/SPEC.md`,
 ### 1.4 TASK.md front-matter
 
 TASK.md is the per-slice executable artefact emitted by the
-`approved-spec-decomposition` skill from an approved SPEC's
+`decompose-approved-spec` skill from an approved SPEC's
 Execution Plan. TASK.md is the dispatchable unit, executed directly
 by agents; the parent SPEC remains the immutable execution
 authority — TASK.md files are NOT peer authorities.
@@ -172,12 +174,11 @@ authority — TASK.md files are NOT peer authorities.
 | `status` | enum | REQUIRED | `todo` \| `in-progress` \| `in-review` \| `done` \| `blocked` | tracker-agnostic lifecycle states; only owner sets `done` |
 | `owner` | string | REQUIRED | agent id or `unassigned` | |
 | `model_route` | string | REQUIRED | model slug from `agents/MODEL_ROUTING.md` Copilot or Claude routing | primary execution lane |
-| `cross_validation_lane` | string | REQUIRED | model slug; MUST be from a different family than `model_route` | independent diff/artefact reviewer |
+| `cross_validation_lane` | string | CONDITIONAL | model slug; MUST be from a different family than `model_route` | independent diff/artefact reviewer. **REQUIRED only on Rule-20 guardrail work** (a TASK whose touch points include manifest-carried paths); OPTIONAL elsewhere. Scoped 2026-07-24 (owner-directed): it was REQUIRED on every TASK, so ordinary repo-local slices paid for a cross-family reviewer that Rule 20 never asked for. Rule 20 itself is unchanged — see `file://agents/MODEL_ROUTING.md` Rule 20. |
 | `verification_lane` | string | REQUIRED | model slug | MAY equal `model_route` for mechanical verification; SHOULD differ for behavioral verification |
 | `mode` | enum | REQUIRED | `HITL` \| `AFK` | AFK requires bounded ownership and explicit acceptance |
 | `deps` | list[string] | REQUIRED | TASK ids that MUST reach `done` first; `[]` allowed | |
 | `write_scope` | enum | REQUIRED | `none` \| `disjoint` \| `overlap` | parallel writes require `disjoint` |
-| `parallelism_evaluated` | boolean | REQUIRED | `true` | MUST be `true`; records evaluation per `2026-05-04-agent-parallelism-and-model-routing-v2` §7.1 |
 | `acceptance_commands` | list[string] | REQUIRED | runnable commands or `[]` with reason in §5 | subset of parent SPEC's plus task-local checks |
 
 TASK.md status state machine:
@@ -192,12 +193,13 @@ blocked ──── unblock ─────────┘
 Idempotency: `done` is monotonic and owner-set. `blocked` is the
 only reverse edge from `in-progress`.
 
-Cross-validation gate: `in-progress → in-review` requires findings
+Cross-validation gate (Rule-20 guardrail slices only; skip when the slice
+declares no `cross_validation_lane`): `in-progress → in-review` requires findings
 from `cross_validation_lane` to be addressed (or explicit
-justified pushback) per `agents/skills/code-review/SKILL.md` and
-`agents/skills/spec-review/SKILL.md`. The review artifact itself
+justified pushback) per `agents/skills/review-diff/SKILL.md` and
+`agents/skills/review-spec/SKILL.md`. The review artifact itself
 MUST carry the Tool-Receipt Block (canonical definition:
-`agents/skills/code-review/SKILL.md`); an artifact without receipts
+`agents/skills/review-diff/SKILL.md`); an artifact without receipts
 is INVALID for this gate — treated as not-run
 (`specs/2026-07-01-cross-val-tool-receipts/SPEC.md`).
 
@@ -290,10 +292,10 @@ specs that lean heavily on normative keywords).
   `Problem` + `Completion Report` for fastpath). Other section
   names follow the templates.
 
-## 5. Quality-gate handoff to `spec-review`
+## 5. Quality-gate handoff to `review-spec`
 
-The review gate is the `spec-review` skill (BLOCKING) — see
-`agents/skills/spec-review/SKILL.md` and
+The review gate is the `review-spec` skill (BLOCKING) — see
+`agents/skills/review-spec/SKILL.md` and
 `agents/workflows/review-spec.md`. It MUST NOT set
 `status: approved` (owner-only; §1.3).
 
@@ -306,7 +308,7 @@ The review gate is the `spec-review` skill (BLOCKING) — see
 - Authoring workflow: `agents/workflows/idea-capture.md`,
   `agents/workflows/author-spec.md`.
 - Review workflow: `agents/workflows/review-spec.md`.
-- Skills: `agents/skills/spec-authoring/SKILL.md`,
+- Skills: `agents/skills/author-spec/SKILL.md`,
   `agents/skills/spec-driven-development/SKILL.md`,
-  `agents/skills/spec-review/SKILL.md`.
+  `agents/skills/review-spec/SKILL.md`.
 - Authority spec: `specs/2026-05-01-bes-spec-authoring-procedure-v1/SPEC.md`.

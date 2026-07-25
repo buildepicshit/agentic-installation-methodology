@@ -19,7 +19,7 @@ from their per-product SPECs.
 
 - Do not expect file-level propagation of `specs/*` content.
 - A studio-level Decision SPEC's downstream binding is enforced
-  when per-product SPECs cite it by `id` and pass `spec-review`.
+  when per-product SPECs cite it by `id` and pass `review-spec`.
   Forward direction is automatic at review time; reverse
   direction (upstream discovers all downstream consumers) is
   manual cross-repo grep.

@@ -331,8 +331,8 @@ run "claude --version is admin-allowed"             block-bad-cli-invocation.sh 
 run "claude mcp list is admin-allowed"              block-bad-cli-invocation.sh 0 "$(J 'claude mcp list')"
 run "claude doctor is admin-allowed"                block-bad-cli-invocation.sh 0 "$(J 'claude doctor')"
 # copilot lane cases per specs/2026-06-05-copilot-cli-cross-validation-lane
-run "copilot well-formed review span allowed"       block-bad-cli-invocation.sh 0 "$(J 'copilot -p "review the diff" --model gpt-5.5 -s --no-custom-instructions --disable-builtin-mcps --deny-tool write --deny-tool shell < /dev/null')"
-run "gh copilot well-formed review span allowed"    block-bad-cli-invocation.sh 0 "$(J 'gh copilot -- -p "review the diff" --model gpt-5.5 -s --no-custom-instructions --disable-builtin-mcps --deny-tool write --deny-tool shell --deny-tool url < /dev/null')"
+run "copilot well-formed review span allowed"       block-bad-cli-invocation.sh 0 "$(J 'copilot -p "review the diff" --model gpt-5.6-sol -s --no-custom-instructions --disable-builtin-mcps --deny-tool write --deny-tool shell < /dev/null')"
+run "gh copilot well-formed review span allowed"    block-bad-cli-invocation.sh 0 "$(J 'gh copilot -- -p "review the diff" --model gpt-5.6-sol -s --no-custom-instructions --disable-builtin-mcps --deny-tool write --deny-tool shell --deny-tool url < /dev/null')"
 run "copilot --model auto blocked"                  block-bad-cli-invocation.sh 2 "$(J 'gh copilot -- -p "p" --model auto')"
 
 run_settings_present() {

@@ -1,9 +1,7 @@
 # Decompose Approved Spec
 
-Single source: the `/decompose-approved-spec` slash-command
-(`.claude/commands/decompose-approved-spec.md`) is the invocation
-surface; the `approved-spec-decomposition` skill
-(`agents/skills/approved-spec-decomposition/SKILL.md`) owns the
+Single source: `/decompose-approved-spec` is served by the `decompose-approved-spec` skill
+(`agents/skills/decompose-approved-spec/SKILL.md`), which owns the
 mechanics — preconditions, TASK.md emission
 (`specs/<id>/tasks/T-NN-<slug>.md` with model lanes per
 `agents/MODEL_ROUTING.md`), the Decomposition Index, and the
