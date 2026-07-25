@@ -183,8 +183,34 @@ If ANY threshold fails, escalate to task/contract/decision.
 **Capture-after** on task/contract/decision SPECs is permitted
 under explicit owner directive when (a) the artefacts pass lint
 and gate, (b) the SPEC is filed before the next change to the
-affected surface, and (c) the SPEC lands at `status: verified`
-with Completion Report. Reference:
+affected surface, (c) the SPEC lands at `status: verified`
+with Completion Report, and (d) the SPEC declares
+`capture_after: owner://<ref>` in front-matter, citing that
+directive.
+Condition (d) binds SPECs authored from 2026-07-24 onward only.
+**Never add it to an already-landed SPEC.** A schema addition
+applies from its introduction forward; artefacts that landed under
+an earlier schema are read under that schema, and a lint warning on
+a historical artefact is a true statement about history, not a
+defect to edit away. Five pre-2026-07-24 capture-after SPECs warn
+permanently and correctly. The precondition binds the SPEC *being
+landed*, never the archive.
+
+This generalises beyond `capture_after`: **do not edit a landed
+SPEC to satisfy any rule introduced after it landed.** The cost is
+not to that document but to the whole corpus — once one record has
+been restated, no reader can trust any record without diffing git
+history. If a retrospective edit is ever unavoidable, it MUST
+annotate itself in-document with its date and authorising SPEC —
+a disclosed retrospective edit is a footnote a reader can price in.
+Three pre-rule instances are recorded in
+`file://specs/2026-07-24-capture-after-lint-declaration/SPEC.md`
+§10 and are NOT reopened; the rule is forward-looking and implies
+no re-validation of existing SPECs. Condition (d) is what makes (a) satisfiable at all:
+capture-after skips the IDEA phase, so `ideated_in` must be
+`null`, and without the declaration lint warns every time — the
+precondition could never be met by the SPEC class it governs.
+Reference:
 `file://agents/skills/spec-driven-development/SKILL.md`
 "Exception: capture-after".
 

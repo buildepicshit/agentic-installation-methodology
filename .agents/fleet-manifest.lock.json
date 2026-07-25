@@ -1,9 +1,9 @@
 {
   "schema_version": 1,
-  "generated_at": "2026-07-25T04:32:34.530Z",
+  "generated_at": "2026-07-25T05:56:53.861Z",
   "source": {
     "repo": "bes-fleet-policy",
-    "commit": "5bd68103bd6a8dbdd1e511dd3bb3443d773040e8",
+    "commit": "6293b4f9a5cf7ef5bace756366b034dde5ad8eb0",
     "dirty": true
   },
   "manifests": {
@@ -252,15 +252,15 @@
       "kind": "agents-file",
       "source_path": "agents/MODEL_ROUTING.md",
       "target_path": ".agents/MODEL_ROUTING.md",
-      "sha256": "62b86d1ac8ef9cfd00232a6eb20737ac3a7eb528411af204e273a82c1733114d",
-      "bytes": 49456
+      "sha256": "1152e372d616534a3dc3b3cad45120e60541ac6a38eaba1c88f6fe1fbc56314d",
+      "bytes": 51092
     },
     {
       "kind": "agents-file",
       "source_path": "agents/OPERATING_MODEL.md",
       "target_path": ".agents/OPERATING_MODEL.md",
-      "sha256": "ed8b7fa5d4d0b8e4b06040499e773895aab85795f59e28f139fcbd3c569bdadf",
-      "bytes": 26635
+      "sha256": "12af843c7da800eaf1e8cc8971bc942e4a7f46f882659a32b2ec1fd37bd777cf",
+      "bytes": 28125
     },
     {
       "kind": "agents-file",
@@ -497,8 +497,8 @@
       "kind": "agents-file",
       "source_path": "agents/scripts/lint-spec.sh",
       "target_path": ".agents/scripts/lint-spec.sh",
-      "sha256": "315b5d032735352fe7bf54c6442af664b09016c8eca275726ee8e76cb6b34454",
-      "bytes": 8674
+      "sha256": "0e90b6eb2d130a16a9928ad81f2399cb656719f181d99be0750797ad338702f9",
+      "bytes": 9842
     },
     {
       "kind": "agents-file",
@@ -532,8 +532,8 @@
       "kind": "agents-file",
       "source_path": "agents/scripts/validate-cli-invocation.sh",
       "target_path": ".agents/scripts/validate-cli-invocation.sh",
-      "sha256": "6725693e91105068a76d579348ba550c4d0852765266954020e232b47d5a4b71",
-      "bytes": 33364
+      "sha256": "0ea81f57c6899127084544625ae02d196204b92ee3751fe49b02f012301bbd76",
+      "bytes": 33372
     },
     {
       "kind": "agents-file",
@@ -609,8 +609,8 @@
       "kind": "agents-file",
       "source_path": "agents/skills/code-review/SKILL.md",
       "target_path": ".agents/skills/code-review/SKILL.md",
-      "sha256": "aab621804f082b95b3e34e44e52b76e3e088ce11aa9cd53ed403ee923c0bb4b9",
-      "bytes": 9813
+      "sha256": "4404446baf7ceccb45a98b0f143f516cfc1e13db16b23b67d8544ac302179989",
+      "bytes": 9825
     },
     {
       "kind": "agents-file",
@@ -630,8 +630,8 @@
       "kind": "agents-file",
       "source_path": "agents/skills/cross-agent-cli-invocation/SKILL.md",
       "target_path": ".agents/skills/cross-agent-cli-invocation/SKILL.md",
-      "sha256": "8b3bea1b61d8cc9b6349db6417bedb2a2949e5caa6d07c737acdcc0f35005479",
-      "bytes": 9547
+      "sha256": "e5cda04d3a191cb785a5e9e1783937e9840f0a1ad2ac22592a59fc27a86d5927",
+      "bytes": 9555
     },
     {
       "kind": "agents-file",
@@ -784,8 +784,8 @@
       "kind": "agents-file",
       "source_path": "agents/specs/SPEC.schema.md",
       "target_path": ".agents/specs/SPEC.schema.md",
-      "sha256": "fb3e10eecb4e918d09685e4a34990620a6ea78e6e2eb1f0034a0631ad5436780",
-      "bytes": 17406
+      "sha256": "b163f9317f8cf5a7dde0a2dc8f49b81c8985df8e59099ba60692b0fde51d9726",
+      "bytes": 18025
     },
     {
       "kind": "agents-file",
@@ -798,8 +798,8 @@
       "kind": "agents-file",
       "source_path": "agents/specs/TASK.template.md",
       "target_path": ".agents/specs/TASK.template.md",
-      "sha256": "5f4aada6b5f2711ceee5cfc092db9aca73b2b6d28ca3e8ee5af53f498ab82411",
-      "bytes": 3427
+      "sha256": "77fde5cbd47d5feb2daacb1c9fee078715d6a604368015aa6af09abc8b323869",
+      "bytes": 3433
     },
     {
       "kind": "agents-file",
@@ -840,8 +840,8 @@
       "kind": "agents-file",
       "source_path": "agents/templates/WORKFLOW.body.md",
       "target_path": ".agents/templates/WORKFLOW.body.md",
-      "sha256": "aa5e3c448547e6b30fea18b769529ccfe298f592cc7ceefbd4eb27be99321520",
-      "bytes": 12610
+      "sha256": "5a307e2936fde3e2d7ce568ce94f94a172a09a1d835fd72514acf64464e9edc3",
+      "bytes": 12612
     },
     {
       "kind": "agents-file",
@@ -1106,8 +1106,8 @@
       "kind": "harness",
       "source_path": ".claude/hooks/tests/run-tests.sh",
       "target_path": ".claude/hooks/tests/run-tests.sh",
-      "sha256": "59464e7f6843b9bb26479021100844203778383c87ae25f3533c45a80aa76be0",
-      "bytes": 58046
+      "sha256": "75a8b1f1224e578b4f2e8842e724ae859bff17f17559da9cb9a4cc9015ab7789",
+      "bytes": 58054
     },
     {
       "kind": "hook",
@@ -1169,15 +1169,15 @@
       "kind": "skill",
       "source_path": "agents/skills/code-review/SKILL.md",
       "target_path": ".claude/skills/code-review/SKILL.md",
-      "sha256": "aab621804f082b95b3e34e44e52b76e3e088ce11aa9cd53ed403ee923c0bb4b9",
-      "bytes": 9813
+      "sha256": "4404446baf7ceccb45a98b0f143f516cfc1e13db16b23b67d8544ac302179989",
+      "bytes": 9825
     },
     {
       "kind": "skill",
       "source_path": "agents/skills/cross-agent-cli-invocation/SKILL.md",
       "target_path": ".claude/skills/cross-agent-cli-invocation/SKILL.md",
-      "sha256": "8b3bea1b61d8cc9b6349db6417bedb2a2949e5caa6d07c737acdcc0f35005479",
-      "bytes": 9547
+      "sha256": "e5cda04d3a191cb785a5e9e1783937e9840f0a1ad2ac22592a59fc27a86d5927",
+      "bytes": 9555
     },
     {
       "kind": "skill",

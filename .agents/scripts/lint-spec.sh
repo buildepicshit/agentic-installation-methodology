@@ -70,15 +70,33 @@ case "$TYPE" in
 esac
 
 # ideated_in advisory (non-blocking): schema §1.2 REQUIRES a repo-relative
-# path for non-fastpath SPECs; `null` is valid ONLY for type: fastpath.
-# Surface drift (absent / literal null / non-path) as advisory, not blocking,
-# so the REQUIRED field stops silently drifting without dead-stopping work.
+# path for non-fastpath SPECs. `null` is valid for type: fastpath (which skips
+# the IDEA phase) and for a DECLARED capture-after SPEC (which also skips it —
+# the work is landed first under owner directive, so no IDEA ever existed).
+#
+# The declaration is what makes the second case checkable. Before it existed,
+# the OPERATING_MODEL capture-after precondition ("lint-spec.sh exit 0") was
+# unsatisfiable by construction: capture-after has no IDEA, so ideated_in had
+# to be null, so lint always exited 2. Measured 6 of 6 such SPECs, five of
+# them already closed — a gate that always fires teaches the fleet to ignore
+# gates. Authority: file://specs/2026-07-24-capture-after-lint-declaration/SPEC.md
+#
+# `capture_after` must carry an owner citation, not a bare `true`: the
+# OPERATING_MODEL condition is an EXPLICIT owner directive, so an
+# unattributable declaration would let any agent self-authorise the skip.
 if [[ "$ARTEFACT" == "spec" && "$TYPE" != "fastpath" ]]; then
     iv="${FM[ideated_in]:-}"
+    ca="${FM[capture_after]:-}"
+    ca="${ca%"${ca##*[![:space:]]}"}"   # trim trailing whitespace
+    if [[ -n "$ca" && ! "$ca" =~ ^owner://[A-Za-z0-9][A-Za-z0-9._/-]*$ ]]; then
+        emit_warn "front-matter" "$fm_end" "capture_after '$ca' must be an owner citation with a non-empty reference (owner://<ref>), not a bare scheme or flag (schema §1.2)"
+    fi
     if [[ -z "$iv" ]]; then
         emit_warn "front-matter" "$fm_end" "ideated_in absent (schema §1.2 REQUIRES a repo-relative path for non-fastpath specs)"
     elif [[ "$iv" == "null" ]]; then
-        emit_warn "front-matter" "$fm_end" "ideated_in is 'null' (allowed only for type: fastpath)"
+        if [[ -z "$ca" ]]; then
+            emit_warn "front-matter" "$fm_end" "ideated_in is 'null' (allowed only for type: fastpath, or a capture-after spec declaring capture_after: owner://<ref>)"
+        fi
     elif [[ "$iv" != */* ]]; then
         emit_warn "front-matter" "$fm_end" "ideated_in '$iv' is not a repo-relative path (schema §1.2)"
     fi

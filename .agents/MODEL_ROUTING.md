@@ -47,21 +47,30 @@ unlimited enterprise seat), zero MCP servers — receipts in
 
 HasNoBeef's operating preference for this fleet:
 
-- `gpt-5.6-sol` is the strongest OpenAI GPT model routed for BES on the
-  canonical index (AA v4.1: 59 vs `gpt-5.5`'s 55; owner-accepted
-  2026-07-16). `gpt-5.5` remains the incumbent Routing Matrix default
-  GPT lane until the owner re-baselines default lanes. Copilot is the
-  GPT agent surface; do not refer to a separate "Copilot" model.
-- Claude Opus 4.8 (`claude-opus-4-8`) remains the owner-flipped
-  frontier Claude lane (GA 2026-05-28). Claude Opus 5
-  (`claude-opus-5`, GA 2026-07-24) now leads both canonical surfaces
-  (AA v4.1 61; Vals SWE-V 97.00) and is entitled on this seat, but a
-  lane-role flip is an owner decision that has not been made — see
-  the Routing Matrix note. Opus 4.7 and 4.6 are legacy-but-available
-  (same price), used only as deliberate legacy/pinned references. Do
-  not hard-code model recency as quality: 4.8's promotion was an
-  evidence-cited decision, not an automatic newest-is-best bump, and
-  Opus 5 leading the index does not by itself move a lane.
+- `gpt-5.6-sol` is the **Routing Matrix default GPT lane** as of
+  2026-07-24 (owner-directed). It leads on BOTH canonical surfaces —
+  AA v4.1 59 vs `gpt-5.5`'s 55, and Vals SWE-V 96.20 vs 82.60 — and is
+  probe-validated on this seat. `gpt-5.5` remains documented,
+  approved-for-fleet and available as the deliberate fallback; AA labels
+  it deprecated but no vendor deprecation notice exists and Copilot still
+  serves it GA, so it is a fallback, not a retirement. Copilot is the GPT
+  agent surface; do not refer to a separate "Copilot" model.
+- Claude Opus 5 (`claude-opus-5`) is the **frontier Claude lane** as of
+  2026-07-24 (owner-directed, FULL promotion). It leads both canonical
+  surfaces (AA v4.1 61; Vals SWE-V 97.00) and is probe-validated on this
+  seat. Opus 4.8 remains documented and approved-for-fleet as the
+  deliberate fallback; 4.7 and 4.6 stay legacy-pinned references only.
+  The recency rule is unchanged and still binding — this flip rests on
+  two independent vendor-neutral surfaces plus an entitlement probe, not
+  on Opus 5 being newer.
+- **Accepted trade-off on the Opus 5 promotion.** Opus 5 ships enhanced
+  cyber-safeguards and may refuse security-adjacent requests. The owner
+  chose FULL promotion over a partial one that would have kept Opus 4.8
+  for security-surface review (`owner://transcript-2026-07-24`). So the
+  refusal risk is ACCEPTED, not designed around: when a
+  `warn-security-surface` review is refused, fall back to
+  `claude-opus-4-8` or a GPT lane for that request and note it — do not
+  treat the refusal as a capability verdict or retry it unchanged.
 - Claude Sonnet with adaptive behavior, when available in the active surface,
   is a useful first-pass Claude lane for creative/product/design synthesis,
   lower-risk implementation support, and token-heavy drafts that may need
@@ -153,9 +162,9 @@ refresh + the Version-Forward Proviso; probe receipts in
 
 | Model | Family | Surfaces | Tier | Verbs | Canonical (AA v4.1) | Tiebreaker (Vals SWE-V) | Status |
 |---|---|---|---|---|---|---|---|
-| `claude-opus-5` | claude | claude-code, copilot-cli, api | frontier | ORCHESTRATE, IMPLEMENT, OPERATE, REASON, SYNTHESIZE | 61 (adaptive/max; 60 xhigh) | 97.00 | documented (GA 2026-07-24); probe-validated 2026-07-24 on claude-code. Top of both canonical surfaces. FRONTIER lane-role is a SEPARATE owner flip — not granted here |
-| `claude-fable-5` | claude | claude-code, api | frontier | ORCHESTRATE, IMPLEMENT, OPERATE, SYNTHESIZE, PIONEER | 60 (adaptive/max) | 95.00 | documented; entitlement resolved 2026-07-10. No longer top-scored (Opus 5: 61 / 97.00), but Anthropic still names Fable 5 for "highest available capability" — a deliberate pick, not a demotion |
-| `claude-opus-4-8` | claude | claude-code, copilot-cli, api | frontier | IMPLEMENT, ORCHESTRATE, OPERATE, REASON, BACKSTOP | 56 (adaptive/max) | 88.60 | configured, approved-for-fleet (FRONTIER); probe-validated 2026-07-24. Vendor-filed "Legacy models" 2026-07-24 (still served, unchanged price) — RETAINED as the fleet's frontier Claude lane pending an owner re-baseline, and PREFERRED for security-surface review (see Known gaps) |
+| `claude-opus-5` | claude | claude-code, copilot-cli, api | frontier | ORCHESTRATE, IMPLEMENT, OPERATE, REASON, SYNTHESIZE | 61 (adaptive/max; 60 xhigh) | 97.00 | documented (GA 2026-07-24); probe-validated 2026-07-24; **approved-for-fleet (FRONTIER)** — owner-flipped 2026-07-24, full promotion including security-surface review |
+| `claude-fable-5` | claude | claude-code, api | frontier | ORCHESTRATE, IMPLEMENT, OPERATE, SYNTHESIZE, PIONEER | 60 (adaptive/max) | 95.00 | documented; **probe-validated 2026-07-24** — entitlement confirmed past the stated promo window, so the re-probe-before-automation caveat is DISCHARGED. No longer top-scored (Opus 5: 61 / 97.00), but Anthropic still names Fable 5 for "highest available capability" — a deliberate pick, not a demotion |
+| `claude-opus-4-8` | claude | claude-code, copilot-cli, api | frontier | IMPLEMENT, ORCHESTRATE, OPERATE, REASON, BACKSTOP | 56 (adaptive/max) | 88.60 | configured, approved-for-fleet; probe-validated 2026-07-24. Vendor-filed "Legacy models". No longer the default frontier lane (Opus 5 took it 2026-07-24) — retained as the deliberate FALLBACK, and the practical stand-in when an Opus 5 cyber-safeguard refusal blocks a security-surface request |
 | `claude-sonnet-5` | claude | claude-code, copilot-cli, api | capable | IMPLEMENT, CONVERSE, ABSTRACT | 53 (adaptive/max) | needs-probe | documented; **probe-validated 2026-07-24 on claude-code** — this closes the STATUS.md Sonnet-5 probe-candidate item. Verbs INHERITED from the retired Sonnet 4.6 row pending a Sonnet-5-specific capability source |
 | `claude-haiku-4-5-20251001` | claude | claude-code, copilot-cli, api | fast | SCAN, RESPOND, IMPLEMENT (bounded) | 24 (non-reasoning; no reasoning-variant index score published) | needs-probe | documented; probe-validated 2026-07-24 on claude-code |
 | `gpt-5.6-sol` | gpt | copilot-cli, api | frontier | REASON, OPERATE, IMPLEMENT, SYNTHESIZE | 59 (max; 58 xhigh) | 96.20 | documented (GA 2026-07-09), probe-validated 2026-07-16 and re-probed 2026-07-24, approved-for-fleet (owner-directed 2026-07-16) |
@@ -263,11 +272,14 @@ Known gaps (explicit, per RESEARCH.md §7 — do not paper over):
   `claude-sonnet-5`, `claude-haiku-4-5`) were not in the board
   excerpt read on 2026-07-24, but that fetch was TRUNCATED. Unread,
   not absent — see the tiebreaker convention above.
-- **Security-surface routing constraint (NEW).** Anthropic and GitHub
-  both flag enhanced cyber-safeguards on Opus 5; security-adjacent
-  requests may be refused. For `warn-security-surface` review work
-  prefer `claude-opus-4-8` or a GPT lane. This is a capability-fit
-  constraint, not a quality judgement.
+- **Opus 5 cyber-safeguards — ACCEPTED TRADE-OFF, not a routing carve-out.**
+  Anthropic and GitHub both flag enhanced cyber-safeguards on Opus 5, so
+  security-adjacent requests may be refused. The owner chose a FULL Opus 5
+  promotion on 2026-07-24 over a partial one that would have reserved
+  security-surface review for Opus 4.8. Operational consequence: when a
+  `warn-security-surface` review is refused, fall back to `claude-opus-4-8`
+  or a GPT lane for that request and record it. A refusal is a policy
+  outcome, not a capability verdict — do not retry it unchanged.
 
 Status refresh 2026-07-16 (triggers (a)+(b)+(c)): the 2026-07-10
 GPT-5.6 REJECTED probe is now RESOLVED — after `copilot update`
@@ -288,12 +300,15 @@ seat — `claude-opus-5`, `claude-sonnet-5`, `claude-opus-4-8`,
 `specs/2026-07-24-opus-5-matrix-refresh/receipts/`) — which CLOSES
 the standing Sonnet-5 probe-candidate item and the Haiku
 `needs-probe` status. `gpt-5.6-sol` was re-probed the same day on
-Copilot CLI 1.0.75. Opus 5's FRONTIER lane-role is deliberately NOT
-granted here: the row records capability and entitlement; the lane
-flip is an owner decision (Routing Matrix note). Anthropic filed Opus
-4.8 under "Legacy models" the same day; the fleet RETAINS 4.8 as its
-frontier lane on a capability-fit argument (security-surface work),
-not on recency.
+Copilot CLI 1.0.75. The matrix row landed first WITHOUT a lane-role —
+a row records capability and entitlement, and the lane flip is an
+owner decision — and the owner then granted the FRONTIER role the
+same day, so `claude-opus-5` is the frontier lane and
+`claude-opus-4-8` the designated fallback. Anthropic filed Opus 4.8
+under "Legacy models" the same day, which is consistent with that
+ordering: the fleet did not follow recency, it followed two canonical
+surfaces plus a seat probe, and the owner chose FULL promotion over a
+partial one that would have kept 4.8 on security-surface work.
 
 Refresh discipline: re-baseline this matrix on (a) an AA index
 version bump (a v4 → v5 bump is a deliberate re-baselining event
@@ -440,10 +455,10 @@ surfaces; the model name is separate from the serving surface.
 
 | Model | Status | Use for | Avoid for |
 | --- | --- | --- | --- |
-| `gpt-5.6-sol` | documented, probe-validated 2026-07-16, re-probed 2026-07-24, approved-for-fleet (owner-directed) | Strongest OpenAI lane on AA v4.1 (59) and now on the tiebreaker too (Vals SWE-V 96.20, 2026-07-22 board — ahead of Fable 5's 95.00): deep reasoning over large codebases, demanding long-running agentic work, high-risk review/cross-validation of Claude-authored work. | Automation pins before more operational history accrues (GA 2026-07-09). The former "until a Vals datum lands" caveat is DISCHARGED — the datum landed 2026-07-22. |
+| `gpt-5.6-sol` | documented, probe-validated 2026-07-16, re-probed 2026-07-24, approved-for-fleet; **Routing Matrix DEFAULT GPT lane from 2026-07-24** | Strongest OpenAI lane on AA v4.1 (59) and now on the tiebreaker too (Vals SWE-V 96.20, 2026-07-22 board — ahead of Fable 5's 95.00): deep reasoning over large codebases, demanding long-running agentic work, high-risk review/cross-validation of Claude-authored work. | Automation pins before more operational history accrues (GA 2026-07-09). The former "until a Vals datum lands" caveat is DISCHARGED — the datum landed 2026-07-22. |
 | `gpt-5.6-terra` | documented, probe-validated 2026-07-16, approved-for-fleet (owner-directed) | Balanced everyday interactive/agentic coding lane; GPT-family implementation at capable tier. | Highest-risk architecture/integration calls when Sol or `gpt-5.5` fits. |
 | `gpt-5.6-luna` | documented, probe-validated 2026-07-16 | Fast bounded scans, lightweight subagents, low-risk summarization. | Final integration decisions, ambiguous architecture, high-risk edits. |
-| `gpt-5.5` | configured, documented, approved-for-fleet. **Contested signal 2026-07-24:** AA labels the model "deprecated" and recommends GPT-5.6 Sol, but GitHub Copilot still lists it GA and no OpenAI deprecation notice was found — an owner decision point, NOT an automatic retirement. | Incumbent default GPT-family lane for root fleet management, non-trivial specs, complex implementation, integration, risky verification, and final synthesis (Routing Matrix default until the owner re-baselines lanes). | Bounded fanout scans where depth is not needed — a fast lane delivers the same quality (fit, not savings). |
+| `gpt-5.5` | configured, documented, approved-for-fleet — **FALLBACK lane as of 2026-07-24**, no longer the default. AA labels it "deprecated" and recommends Sol, but Copilot still lists it GA and no OpenAI deprecation notice exists, so it is a fallback and NOT retired. | Deliberate fallback when `gpt-5.6-sol` is unavailable or quota-constrained, and for work explicitly pinned to 5.5 for reproducibility. | New default-lane assignments — use `gpt-5.6-sol`. |
 | `gpt-5.4` | documented, needs-probe | Fallback when `gpt-5.5` is unavailable or a workflow is pinned to GPT-5.4. | Replacing `gpt-5.5` for high-risk work when `gpt-5.5` is available. |
 | `gpt-5.4-mini` | documented, needs-probe | Fast read-heavy exploration, parallel document scans, lightweight subagents, low-risk summarization. | Final integration decisions, ambiguous architecture, high-risk edits. |
 
@@ -454,14 +469,14 @@ Verified sources: local Claude config and official Claude Code model docs.
 | Model or alias | Status | Use for | Avoid for |
 | --- | --- | --- | --- |
 | `opus` | configured, documented, approved-for-fleet | Independent architecture/spec review, ambiguity review, high-risk design critique, public-OSS review. | Bounded fanout and routine edits — fast lanes fit those equally well. |
-| `claude-opus-5` | documented (GA 2026-07-24), probe-validated 2026-07-24 on claude-code | Top-scored model on both canonical surfaces (AA v4.1 61; Vals SWE-V 97.00): complex agentic coding, long-running multi-step execution, autonomous code change with regression verification, multi-tool coordination, deep debugging and root-cause analysis. | Security-adjacent / cyber-related review — enhanced cyber-safeguards may refuse; use `claude-opus-4-8` or a GPT lane. Automation pins before an owner FRONTIER flip. |
-| `claude-opus-4-8` | configured, documented, approved-for-fleet (FRONTIER); vendor-filed "Legacy models" 2026-07-24 (still served) | Frontier Claude lane: cross-validation/review, high-risk implementation review, architecture/spec critique, public-OSS release review, independent second-pass code review. PREFERRED lane for security-surface review. | Bounded fanout and routine edits — fast lanes fit those equally well. |
+| `claude-opus-5` | documented (GA 2026-07-24), probe-validated 2026-07-24; **approved-for-fleet (FRONTIER) from 2026-07-24** | Top-scored model on both canonical surfaces (AA v4.1 61; Vals SWE-V 97.00): complex agentic coding, long-running multi-step execution, autonomous code change with regression verification, multi-tool coordination, deep debugging and root-cause analysis. | Nothing categorically. On a cyber-safeguard refusal during security-surface review, fall back to `claude-opus-4-8` or a GPT lane for that request and record it — the accepted trade-off of the full promotion, not a carve-out. |
+| `claude-opus-4-8` | configured, documented, approved-for-fleet — **FALLBACK from 2026-07-24**; vendor-filed "Legacy models" (still served) | Deliberate fallback for cross-validation/review, high-risk implementation review, architecture/spec critique, public-OSS release review. Also the practical stand-in when an Opus 5 cyber-safeguard refusal blocks a security-surface request. | New default frontier-lane assignments — use `claude-opus-5`. |
 | `claude-sonnet-5` | documented, probe-validated 2026-07-24 on claude-code | Capable-tier Claude lane, successor to Sonnet 4.6 (AA v4.1 53): daily Claude coding, implementation support, doc synthesis, repo-local work after an approved spec. | Highest-risk architecture or integration calls when a frontier lane is available. |
 | `claude-sonnet-4-6` | documented, needs-probe (never held an owner `approved-for-fleet` flip — do not imply one) | Legacy capable-tier reference, superseded upstream by Sonnet 5. Deliberate pinned/legacy use only. | New fit-selection picks — use `claude-sonnet-5`. |
-| `claude-fable-5` | configured, documented; entitlement resolved 2026-07-10 | Anthropic's designated "highest available capability" pick (AA v4.1 60; Vals SWE-V 95.00): orchestration, synthesis, high-risk implementation/review, deep multi-step work. No longer the top-scored Claude row (Opus 5: 61 / 97.00) — that is a scoreboard fact, not a demotion. | Cost-driven avoidance (cost is not a routing input); assuming a permanent role before the owner designates one. |
-| `claude-opus-4-7` | documented, approved-for-fleet (LEGACY lane-role) | Legacy-but-available frontier predecessor (same $5/$25). Use only as a deliberate pinned/legacy reference; 4.8 is the frontier lane. | New frontier-lane assignments (use 4.8). |
-| `claude-opus-4-6` | documented, approved-for-fleet (LEGACY lane-role) | Legacy-but-available (same price). Deliberate legacy/pinned use only. | New frontier-lane assignments (use 4.8). |
-| `sonnet` | documented, needs-probe | Creative/product/design synthesis, adaptive first-pass Claude work when configured, daily Claude coding, implementation support, doc synthesis, repo-local work after approved spec. | Highest-risk coding or architecture calls when Opus 4.8 or Copilot-served `gpt-5.5` is available and quota allows. |
+| `claude-fable-5` | configured, documented; entitlement resolved 2026-07-10, **re-probed 2026-07-24** | Anthropic's designated "highest available capability" pick (AA v4.1 60; Vals SWE-V 95.00): orchestration, synthesis, high-risk implementation/review, deep multi-step work. No longer the top-scored Claude row (Opus 5: 61 / 97.00) — that is a scoreboard fact, not a demotion. | Cost-driven avoidance (cost is not a routing input); assuming a permanent role before the owner designates one. |
+| `claude-opus-4-7` | documented, approved-for-fleet (LEGACY lane-role) | Legacy-but-available frontier predecessor (same $5/$25). Deliberate pinned/legacy reference only; `claude-opus-5` is the frontier lane and `claude-opus-4-8` the fallback. | New frontier-lane assignments (use `claude-opus-5`). |
+| `claude-opus-4-6` | documented, approved-for-fleet (LEGACY lane-role) | Legacy-but-available (same price). Deliberate legacy/pinned use only. | New frontier-lane assignments (use `claude-opus-5`). |
+| `sonnet` | documented, needs-probe | Creative/product/design synthesis, adaptive first-pass Claude work when configured, daily Claude coding, implementation support, doc synthesis, repo-local work after approved spec. | Highest-risk coding or architecture calls when `claude-opus-5` or Copilot-served `gpt-5.6-sol` is available and quota allows. |
 | `haiku` | documented, needs-probe | Simple scans, short summaries, low-risk formatting, fast bounded support work. | Complex code edits, final review, ambiguous specs. |
 | `opusplan` | documented, needs-probe | Claude-led work where planning should use Opus and execution should use Sonnet. | Work that must stay strictly on one pinned model. |
 | `opus[1m]` / `sonnet[1m]` | documented, needs-probe | Long sessions and large-codebase/document synthesis when account support is confirmed. | Default use; verify availability first. |
@@ -476,8 +491,9 @@ keys on the MODEL served, not the CLI brand.
 
 | Model | Status | Use for | Avoid for |
 | --- | --- | --- | --- |
-| `gpt-5.5` (via Copilot CLI) | approved-for-fleet | Cross-validation/review of Claude-authored work; primary GPT-lane dispatch; second independent GPT opinion when the primary author is not GPT-family. | Cross-validating GPT-authored work — same family. |
-| `gpt-5.6-sol` / `gpt-5.6-terra` / `gpt-5.6-luna` (via Copilot CLI) | probe-validated 2026-07-16 | Per the GPT Model Catalog rows above; same lane rules as `gpt-5.5`. | Cross-validating GPT-authored work — same family. |
+| `gpt-5.6-sol` (via Copilot CLI) | approved-for-fleet; **DEFAULT GPT lane from 2026-07-24** | Primary GPT-lane dispatch; cross-validation/review of Claude-authored work; second independent GPT opinion when the primary author is not GPT-family. | Cross-validating GPT-authored work — same family. |
+| `gpt-5.5` (via Copilot CLI) | approved-for-fleet — FALLBACK from 2026-07-24 | Deliberate fallback when Sol is unavailable or quota-constrained, and work pinned to 5.5 for reproducibility. | New default-lane dispatch — use `gpt-5.6-sol`. Cross-validating GPT-authored work — same family. |
+| `gpt-5.6-terra` / `gpt-5.6-luna` (via Copilot CLI) | probe-validated 2026-07-16 | Per the GPT Model Catalog rows above; same lane rules as Sol. | Cross-validating GPT-authored work — same family. |
 | other unlisted/unprobed GPT models on Copilot | needs-probe | Probe with a pinned `--model` before catalog promotion. | Automation pins before a probe. |
 | non-GPT models on Copilot | FORBIDDEN in lane use | — | Any lane assignment: serving a Claude model through Copilot silently voids cross-family validity. This binds by FAMILY, not by an enumerated list — it covers every Claude model GitHub serves, including ones added after this table was written (Opus 5 and Sonnet 5 appeared in the Copilot catalogue 2026-07-24) and any version reached under the Version-Forward Proviso. Enforced mechanically: `validate-cli-invocation.sh` FAILS any copilot span whose `--model` does not match `^gpt-`. |
 | `--model auto` | FORBIDDEN in lane use | — | Any lane invocation (mechanically blocked by `validate-cli-invocation.sh`). |
@@ -501,37 +517,34 @@ the Capability Matrix above (verbs + canonical score + family
 independence + context fit). Treat a row as the default opening
 position that the matrix can override in either direction.
 
-**Two default-lane re-baselines are OPEN owner decisions as of
-2026-07-24 — the rows below are deliberately unchanged pending them:**
+**Both default lanes were re-baselined 2026-07-24 (owner-directed).** The rows
+below now read `gpt-5.6-sol` and `Claude Opus 5`.
 
-1. GPT lane `gpt-5.5` → `gpt-5.6-sol`. Sol now leads on BOTH canonical
-   surfaces (AA 59 vs 55; Vals SWE-V 96.20 vs 82.60) and AA labels
-   `gpt-5.5` deprecated — but Copilot still serves it GA and no
-   vendor deprecation notice was found. Affects 11 of 14 rows below,
-   three Capacity rows, and the Standard Prompt pins.
-2. Claude lane `claude-opus-4-8` → `claude-opus-5`. Opus 5 leads both
-   surfaces and is probe-validated, but 4.8 is the better
-   capability fit for security-surface review (Opus 5 cyber-safeguards
-   may refuse). A partial promotion — Opus 5 general, 4.8 retained for
-   security-surface — is the shape to consider.
+Basis: each new lane leads BOTH canonical surfaces — Sol AA v4.1 59 / Vals
+SWE-V 96.20 against `gpt-5.5`'s 55 / 82.60; Opus 5 AA v4.1 61 / SWE-V 97.00
+against Opus 4.8's 56 / 88.60 — **and** each is probe-validated on this seat.
+`gpt-5.5` and `claude-opus-4-8` remain documented, approved-for-fleet
+fallbacks; neither is retired.
 
-Neither is applied automatically. Recency does not move a lane; an
-owner flip does.
+The recency rule still binds. An owner flip moved these lanes on two
+independent vendor-neutral surfaces plus entitlement receipts; recency alone
+would not have. **The Opus 5 promotion is FULL, including security-surface
+review** — see the accepted trade-off in Owner Calibration.
 
 | Task class | Primary route | Secondary route | Notes |
 | --- | --- | --- | --- |
-| Root fleet management | Copilot CLI `gpt-5.5` | Claude Opus 4.8 review | Root owns orchestration, preflight, handoff order, and cross-repo policy. |
-| Repo orientation | Copilot CLI `gpt-5.5` or `gpt-5.4-mini` | Claude `sonnet` | Use faster models only for bounded read-only inventory. |
-| New non-trivial SPEC | Copilot CLI `gpt-5.5` | Claude Opus 4.8 critique | Claude should review ambiguity before high-risk execution. |
-| Spec review | Claude Opus 4.8 or Copilot CLI `gpt-5.5` | Both families for high-risk specs | Use independent cross-family review for public OSS, architecture, security, release, or cross-repo work. |
-| Implementation from approved spec | Copilot CLI `gpt-5.5` or Claude Opus 4.8 | Claude `sonnet` for creative/supporting work | Write-capable agents need branch/worktree isolation and file ownership. |
+| Root fleet management | Copilot CLI `gpt-5.6-sol` | Claude Opus 5 review | Root owns orchestration, preflight, handoff order, and cross-repo policy. |
+| Repo orientation | Copilot CLI `gpt-5.6-sol` or `gpt-5.4-mini` | Claude `sonnet` | Use faster models only for bounded read-only inventory. |
+| New non-trivial SPEC | Copilot CLI `gpt-5.6-sol` | Claude Opus 5 critique | Claude should review ambiguity before high-risk execution. |
+| Spec review | Claude Opus 5 or Copilot CLI `gpt-5.6-sol` | Both families for high-risk specs | Use independent cross-family review for public OSS, architecture, security, release, or cross-repo work. |
+| Implementation from approved spec | Copilot CLI `gpt-5.6-sol` or Claude Opus 5 | Claude `sonnet` for creative/supporting work | Write-capable agents need branch/worktree isolation and file ownership. |
 | Fast fanout / document scan | Copilot CLI `gpt-5.4-mini` | Claude `haiku` | Return distilled facts to the root agent; do not let scan agents edit. |
-| Multi-agent coding | One lead writer on Copilot CLI `gpt-5.5` or Claude Opus 4.8 | Additional writers only on disjoint files/worktrees | Root fleet manager must define ownership and integration order before edits. |
-| Creative/product/design synthesis | Claude `sonnet`, preferably adaptive when configured and available | Claude Opus 4.8 or Copilot CLI `gpt-5.5` for final technical validation | Useful for tone, concepts, narrative, and design exploration; specs still control execution. |
-| Code review | Copilot CLI `gpt-5.5` with `code-review` | Claude Opus 4.8 | Findings first, severity ordered, with file/line citations. |
-| Public OSS release work | Copilot CLI `gpt-5.5` | Claude Opus 4.8 independent review | Wick and Mimir require low-noise PR plans and owner approval before push/publish. |
-| Green room product evaluation | Copilot CLI `gpt-5.5` or Claude Opus 4.8 | Different model family required | Follow `.agents/GREEN_ROOM_EVALUATION.md`; primary evaluation and verifier must be separate runs. |
-| Long-context synthesis | Claude Opus 4.8 `[1m]` or Sonnet `[1m]` after probe | Copilot CLI `gpt-5.5` with scoped docs | Use 1M context only when account support is confirmed and the task clearly benefits. |
+| Multi-agent coding | One lead writer on Copilot CLI `gpt-5.6-sol` or Claude Opus 5 | Additional writers only on disjoint files/worktrees | Root fleet manager must define ownership and integration order before edits. |
+| Creative/product/design synthesis | Claude `sonnet`, preferably adaptive when configured and available | Claude Opus 5 or Copilot CLI `gpt-5.6-sol` for final technical validation | Useful for tone, concepts, narrative, and design exploration; specs still control execution. |
+| Code review | Copilot CLI `gpt-5.6-sol` with `code-review` | Claude Opus 5 | Findings first, severity ordered, with file/line citations. |
+| Public OSS release work | Copilot CLI `gpt-5.6-sol` | Claude Opus 5 independent review | Wick and Mimir require low-noise PR plans and owner approval before push/publish. |
+| Green room product evaluation | Copilot CLI `gpt-5.6-sol` or Claude Opus 5 | Different model family required | Follow `.agents/GREEN_ROOM_EVALUATION.md`; primary evaluation and verifier must be separate runs. |
+| Long-context synthesis | Claude Opus 5 `[1m]` or Sonnet `[1m]` after probe | Copilot CLI `gpt-5.6-sol` with scoped docs | Use 1M context only when account support is confirmed and the task clearly benefits. |
 | Trivial local command | Current root agent | None | Do not spawn agents for simple terminal answers. |
 
 ## Approved SPEC Decomposition
@@ -545,8 +558,8 @@ integration gate are canonical in
 Model-lane assignment per task class draws from the Routing Matrix
 above:
 
-- `task_class: implementation` → primary Copilot CLI `gpt-5.5`,
-  cross-validation Claude Opus 4.8 (different family).
+- `task_class: implementation` → primary Copilot CLI `gpt-5.6-sol`,
+  cross-validation Claude Opus 5 (different family).
 - `task_class: code-review` → cross-family from the implementer.
 - `task_class: verification` (behavioral) → different family
   from the implementer; mechanical verification (lint, test) MAY
@@ -562,13 +575,13 @@ optimization:
 
 | Pressure | Routing adjustment |
 | --- | --- |
-| Copilot `gpt-5.5` quota healthy | Use Copilot as root lead and primary GPT implementer. |
-| Copilot `gpt-5.5` quota constrained | Move independent review/spec critique to Claude Opus 4.8; reserve Copilot for GPT-family integration and verification if possible. |
+| Copilot `gpt-5.6-sol` quota healthy | Use Copilot as root lead and primary GPT implementer. |
+| Copilot `gpt-5.6-sol` quota constrained | Move independent review/spec critique to Claude Opus 5; reserve Copilot for GPT-family integration and verification if possible. |
 | Copilot CLI down or unreachable | Pause GPT-lane dispatch or use API only when a SPEC explicitly approves that surface. |
 | Claude frontier quota healthy | Use the frontier Claude lane for spec review, second-pass code review, and high-risk repo work where a different model family adds value. |
-| Claude frontier quota constrained | Reserve the frontier lane for the riskiest reviews; legacy Opus 4.7/4.6 remain available as deliberate pinned fallbacks if frontier quota is exhausted. |
+| Claude frontier quota constrained | Reserve `claude-opus-5` for the riskiest reviews and drop to `claude-opus-4-8`, the designated fallback; legacy Opus 4.7/4.6 remain available as deliberate pinned references only if both are exhausted. |
 | Both frontier quotas constrained | Stop parallel frontier fanout. Use fast/read-only models for inventory, then queue owner decisions until frontier capacity returns. |
-| Creative work with low code risk | Prefer Claude Sonnet/adaptive when available, then validate implementation-impacting decisions with Copilot CLI `gpt-5.5` or the frontier Claude lane. |
+| Creative work with low code risk | Prefer Claude Sonnet/adaptive when available, then validate implementation-impacting decisions with Copilot CLI `gpt-5.6-sol` or the frontier Claude lane. |
 
 Be frugal on wasteful PROCESS overhead, never on research
 (`file://agents/skills/execution-discipline-cluster/SKILL.md`
@@ -674,7 +687,7 @@ Claude independent spec review:
 ```bash
 claude --print \
   "Read AGENTS.md, CLAUDE.md, WORKFLOW.md, and the target SPEC.md. Review only. Return blockers, ambiguity, unsafe assumptions, missing verification, and owner decisions. Do not edit files." \
-  --model claude-opus-4-8 \
+  --model claude-opus-5 \
   --permission-mode plan \
   --strict-mcp-config \
   --mcp-config '{"mcpServers":{}}'
@@ -694,7 +707,7 @@ Claude bounded repo worker after approved spec (frontier lane):
 
 ```bash
 claude \
-  --model claude-opus-4-8 \
+  --model claude-opus-5 \
   --effort xhigh \
   --permission-mode default \
   --strict-mcp-config \
@@ -706,7 +719,7 @@ Claude deep technical review (frontier lane):
 ```bash
 claude --print \
   "Read the named source docs and current diffs. Review only. Return deep technical risks, correctness concerns, missing tests, and decision points. Do not edit files." \
-  --model claude-opus-4-8 \
+  --model claude-opus-5 \
   --effort xhigh \
   --permission-mode plan \
   --strict-mcp-config \
@@ -728,7 +741,7 @@ Copilot read-only review (co-equal GPT lane; scripted):
 
 ```bash
 gh copilot -- -p "$(cat specs/<id>/reviews/PROMPT.md)" \
-  --model gpt-5.5 \
+  --model gpt-5.6-sol \
   -s \
   --no-custom-instructions \
   --disable-builtin-mcps \
@@ -745,7 +758,7 @@ Copilot GPT repo worker:
 
 ```bash
 gh copilot -- -p "$(cat prompts/WORKER.md)" \
-  --model gpt-5.5 \
+  --model gpt-5.6-sol \
   --no-custom-instructions \
   --disable-builtin-mcps \
   < /dev/null

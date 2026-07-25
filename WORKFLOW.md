@@ -53,6 +53,7 @@ bes:
 
 
 
+
 # agentic-installation-methodology Workflow
 
 This is the **public OSS** repo for the agentic installation
@@ -259,8 +260,8 @@ Dispatch model:
   decision: fanout | local | owner-check
   rationale: <why this shape>
   agents_or_models:
-    - copilot:gpt-5.5
-    - claude:claude-opus-4-8
+    - copilot:gpt-5.6-sol
+    - claude:claude-opus-5
   ```
 
 For cross-repo work, do NOT dispatch subagents across repo

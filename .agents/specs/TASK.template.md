@@ -3,9 +3,9 @@ id: T-NN-kebab-case-slice
 parent_spec: YYYY-MM-DD-kebab-case-spec-id
 status: todo
 owner: unassigned
-model_route: gpt-5.5
-cross_validation_lane: claude-opus-4-8
-verification_lane: gpt-5.5
+model_route: gpt-5.6-sol
+cross_validation_lane: claude-opus-5
+verification_lane: gpt-5.6-sol
 mode: HITL
 deps: []
 write_scope: disjoint

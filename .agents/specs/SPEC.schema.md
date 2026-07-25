@@ -35,7 +35,7 @@ delimited by `---` on its own line.
 | `spec_id` | string | REQUIRED | `<YYYY-MM-DD>-<id>` | id of the SPEC this IDEA feeds |
 | `status` | enum | REQUIRED | `draft` \| `ready-for-spec` \| `owner-blocking` \| `archived` | initial value `draft` |
 | `owner` | string | REQUIRED | owner identifier | e.g. `HasNoBeef` |
-| `brainstormed_by` | string | REQUIRED | agent identifier | e.g. `copilot-gpt-5.5`, `claude-opus-4-8-1m`, or any other model:lane label |
+| `brainstormed_by` | string | REQUIRED | agent identifier | e.g. `copilot-gpt-5.6-sol`, `claude-opus-5-1m`, or any other model:lane label |
 | `brainstormed_on` | date | REQUIRED | ISO-8601 date | e.g. `2026-05-01` |
 | `implies_spec_type` | enum | OPTIONAL | `task` \| `contract` \| `decision` | informational only post-WS-SPEC-lean; all specs use the one unified `SPEC.template.md` |
 
@@ -56,7 +56,8 @@ Literal example: the front-matter block of
 | `requires_network` | boolean | REQUIRED | `true` \| `false` | |
 | `requires_secrets` | list[string] | REQUIRED | env-var names or `[]` | |
 | `acceptance_commands` | list[string] | REQUIRED | runnable commands | non-empty OR explicitly `[]` with reason in Acceptance Criteria section; `type: fastpath` MAY use `[]` with the checks inline in the fastpath §4 Acceptance-commands section |
-| `ideated_in` | string | REQUIRED | repo-relative path OR `null` | path to producing IDEA.md; `null` is valid ONLY for `type: fastpath` (which skips the IDEA phase) |
+| `ideated_in` | string | REQUIRED | repo-relative path OR `null` | path to producing IDEA.md; `null` is valid for `type: fastpath` (which skips the IDEA phase) and for a SPEC declaring `capture_after` (which also skips it) |
+| `capture_after` | string | OPTIONAL | `owner://<ref>` | REQUIRED to use `ideated_in: null` on a non-fastpath SPEC. Declares that the work landed BEFORE the SPEC was filed under an explicit owner directive, per `file://agents/OPERATING_MODEL.md` "Capture-after" — so no IDEA ever existed. MUST match `owner://<ref>` with a non-empty reference starting alphanumeric — never a bare `true` and never a bare scheme: capture-after requires an *explicit* owner directive, and an unattributable flag would let an agent self-authorise skipping the IDEA phase. |
 | `superseded_by` | string | OPTIONAL | spec id or citation-grammar string | REQUIRED at `status: superseded` unless the superseding authority is stated in the spec body (a commit message alone is NOT sufficient); empty string invalid |
 
 Literal example: the front-matter block of

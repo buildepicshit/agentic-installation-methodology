@@ -148,7 +148,7 @@ REQUIRED fields (the FIELDS are normative, not any one machine's log
 layout):
 
 - `lane` — reviewing surface + explicit model pin
-  (e.g. `copilot gpt-5.5`).
+  (e.g. `copilot gpt-5.6-sol`).
 - `invocation` — the exact CLI invocation, or the validator's verbatim
   PASS/WARN output for it.
 - `session_log` — a session/log identifier the run can be traced to
@@ -161,8 +161,8 @@ Example:
 
 ```text
 receipt:
-  lane: copilot gpt-5.5 (cross-family, GPT)
-  invocation: gh copilot -- -p "<prompt>" --model gpt-5.5 -s ... (validator PASS)
+  lane: copilot gpt-5.6-sol (cross-family, GPT)
+  invocation: gh copilot -- -p "<prompt>" --model gpt-5.6-sol -s ... (validator PASS)
   session_log: ~/.copilot/logs/2026-07-02T10-41-session.log
   wall_clock: 2026-07-02T10:41Z
   tokens: omitted — lane does not expose usage
