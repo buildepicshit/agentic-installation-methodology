@@ -6,6 +6,11 @@
 
 set -uo pipefail
 
+# Fleet decision instrumentation (fail-safe; cannot alter this gate's verdict).
+# specs/2026-07-24-hook-decision-instrumentation/SPEC.md
+source "${CLAUDE_PROJECT_DIR:-.}/.claude/hooks/lib/log-decision.sh" 2>/dev/null || true
+type bes_log_install_trap >/dev/null 2>&1 && bes_log_install_trap "warn-security-surface.sh"
+
 read_command() {
     local input
     input="$(cat)"
@@ -51,6 +56,7 @@ case "$rc" in
     0) exit 0 ;;
     1)
         printf 'warn-security-surface: %s\n' "$out" >&2
+        BES_LOG_DECISION=WARN
         exit 0
         ;;
     2)
