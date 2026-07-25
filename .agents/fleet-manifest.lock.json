@@ -1,9 +1,9 @@
 {
   "schema_version": 1,
-  "generated_at": "2026-07-16T16:28:08.222Z",
+  "generated_at": "2026-07-25T04:32:34.530Z",
   "source": {
     "repo": "bes-fleet-policy",
-    "commit": "822e171706b47f6beaa217de5ddeedda13579a71",
+    "commit": "5bd68103bd6a8dbdd1e511dd3bb3443d773040e8",
     "dirty": true
   },
   "manifests": {
@@ -76,6 +76,7 @@
       "fleet-directives/README.md",
       "scripts/validate-skill-frontmatter.sh",
       "scripts/audit-entry-docs.sh",
+      "scripts/audit-hook-decisions.sh",
       "skills/approved-spec-decomposition/SKILL.md",
       "skills/diagnosis/SKILL.md",
       "skills/tdd/SKILL.md",
@@ -160,7 +161,9 @@
       "session-start-context.sh",
       "warn-security-surface.sh",
       "warn-subagent-routing.sh",
-      "block-fleet-commit-sweep.sh"
+      "block-fleet-commit-sweep.sh",
+      "lib/log-decision.sh",
+      ".gitignore"
     ],
     "fleet_hook_fixtures": [
       "msg-clean.txt",
@@ -249,15 +252,15 @@
       "kind": "agents-file",
       "source_path": "agents/MODEL_ROUTING.md",
       "target_path": ".agents/MODEL_ROUTING.md",
-      "sha256": "9d9a3a1ac2648d8d83e5419e6e6db43d43d5684de4d8131315427d7daa9d3c6a",
-      "bytes": 30993
+      "sha256": "62b86d1ac8ef9cfd00232a6eb20737ac3a7eb528411af204e273a82c1733114d",
+      "bytes": 49456
     },
     {
       "kind": "agents-file",
       "source_path": "agents/OPERATING_MODEL.md",
       "target_path": ".agents/OPERATING_MODEL.md",
-      "sha256": "6b2f6ebd7ac01e3aabd36298c63fa365ce4315de77a5e6a65da2d8cb4e019c93",
-      "bytes": 26551
+      "sha256": "ed8b7fa5d4d0b8e4b06040499e773895aab85795f59e28f139fcbd3c569bdadf",
+      "bytes": 26635
     },
     {
       "kind": "agents-file",
@@ -359,6 +362,13 @@
     },
     {
       "kind": "agents-file",
+      "source_path": "agents/scripts/audit-hook-decisions.sh",
+      "target_path": ".agents/scripts/audit-hook-decisions.sh",
+      "sha256": "a6485190b45e8152b594f45b878cc0a966b7ebd649df218b73eb6f227caae8f0",
+      "bytes": 5285
+    },
+    {
+      "kind": "agents-file",
       "source_path": "agents/scripts/audit-tracked-paths.sh",
       "target_path": ".agents/scripts/audit-tracked-paths.sh",
       "sha256": "3cc6d4c399eb7cb29b437851704e59ff20001dcffeb6f82673bdea81f03d9dd2",
@@ -396,15 +406,15 @@
       "kind": "agents-file",
       "source_path": "agents/scripts/fleet-hooks.txt",
       "target_path": ".agents/scripts/fleet-hooks.txt",
-      "sha256": "790a63b222166129083acdaeb0ad200cc5ae035144fb7fb22d9d4a702317dc15",
-      "bytes": 343
+      "sha256": "52632df4553469dab757b46005eada15d21ba54c4b61109c4559110c78bdd024",
+      "bytes": 374
     },
     {
       "kind": "agents-file",
       "source_path": "agents/scripts/fleet-internal-repos.txt",
       "target_path": ".agents/scripts/fleet-internal-repos.txt",
-      "sha256": "6195a4bb7289a700d781a92fdc79ef86857d6ab7d7387a8cd3e168d5a8c1eaa5",
-      "bytes": 86
+      "sha256": "a00c3fc1e9d3048fffae96a820d35807b8d9954216e5ad7ce1bfabedc94f15c8",
+      "bytes": 97
     },
     {
       "kind": "agents-file",
@@ -494,8 +504,8 @@
       "kind": "agents-file",
       "source_path": "agents/scripts/preflight-config.json",
       "target_path": ".agents/scripts/preflight-config.json",
-      "sha256": "e5608446ac836ebaf8fd9bc7d2d8ec6536c2c059c4beea1a0824deda44a61810",
-      "bytes": 1345
+      "sha256": "403d39ed95d0dc90d4d1f54d1bf6459f3d2428a7fc785185ac4991f2de0055f6",
+      "bytes": 1396
     },
     {
       "kind": "agents-file",
@@ -989,73 +999,87 @@
     },
     {
       "kind": "hook",
+      "source_path": ".claude/hooks/.gitignore",
+      "target_path": ".claude/hooks/.gitignore",
+      "sha256": "30d648dd18e19d3df528fd577ed97c53c8f8f82d57df9921c486e10b2dafe1d1",
+      "bytes": 138
+    },
+    {
+      "kind": "hook",
       "source_path": ".claude/hooks/block-ai-attribution.sh",
       "target_path": ".claude/hooks/block-ai-attribution.sh",
-      "sha256": "d31a245bbfa135697663bac07dccdb42fbb4aa139d1e4169f4fb12fe5d5285a9",
-      "bytes": 4902
+      "sha256": "b0e6cdfe1bb487fc08ddcdbb34317bf0c87274c117ff8272b441fa7d2b93c3dc",
+      "bytes": 5220
     },
     {
       "kind": "hook",
       "source_path": ".claude/hooks/block-bad-cli-invocation.sh",
       "target_path": ".claude/hooks/block-bad-cli-invocation.sh",
-      "sha256": "5ad7c9fb6422ce22757e12ec6f4a677cbb9e3db33f7be41e747d67f29196ddcd",
-      "bytes": 3007
+      "sha256": "f886ce3aa700e9fb7e26eee296a4d8a58d6a7a74d2116d1b0c5792271b8d1bd5",
+      "bytes": 3329
     },
     {
       "kind": "hook",
       "source_path": ".claude/hooks/block-edit-on-main.sh",
       "target_path": ".claude/hooks/block-edit-on-main.sh",
-      "sha256": "9198f83b3782e140f0fb0e8c803af3da84d28fda6e6f2eb50640f012ce54d004",
-      "bytes": 6648
+      "sha256": "680b51e65c376e01e537e67fb1c950b99b34b916627c3e3a523f1a6080450319",
+      "bytes": 6964
     },
     {
       "kind": "hook",
       "source_path": ".claude/hooks/block-fleet-commit-sweep.sh",
       "target_path": ".claude/hooks/block-fleet-commit-sweep.sh",
-      "sha256": "3db739eb35704daf1c3b374a79ce7c9baae7749401edb90d3ecd9ff92dafa12c",
-      "bytes": 11160
+      "sha256": "1739eef9f2a9964dcac079b48b8823d558aabeb9df1ddff4a4a64571f94b0885",
+      "bytes": 11482
     },
     {
       "kind": "hook",
       "source_path": ".claude/hooks/block-git-add-all.sh",
       "target_path": ".claude/hooks/block-git-add-all.sh",
-      "sha256": "5a341b15b44dccd4bafc4baac2b025541b9b65b8bd0ee3930cd7d9b71b918afb",
-      "bytes": 2525
+      "sha256": "21f4038bb55129d6536d1a5dafa741e1270e29519ad2756f1835c7e95798c519",
+      "bytes": 2840
     },
     {
       "kind": "hook",
       "source_path": ".claude/hooks/block-probe-residue.sh",
       "target_path": ".claude/hooks/block-probe-residue.sh",
-      "sha256": "fdb0c2b6652d9762c9708889f94301921ffe506c52e2e8d2a839d7df26c0f8a1",
-      "bytes": 6021
+      "sha256": "9b571b42a18a6ebc45d406178175a30304a7c1eefbe0c572e8b9f1d20b7c1ac3",
+      "bytes": 6338
     },
     {
       "kind": "hook",
       "source_path": ".claude/hooks/block-push-to-main.sh",
       "target_path": ".claude/hooks/block-push-to-main.sh",
-      "sha256": "fff6416ad7fdfb1f5a38e5ef4e467df1fcf76c44e5cf382f0c3d88542ff3831b",
-      "bytes": 5087
+      "sha256": "f12a12f2a0020bdf1105c59c991ff60c9a49d95ffbb4137d68ac42056f63445f",
+      "bytes": 5403
     },
     {
       "kind": "hook",
       "source_path": ".claude/hooks/block-stale-derived-artifacts.sh",
       "target_path": ".claude/hooks/block-stale-derived-artifacts.sh",
-      "sha256": "298b5736c576bd257b238c87fd858b12c935d27e64ef9291f4292d6ae1d9cbab",
-      "bytes": 6777
+      "sha256": "8ca4f3f921f5f49a4bdf276b98ca1754210413c9d5179565a699d53022ebeae1",
+      "bytes": 7104
     },
     {
       "kind": "hook",
       "source_path": ".claude/hooks/block-undeclared-deps.sh",
       "target_path": ".claude/hooks/block-undeclared-deps.sh",
-      "sha256": "7f0822ee9104834e4d47f26a6e066571d525f2d1648b3504f5d89dd5c40e987f",
-      "bytes": 2540
+      "sha256": "0fd30d0c7ddec0a820b7fa82cdac00b5a2d0470d785f4650248caf4e2f2f8c7f",
+      "bytes": 2859
     },
     {
       "kind": "hook",
       "source_path": ".claude/hooks/block-verify-bypass.sh",
       "target_path": ".claude/hooks/block-verify-bypass.sh",
-      "sha256": "7d180a47d010506caee570e6bc0447072c7e029eaa73ea84dbbf6ca2e9271bc2",
-      "bytes": 3683
+      "sha256": "2db9154bd57aa6611c60b1cf0857c0cd1205c2929224c8e805f4ac820ccf7e1a",
+      "bytes": 4000
+    },
+    {
+      "kind": "hook",
+      "source_path": ".claude/hooks/lib/log-decision.sh",
+      "target_path": ".claude/hooks/lib/log-decision.sh",
+      "sha256": "7f1993e03e1179c498bb8c5dfda0c2c78a7e67c2ee8e152008ebcc946be9922c",
+      "bytes": 5961
     },
     {
       "kind": "hook",
@@ -1082,8 +1106,8 @@
       "kind": "harness",
       "source_path": ".claude/hooks/tests/run-tests.sh",
       "target_path": ".claude/hooks/tests/run-tests.sh",
-      "sha256": "a17e10504dee7a02e269e69569713bac5efce5bca43ff0df6baa621093c6f24c",
-      "bytes": 51143
+      "sha256": "59464e7f6843b9bb26479021100844203778383c87ae25f3533c45a80aa76be0",
+      "bytes": 58046
     },
     {
       "kind": "hook",
@@ -1096,15 +1120,15 @@
       "kind": "hook",
       "source_path": ".claude/hooks/warn-security-surface.sh",
       "target_path": ".claude/hooks/warn-security-surface.sh",
-      "sha256": "4cffc2b6d0b7e2fe1250689a965c8a84f9680e13affbc48defb7b2322b66354c",
-      "bytes": 1929
+      "sha256": "09a04200885a9aed76f8f006ce9a132d4756ad3421e0d1f019ecae44bd7d3927",
+      "bytes": 2278
     },
     {
       "kind": "hook",
       "source_path": ".claude/hooks/warn-subagent-routing.sh",
       "target_path": ".claude/hooks/warn-subagent-routing.sh",
-      "sha256": "28a62d62c28695c2360f1bce56b27f443146101b395f03479988949f440fa8bc",
-      "bytes": 3645
+      "sha256": "66e4d2d249d543822121c60657f57d47c5a9f7bf0003f72f0ede3462ffcf5da3",
+      "bytes": 3990
     },
     {
       "kind": "harness",

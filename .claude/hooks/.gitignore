@@ -1,0 +1,3 @@
+# Machine-local hook decision log (fleet instrumentation).
+# Never commit: per-machine measurement data, not fleet content.
+decisions.log

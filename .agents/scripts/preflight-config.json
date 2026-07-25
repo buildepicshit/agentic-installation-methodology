@@ -23,6 +23,7 @@
     "IKTO",
     "Mimir",
     "SESSION_JOURNAL.md",
+    "TimeStrats",
     "UsefulIdiots",
     "Wick",
     "WORKFLOW.md",
@@ -45,6 +46,7 @@
 
   "productRepoAllowedTopLevel": {
     "bes-fleet-runtime": ["README.md", "bin", "package.json", "src", "test"],
-    "IKTO": ["unity"]
+    "IKTO": ["unity"],
+    "TimeStrats": ["README.md"]
   }
 }

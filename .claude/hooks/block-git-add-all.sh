@@ -4,6 +4,11 @@
 # pre-filtered (per https://code.claude.com/docs/en/hooks).
 set -uo pipefail
 
+# Fleet decision instrumentation (fail-safe; cannot alter this gate's verdict).
+# specs/2026-07-24-hook-decision-instrumentation/SPEC.md
+source "${CLAUDE_PROJECT_DIR:-.}/.claude/hooks/lib/log-decision.sh" 2>/dev/null || true
+type bes_log_install_trap >/dev/null 2>&1 && bes_log_install_trap "block-git-add-all.sh"
+
 # extract_real_commands: emit one logical command per line, with quoted strings
 # and heredoc bodies stripped, so we only see the verb-position tokens.
 extract_real_commands() {

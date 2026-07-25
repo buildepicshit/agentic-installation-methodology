@@ -12,3 +12,5 @@ session-start-context.sh
 warn-security-surface.sh
 warn-subagent-routing.sh
 block-fleet-commit-sweep.sh
+lib/log-decision.sh
+.gitignore

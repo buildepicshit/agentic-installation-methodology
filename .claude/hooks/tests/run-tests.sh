@@ -5,6 +5,61 @@
 
 set -u
 HOOK_DIR="$(dirname "$(readlink -f "$0")")/.."
+
+# ---- fixture teardown: declared ONCE, before anything is created ----
+# The suite used to replace its EXIT trap six times, and every replacement
+# omitted fixtures created earlier, so an early exit leaked them (measured:
+# 3 dirs per run). One trap now owns teardown for every fixture.
+#
+# These are set to the EMPTY STRING deliberately — never `${VAR-}`. That form
+# would inherit a same-named exported variable from the caller's environment
+# and hand a caller-owned path to `rm -rf` on exit. Cross-family review
+# 2026-07-24 caught exactly that. This block therefore also has to sit ABOVE
+# every real assignment, so nothing it declares can clobber a live fixture.
+BES_LOG_DIR=""
+SANDBOX=""
+PUSH_MAIN_DIRECT=""
+MAIN_NO_SPEC=""
+MAIN_WITH_SPEC=""
+MAIN_WITH_DECOMPOSED=""
+VR_ACTIVE=""
+PROBE_CLEAN=""
+PROBE_DIRTY=""
+PROBE_EXCL=""
+PROBE_DOCS=""
+PROBE_UNTRACKED=""
+PROBE_HOOKFILE=""
+STALE_SRC=""
+STALE_SRC_CLEAN=""
+STALE_SRC_STRAY=""
+STALE_CHILD=""
+STALE_CHILD_STRAY=""
+STALE_OSS=""
+RANK_FIX=""
+RANK_TIE=""
+SUBR_FIX=""
+PUSH_MAIN=""
+PUSH_FEAT=""
+SWEEP_MIXED=""
+SWEEP_FLEET=""
+SWEEP_PROD=""
+SWEEP_MOD=""
+SWEEP_CLEAN=""
+SWEEP_SPECS=""
+SWEEP_SOURCE=""
+SWEEP_FLEETHEAD=""
+SWEEP_GHOOKS=""
+LOGTEST=""
+SUBR_ERRF=""
+bes_cleanup_fixtures() { rm -rf "$BES_LOG_DIR" "$SANDBOX" "$PUSH_MAIN_DIRECT" "$MAIN_NO_SPEC" "$MAIN_WITH_SPEC" "$MAIN_WITH_DECOMPOSED" "$VR_ACTIVE" "$PROBE_CLEAN" "$PROBE_DIRTY" "$PROBE_EXCL" "$PROBE_DOCS" "$PROBE_UNTRACKED" "$PROBE_HOOKFILE" "$STALE_SRC" "$STALE_SRC_CLEAN" "$STALE_SRC_STRAY" "$STALE_CHILD" "$STALE_CHILD_STRAY" "$STALE_OSS" "$RANK_FIX" "$RANK_TIE" "$SUBR_FIX" "$PUSH_MAIN" "$PUSH_FEAT" "$SWEEP_MIXED" "$SWEEP_FLEET" "$SWEEP_PROD" "$SWEEP_MOD" "$SWEEP_CLEAN" "$SWEEP_SPECS" "$SWEEP_SOURCE" "$SWEEP_FLEETHEAD" "$SWEEP_GHOOKS" "$LOGTEST" "$SUBR_ERRF"; }
+trap bes_cleanup_fixtures EXIT
+
+# Keep the suite OUT of the live decision log. Hooks now record every
+# invocation (specs/2026-07-24-hook-decision-instrumentation); without this,
+# each test run would inflate the very measurement the log exists to provide.
+BES_LOG_DIR="$(mktemp -d)"
+BES_LOG_FILE="$BES_LOG_DIR/suite-decisions.log"
+export BES_LOG_FILE
 PASS=0; FAIL=0; FAILURES=()
 
 run() {
@@ -37,7 +92,6 @@ run() {
 # through to the block. Without this, tests run from inside bes-fleet-policy
 # would now exit 0 (main-direct policy honoured) instead of 2.
 SANDBOX="$(mktemp -d)"
-trap 'rm -rf "$SANDBOX"' EXIT
 
 J() {
     # Wrap a shell command into the JSON envelope Claude Code passes to PreToolUse(Bash).
@@ -57,11 +111,26 @@ run "commit message contains git push txt"  block-push-to-main.sh   0 "$(J 'git 
 run "heredoc body mentioning git push"      block-push-to-main.sh   0 "$(J $'cat > /tmp/msg <<EOF\nrefuses git push to main\nEOF\ngit commit -F /tmp/msg')"
 run "chain: cd && git push origin main"     block-push-to-main.sh   2 "$(J 'cd /repo && git push origin main')" "$SANDBOX"
 # main-direct policy: when an approved/in-execution/verified/closed SPEC
-# declares branch_policy: main-direct, push to main is allowed. Tested by
-# running from inside bes-fleet-policy (which declares main-direct on its
-# inaugural SPEC and others).
-run "main-direct SPEC allows push to main"  block-push-to-main.sh   0 "$(J 'git push origin main')" "$HOOK_DIR/../.."
-run "main-direct SPEC allows push -u main"  block-push-to-main.sh   0 "$(J 'git push -u origin main')" "$HOOK_DIR/../.."
+# declares branch_policy: main-direct, push to main is allowed.
+#
+# These two cases used to run from "$HOOK_DIR/../.." — i.e. whatever repo the
+# harness happens to live in — on the assumption it "declares main-direct on
+# its inaugural SPEC". That holds in bes-fleet-policy and NOT in most child
+# repos, so the propagated harness failed 2/N in every child without such a
+# SPEC (verified against TimeStrats at origin/main, before any 2026-07-24
+# change). Now hermetic: a purpose-built fixture, so the suite means the same
+# thing in all 12 fleet locations.
+PUSH_MAIN_DIRECT="$(mktemp -d)"
+( cd "$PUSH_MAIN_DIRECT" \
+    && git init -q \
+    && git symbolic-ref HEAD refs/heads/main \
+    && mkdir -p specs/fixture \
+    && printf -- '---\nid: fixture\ntype: contract\nstatus: closed\nbranch_policy: main-direct\n---\n' > specs/fixture/SPEC.md \
+    && git -c user.email=t@t -c user.name=t add specs/fixture/SPEC.md \
+    && git -c user.email=t@t -c user.name=t commit -q -m init )
+
+run "main-direct SPEC allows push to main"  block-push-to-main.sh   0 "$(J 'git push origin main')" "$PUSH_MAIN_DIRECT"
+run "main-direct SPEC allows push -u main"  block-push-to-main.sh   0 "$(J 'git push -u origin main')" "$PUSH_MAIN_DIRECT"
 
 # --- block-git-add-all.sh ---
 run "real git add . blocked"                block-git-add-all.sh    2 "$(J 'git add .')"
@@ -139,7 +208,6 @@ VR_ACTIVE="$(mktemp -d)"
 ( cd "$VR_ACTIVE" && mkdir -p specs/fixture \
     && printf -- '---\nid: fixture\nstatus: in-execution\n---\n' > specs/fixture/SPEC.md )
 
-trap 'rm -rf "$SANDBOX" "$MAIN_NO_SPEC" "$MAIN_WITH_SPEC" "$MAIN_WITH_DECOMPOSED" "$VR_ACTIVE"' EXIT
 
 JE() {
     # Edit tool envelope. block-edit-on-main.sh reads tool_input.file_path
@@ -150,7 +218,11 @@ JE() {
 # main-direct allow-path (unchanged): a main-direct SPEC allows every edit on
 # main regardless of whether the target is tracked.
 run "edit on main allowed (main-direct SPEC)"      block-edit-on-main.sh   0 "$(JE 'foo.md')" "$MAIN_WITH_SPEC"
-run "edit in bes-fleet-policy allowed (main-direct)" block-edit-on-main.sh 0 "$(JE 'STATUS.md')" "$HOOK_DIR/../.."
+# Was: cwd "$HOOK_DIR/../.." with a TRACKED file, which only asserts anything
+# in a repo that both is main-direct and tracks STATUS.md — ambient, and in a
+# child it can pass vacuously because the path is simply untracked. Reuses the
+# hermetic main-direct fixture and a path that IS tracked there.
+run "edit on main allowed, tracked path (main-direct)" block-edit-on-main.sh 0 "$(JE 'specs/fixture/SPEC.md')" "$MAIN_WITH_SPEC"
 run "edit in non-git dir allowed (branch empty)"   block-edit-on-main.sh   0 "$(JE 'foo.md')" "$SANDBOX"
 # decomposed is an owner-set main-direct-eligible status (schema §1.3).
 run "edit on main allowed (decomposed main-direct)" block-edit-on-main.sh  0 "$(JE 'foo.md')" "$MAIN_WITH_DECOMPOSED"
@@ -400,7 +472,6 @@ run "probe-residue: git commit --help not a commit" block-probe-residue.sh 0 "$(
 run "probe-residue: later -C cannot shadow target"  block-probe-residue.sh 2 "$(J "git -C $PROBE_DIRTY commit -m \"x\" && echo -C /tmp/other")" "$SANDBOX"
 run "probe-residue: --help after -- is pathspec"    block-probe-residue.sh 2 "$(J 'git commit -m "x" -- --help')" "$PROBE_DIRTY"
 run "probe-residue: hook-path exclusions allowed"   block-probe-residue.sh 0 "$(J 'git commit -m "x"')" "$PROBE_EXCL"
-trap 'rm -rf "$SANDBOX" "$MAIN_NO_SPEC" "$MAIN_WITH_SPEC" "$PROBE_CLEAN" "$PROBE_DIRTY" "$PROBE_DOCS" "$PROBE_UNTRACKED" "$PROBE_HOOKFILE" "$PROBE_EXCL"' EXIT
 
 # --- block-stale-derived-artifacts.sh ---
 # Source-only commit guard: fake source layouts carry the exact IS_SOURCE marker
@@ -455,7 +526,6 @@ run "stale-derived: IS_SOURCE stray .agents -> source" block-stale-derived-artif
 run "stale-derived: IS_SOURCE child marker -> noop"  block-stale-derived-artifacts.sh 0 "$(J 'git commit -m "x"')" "$STALE_CHILD"
 run "stale-derived: IS_SOURCE child+agents -> noop"  block-stale-derived-artifacts.sh 0 "$(J 'git commit -m "x"')" "$STALE_CHILD_STRAY"
 run "stale-derived: IS_SOURCE OSS -> noop"           block-stale-derived-artifacts.sh 0 "$(J 'git commit -m "x"')" "$STALE_OSS"
-trap 'rm -rf "$SANDBOX" "$MAIN_NO_SPEC" "$MAIN_WITH_SPEC" "$PROBE_CLEAN" "$PROBE_DIRTY" "$PROBE_DOCS" "$PROBE_UNTRACKED" "$PROBE_HOOKFILE" "$PROBE_EXCL" "$STALE_SRC" "$STALE_SRC_CLEAN" "$STALE_SRC_STRAY" "$STALE_CHILD" "$STALE_CHILD_STRAY" "$STALE_OSS"' EXIT
 
 # Active-SPEC ranking: in-execution > decomposed > approved, newest
 # wins ties — a live contract must beat stale approved specs (e.g.
@@ -687,12 +757,24 @@ mkdir -p "$SWEEP_SOURCE/agents/scripts"
 echo x > "$SWEEP_SOURCE/agents/scripts/fleet-skills.txt"
 git -C "$SWEEP_SOURCE" add agents/scripts/fleet-skills.txt
 git -C "$SWEEP_SOURCE" commit -qm "init"
+# The fail-open case below must pass ONLY because of the source marker. With no
+# fleet-managed content the hook takes a DIFFERENT fail-open ("no fleet content
+# exists"), which made the assertion vacuous (cross-family review, finding 3).
+# So: give it .agents/ content AND a staged fleet change — but never
+# .agents/scripts/fleet-skills.txt, whose ABSENCE is half the marker predicate.
+mkdir -p "$SWEEP_SOURCE/.agents"
+echo policy > "$SWEEP_SOURCE/.agents/OPERATING_MODEL.md"
+git -C "$SWEEP_SOURCE" add .agents/OPERATING_MODEL.md
 run "sweep: -C source-repo commit fail-opens despite dirty cwd index" block-fleet-commit-sweep.sh 0 "$(J "git -C $SWEEP_SOURCE commit -m \"docs: x\"")" "$SWEEP_MIXED"
 run "sweep: -C child target evaluated from clean cwd (mixed blocked)" block-fleet-commit-sweep.sh 2 "$(J "git -C $SWEEP_MIXED commit -m \"feat: x\"")" "$SWEEP_CLEAN"
 run "sweep: quoted msg does not eat pathspec" block-fleet-commit-sweep.sh 2 "$(J 'git commit -m "feat: x" .agents/f.md')" "$SWEEP_CLEAN"
 run "sweep: unquoted msg value not a pathspec" block-fleet-commit-sweep.sh 0 "$(J 'git commit -m fix src/app.txt')" "$SWEEP_CLEAN"
 run "sweep: fleet path in quoted msg allowed" block-fleet-commit-sweep.sh 0 "$(J 'git commit -m "sweep .agents/ docs"')" "$SWEEP_PROD"
-run "sweep: source repo fail-open"          block-fleet-commit-sweep.sh 0 "$(J 'git commit -m "feat: x"')"
+# Was: no cwd argument at all, so it inherited the harness's ambient repo. That
+# only holds where the ambient repo IS the fleet source; at the studio-root
+# mirror it fails (correctly — the hook sees freshly synced fleet paths in a
+# non-`fleet:` commit). $SWEEP_SOURCE is the purpose-built source-repo fixture.
+run "sweep: source repo fail-open"          block-fleet-commit-sweep.sh 0 "$(J 'git commit -m "feat: x"')" "$SWEEP_SOURCE"
 run "sweep: non-git cwd fail-open"          block-fleet-commit-sweep.sh 0 "$(J 'git commit -m "feat: x"')" "$SANDBOX"
 # gate-2 r1 catches: --pathspec-from-file, --amend --no-edit, .githooks-only repos.
 printf '.agents/f.md\nsrc/app.txt\n' > "$SWEEP_CLEAN/list.txt"
@@ -717,7 +799,73 @@ echo h2 >> "$SWEEP_GHOOKS/.githooks/pre-push"; echo a2 >> "$SWEEP_GHOOKS/src/app
 git -C "$SWEEP_GHOOKS" add .githooks/pre-push src/app.txt
 run "sweep: githooks-only repo mixed blocked" block-fleet-commit-sweep.sh 2 "$(J 'git commit -m "feat: x"')" "$SWEEP_GHOOKS"
 
-trap 'rm -rf "$SANDBOX" "$MAIN_NO_SPEC" "$MAIN_WITH_SPEC" "$MAIN_WITH_DECOMPOSED" "$VR_ACTIVE" "$RANK_FIX" "$RANK_TIE" "$PROBE_CLEAN" "$PROBE_DIRTY" "$PROBE_DOCS" "$PROBE_UNTRACKED" "$PROBE_HOOKFILE" "$PROBE_EXCL" "$SUBR_FIX" "$SUBR_ERRF" "$PUSH_MAIN" "$PUSH_FEAT" "$SWEEP_MIXED" "$SWEEP_FLEET" "$SWEEP_PROD" "$SWEEP_MOD" "$SWEEP_CLEAN" "$SWEEP_FLEETHEAD" "$SWEEP_GHOOKS"' EXIT
+
+
+# --- instrumentation: decision logging (specs/2026-07-24-hook-decision-instrumentation) ---
+# A BLOCK must write exactly one record, and secrets must be redacted before
+# the line is written. Uses an isolated BES_LOG_FILE so the real log is
+# untouched by the suite.
+LOGTEST="$(mktemp -d)"
+assert_log() {
+    local name="$1" want_recs="$2" want_decision="$3"
+    local recs got
+    recs=$(wc -l < "$LOGTEST/decisions.log" 2>/dev/null | tr -d ' ') || recs=0
+    got=$(awk -F'\t' -v d="$want_decision" '$3==d' "$LOGTEST/decisions.log" 2>/dev/null | wc -l | tr -d ' ')
+    if [ "$recs" = "$want_recs" ] && [ "$got" = "1" ]; then
+        PASS=$((PASS+1)); printf 'PASS %-50s [%s]\n' "$name" "log-decision.sh"
+    else
+        FAIL=$((FAIL+1))
+        FAILURES+=("$name [log-decision.sh]: wanted $want_recs record(s) incl one $want_decision, got recs=$recs ${want_decision}=$got")
+        printf 'FAIL %-50s [%s]\n' "$name" "log-decision.sh"
+    fi
+}
+
+: > "$LOGTEST/decisions.log"
+printf '%s' "$(J 'git add .')" | BES_LOG_FILE="$LOGTEST/decisions.log" "$HOOK_DIR/block-git-add-all.sh" >/dev/null 2>&1
+assert_log "instrumentation: BLOCK writes exactly one record" 1 BLOCK
+
+: > "$LOGTEST/decisions.log"
+printf '%s' "$(J 'git status')" | BES_LOG_FILE="$LOGTEST/decisions.log" "$HOOK_DIR/block-git-add-all.sh" >/dev/null 2>&1
+assert_log "instrumentation: ALLOW writes exactly one record" 1 ALLOW
+
+# WARN must be distinguishable from a clean ALLOW
+: > "$LOGTEST/decisions.log"
+printf '%s' '{"tool_name":"Task","tool_input":{"subagent_type":"general-purpose","prompt":"x"}}' \
+  | BES_LOG_FILE="$LOGTEST/decisions.log" "$HOOK_DIR/warn-subagent-routing.sh" >/dev/null 2>&1
+assert_log "instrumentation: advisory records WARN not ALLOW" 1 WARN
+
+# TSV integrity: a tab or newline in ANY field must not shift columns.
+# INJ must be built as a VARIABLE: `$(printf '\n')` strips the trailing
+# newline via command substitution, and `$'\t\n'` does not expand inside
+# double quotes. Both mistakes were made here and caught by cross-family
+# review r4/r5 — the test claimed an injection it was not performing.
+INJ=$'\t\n'
+: > "$LOGTEST/decisions.log"
+( source "$HOOK_DIR/lib/log-decision.sh" 2>/dev/null
+  BES_LOG_FILE="$LOGTEST/decisions.log" \
+    bes_log_write "h${INJ}X" "BOGUS${INJ}Y" "r${INJ}Z" "d${INJ}W" ) >/dev/null 2>&1
+tsv_lines=$(wc -l < "$LOGTEST/decisions.log" 2>/dev/null | tr -d ' ')
+tsv_fields=$(awk -F'\t' 'NR==1{print NF}' "$LOGTEST/decisions.log" 2>/dev/null)
+tsv_dec=$(awk -F'\t' 'NR==1{print $3}' "$LOGTEST/decisions.log" 2>/dev/null)
+if [ "$tsv_lines" = "1" ] && [ "$tsv_fields" = "5" ] && [ "$tsv_dec" = "UNKNOWN" ]; then
+    PASS=$((PASS+1)); printf 'PASS %-50s [%s]\n' "instrumentation: TSV integrity under injection" "log-decision.sh"
+else
+    FAIL=$((FAIL+1))
+    FAILURES+=("instrumentation: TSV integrity [log-decision.sh]: lines=$tsv_lines fields=$tsv_fields decision=$tsv_dec (want 1/5/UNKNOWN)")
+    printf 'FAIL %-50s [%s]\n' "instrumentation: TSV integrity under injection" "log-decision.sh"
+fi
+
+# redaction: a token-shaped string must never reach the log verbatim
+: > "$LOGTEST/decisions.log"
+( source "$HOOK_DIR/lib/log-decision.sh" 2>/dev/null
+  BES_LOG_FILE="$LOGTEST/decisions.log" bes_log_write t BLOCK r 'export GITHUB_TOKEN=ghp_AAAAAAAAAAAAAAAAAAAA' ) >/dev/null 2>&1
+if grep -q 'ghp_AAAAAAAAAAAAAAAAAAAA' "$LOGTEST/decisions.log" 2>/dev/null; then
+    FAIL=$((FAIL+1)); FAILURES+=("instrumentation: secret redaction [log-decision.sh]: token leaked verbatim")
+    printf 'FAIL %-50s [%s]\n' "instrumentation: secret redaction" "log-decision.sh"
+else
+    PASS=$((PASS+1)); printf 'PASS %-50s [%s]\n' "instrumentation: secret redaction" "log-decision.sh"
+fi
+rm -rf "$LOGTEST"
 
 printf '\n=== %d pass / %d fail ===\n' "$PASS" "$FAIL"
 if [ "$FAIL" -gt 0 ]; then

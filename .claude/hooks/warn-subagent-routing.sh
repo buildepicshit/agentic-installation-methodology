@@ -6,12 +6,18 @@
 
 set -o pipefail
 
+# Fleet decision instrumentation (fail-safe; cannot alter this gate's verdict).
+# specs/2026-07-24-hook-decision-instrumentation/SPEC.md
+source "${CLAUDE_PROJECT_DIR:-.}/.claude/hooks/lib/log-decision.sh" 2>/dev/null || true
+type bes_log_install_trap >/dev/null 2>&1 && bes_log_install_trap "warn-subagent-routing.sh"
+
 # §7.2a static silent list: subagent types with known harness
 # auto-routing. Exact full-string match. Every entry MUST have a
 # matching false-positive test in .claude/hooks/tests/run-tests.sh.
 readonly KNOWN_AUTOROUTED_AGENT_TYPES=("Explore")
 
 advise() {
+    BES_LOG_DECISION=WARN
     printf 'warn-subagent-routing: no model pinned on this subagent dispatch. Consult the Capability Matrix (agents/MODEL_ROUTING.md or .agents/MODEL_ROUTING.md) and pin a fit-appropriate model — capability fit, not reflexive frontier.\n' >&2
 }
 

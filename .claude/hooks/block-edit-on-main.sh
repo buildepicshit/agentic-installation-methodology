@@ -1,5 +1,10 @@
 #!/usr/bin/env bash
 set -uo pipefail
+
+# Fleet decision instrumentation (fail-safe; cannot alter this gate's verdict).
+# specs/2026-07-24-hook-decision-instrumentation/SPEC.md
+source "${CLAUDE_PROJECT_DIR:-.}/.claude/hooks/lib/log-decision.sh" 2>/dev/null || true
+type bes_log_install_trap >/dev/null 2>&1 && bes_log_install_trap "block-edit-on-main.sh"
 # PreToolUse(Edit|Write): on the protected branch, block edits to repo-TRACKED
 # paths UNLESS any SPEC (approved/decomposed/in-execution/verified/closed) declares
 # branch_policy: main-direct. A closed SPEC represents settled policy that
