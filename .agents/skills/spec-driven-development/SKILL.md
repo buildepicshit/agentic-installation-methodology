@@ -63,13 +63,13 @@ Decompose → Dispatch → Cross-validate between Approve and Execute (see
 
 | Need | Use |
 |---|---|
-| Capture IDEA or write SPEC | `spec-authoring` |
-| Review IDEA or SPEC | `spec-review` |
-| Split approved multi-slice work | `approved-spec-decomposition` |
-| Execute approved scope | `implementation-execution` |
-| Prove the change | `verification` |
-| Capture durable lessons | `spec-evidence-governance` |
-| Check a small reversible exception | `spec-authoring` + `SPEC.fastpath.template.md` |
+| Capture IDEA or write SPEC | `author-spec` |
+| Review IDEA or SPEC | `review-spec` |
+| Split approved multi-slice work | `decompose-approved-spec` |
+| Execute approved scope | `execute-spec` |
+| Prove the change | `verify-spec` |
+| Capture durable lessons | `spec-evidence` |
+| Check a small reversible exception | `author-spec` + `SPEC.fastpath.template.md` |
 
 ## Hard Stops
 

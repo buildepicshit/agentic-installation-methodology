@@ -15,8 +15,7 @@ or scratch/runtime state.
 | `CLAUDE.md` | Claude root entrypoint importing root policy | tracked |
 | `WORKFLOW.md` | Company-level engagement contract | tracked |
 | `.agents/` | Specs, skills, workflows, preflight, layout policy | tracked |
-| `.claude/commands/` | Claude command wrappers for shared workflows | tracked |
-| `.claude/skills/` | Claude-native mirrors of shared skills | tracked |
+| `.claude/skills/` | Claude-native mirrors of shared skills; the directory name IS the slash-command (`/<name>`) | tracked |
 | `.claude/settings.json` | Portable Claude project settings | tracked |
 | `.claude/settings.local.json` | Per-user Claude permissions/secrets | ignored |
 | `.copilot` | Copilot local scratch/state | ignored |

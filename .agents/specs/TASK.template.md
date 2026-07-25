@@ -3,13 +3,12 @@ id: T-NN-kebab-case-slice
 parent_spec: YYYY-MM-DD-kebab-case-spec-id
 status: todo
 owner: unassigned
-model_route: gpt-5.5
-cross_validation_lane: claude-opus-4-8
-verification_lane: gpt-5.5
+model_route: gpt-5.6-sol
+cross_validation_lane: claude-opus-5   # Rule-20 guardrail slices only; delete this line otherwise
+verification_lane: gpt-5.6-sol
 mode: HITL
 deps: []
 write_scope: disjoint
-parallelism_evaluated: true
 acceptance_commands: []
 ---
 
@@ -22,8 +21,9 @@ carries the slice's executable scope, model lanes, verification
 commands, and evidence trail.
 
 Front-matter contract: `file://agents/specs/SPEC.schema.md` §1.4.
-`cross_validation_lane` MUST be a different model family from
-`model_route`; owner alone sets `status: done`.
+`cross_validation_lane` is REQUIRED only on Rule-20 guardrail slices
+(manifest-carried touch points) and, when present, MUST be a different
+model family from `model_route`; owner alone sets `status: done`.
 
 Citation discipline applies: every factual claim in §3 (Scope), §4
 (Read context), and §6 (Evidence) MUST carry a citation prefix per
@@ -73,7 +73,7 @@ work as follow-ups per
 | Lane | Model | Role |
 |---|---|---|
 | Primary | `{{model_route}}` | Implementation + workpad management. |
-| Cross-validation | `{{cross_validation_lane}}` | Independent diff review before Human Review. Different family from primary. |
+| Cross-validation | `{{cross_validation_lane}}` | Independent diff review before Human Review. Different family from primary. Rule-20 guardrail slices only; omit this row otherwise. |
 | Verification | `{{verification_lane}}` | Run acceptance_commands; capture fresh evidence. |
 
 Subagent dispatch follows

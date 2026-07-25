@@ -1,9 +1,9 @@
 {
   "schema_version": 1,
-  "generated_at": "2026-07-25T04:32:34.530Z",
+  "generated_at": "2026-07-25T06:47:47.567Z",
   "source": {
     "repo": "bes-fleet-policy",
-    "commit": "5bd68103bd6a8dbdd1e511dd3bb3443d773040e8",
+    "commit": "02a7958852fea218c3424da412073c3a85b33df2",
     "dirty": true
   },
   "manifests": {
@@ -26,22 +26,23 @@
       "scripts/lint-spec-fixtures/good-task.md",
       "scripts/lint-spec-fixtures/bad-uncited.md",
       "scripts/lint-spec-fixtures/bad-missing-section.md",
-      "skills/code-review/SKILL.md",
-      "skills/code-review/references/multi-agent-review.md",
-      "skills/implementation-execution/SKILL.md",
-      "skills/repo-orientation/SKILL.md",
-      "skills/spec-authoring/SKILL.md",
-      "skills/spec-authoring/references/reference-architecture.md",
-      "skills/spec-authoring/references/studio-principles.md",
+      "skills/review-diff/SKILL.md",
+      "skills/review-diff/references/multi-agent-review.md",
+      "skills/execute-spec/SKILL.md",
+      "skills/orient/SKILL.md",
+      "skills/author-spec/SKILL.md",
+      "skills/idea-capture/SKILL.md",
+      "skills/author-spec/references/reference-architecture.md",
+      "skills/author-spec/references/studio-principles.md",
       "skills/spec-driven-development/SKILL.md",
-      "skills/spec-evidence-governance/SKILL.md",
-      "skills/spec-review/SKILL.md",
-      "skills/spec-review/references/per-type-gates.md",
+      "skills/spec-evidence/SKILL.md",
+      "skills/review-spec/SKILL.md",
+      "skills/review-spec/references/per-type-gates.md",
       "skills/spec-driven-development/references/capture-after-and-fastpath.md",
       "skills/spec-driven-development/references/cascade-by-id-citation.md",
       "skills/spec-driven-development/references/lifecycle-router.md",
-      "skills/approved-spec-decomposition/references/cross-validation-lanes.md",
-      "skills/verification/SKILL.md",
+      "skills/decompose-approved-spec/references/cross-validation-lanes.md",
+      "skills/verify-spec/SKILL.md",
       "workflows/author-spec.md",
       "workflows/execute-spec.md",
       "workflows/idea-capture.md",
@@ -65,7 +66,6 @@
       "scripts/fleet-enforce.sh",
       "scripts/audit-fleet-compliance.sh",
       "scripts/fleet-skills.txt",
-      "scripts/fleet-commands.txt",
       "scripts/fleet-hooks.txt",
       "scripts/fleet-hook-fixtures.txt",
       "scripts/fleet-oss-gitignore.txt",
@@ -77,7 +77,7 @@
       "scripts/validate-skill-frontmatter.sh",
       "scripts/audit-entry-docs.sh",
       "scripts/audit-hook-decisions.sh",
-      "skills/approved-spec-decomposition/SKILL.md",
+      "skills/decompose-approved-spec/SKILL.md",
       "skills/diagnosis/SKILL.md",
       "skills/tdd/SKILL.md",
       "skills/cross-agent-cli-invocation/SKILL.md",
@@ -119,33 +119,22 @@
       "scripts/fleet-selfcheck.sh"
     ],
     "fleet_skills": [
-      "code-review",
-      "implementation-execution",
-      "repo-orientation",
-      "spec-authoring",
-      "spec-driven-development",
-      "spec-evidence-governance",
-      "spec-review",
-      "verification",
-      "approved-spec-decomposition",
-      "diagnosis",
-      "tdd",
-      "fleet-enforce",
-      "cross-agent-cli-invocation",
-      "execution-discipline-cluster",
-      "evidence-cluster"
-    ],
-    "fleet_commands": [
       "author-spec",
+      "cross-agent-cli-invocation",
       "decompose-approved-spec",
+      "diagnosis",
+      "evidence-cluster",
       "execute-spec",
+      "execution-discipline-cluster",
+      "fleet-enforce",
       "idea-capture",
       "orient",
       "review-diff",
       "review-spec",
+      "spec-driven-development",
       "spec-evidence",
-      "verify-spec",
-      "fleet-enforce"
+      "tdd",
+      "verify-spec"
     ],
     "fleet_hooks": [
       "block-ai-attribution.sh",
@@ -252,15 +241,15 @@
       "kind": "agents-file",
       "source_path": "agents/MODEL_ROUTING.md",
       "target_path": ".agents/MODEL_ROUTING.md",
-      "sha256": "62b86d1ac8ef9cfd00232a6eb20737ac3a7eb528411af204e273a82c1733114d",
-      "bytes": 49456
+      "sha256": "e9573fd03aeb3110b8eebc2e0a5d00d69510ef2c15af9ebe62b6e7b48261f679",
+      "bytes": 52516
     },
     {
       "kind": "agents-file",
       "source_path": "agents/OPERATING_MODEL.md",
       "target_path": ".agents/OPERATING_MODEL.md",
-      "sha256": "ed8b7fa5d4d0b8e4b06040499e773895aab85795f59e28f139fcbd3c569bdadf",
-      "bytes": 26635
+      "sha256": "6518fd5d4b8be6dbf95fd90c3c1b70f351aa4e771289c35e16b4488eac9b1d15",
+      "bytes": 29984
     },
     {
       "kind": "agents-file",
@@ -371,8 +360,8 @@
       "kind": "agents-file",
       "source_path": "agents/scripts/audit-tracked-paths.sh",
       "target_path": ".agents/scripts/audit-tracked-paths.sh",
-      "sha256": "3cc6d4c399eb7cb29b437851704e59ff20001dcffeb6f82673bdea81f03d9dd2",
-      "bytes": 2811
+      "sha256": "2ca6614785de0adf2824e2c089e0f525940f96aa8fbc0ef28d6bedce652cb356",
+      "bytes": 2810
     },
     {
       "kind": "agents-file",
@@ -380,13 +369,6 @@
       "target_path": ".agents/scripts/fleet-ci-oss-enabled.txt",
       "sha256": "782cdcb9209e821543e7f5d4590a058bfb9ea285089fc5b0b322f6cdc2c9aa05",
       "bytes": 414
-    },
-    {
-      "kind": "agents-file",
-      "source_path": "agents/scripts/fleet-commands.txt",
-      "target_path": ".agents/scripts/fleet-commands.txt",
-      "sha256": "6b7fd5854dab8748c08a7672083cf7e3be0c8de32b8dd0fe74b5eab9da5f9f21",
-      "bytes": 133
     },
     {
       "kind": "agents-file",
@@ -448,15 +430,15 @@
       "kind": "agents-file",
       "source_path": "agents/scripts/fleet-skills.txt",
       "target_path": ".agents/scripts/fleet-skills.txt",
-      "sha256": "4e2009f2ee08666f1baf36f8ceca02bd869910fbe156abf6be00e90c90bf9b39",
-      "bytes": 272
+      "sha256": "70863433d4f133f92e4dbbc18a15456224125afdb2028eade419c3de9a591881",
+      "bytes": 244
     },
     {
       "kind": "agents-file",
       "source_path": "agents/scripts/generate-fleet-manifest-lock.mjs",
       "target_path": ".agents/scripts/generate-fleet-manifest-lock.mjs",
-      "sha256": "bcee4d7ea8bb32a70e16c64125f180fd59e169958fbeaa7ceabd4faa9d760606",
-      "bytes": 5777
+      "sha256": "5b3a2a75211ecda4f63384cc3b96fa1fa68f51381e4b40e7eb91d2c4ab00af2b",
+      "bytes": 5674
     },
     {
       "kind": "agents-file",
@@ -497,8 +479,8 @@
       "kind": "agents-file",
       "source_path": "agents/scripts/lint-spec.sh",
       "target_path": ".agents/scripts/lint-spec.sh",
-      "sha256": "315b5d032735352fe7bf54c6442af664b09016c8eca275726ee8e76cb6b34454",
-      "bytes": 8674
+      "sha256": "047522ed7961d2d80b6a07c6657589b0019cb16128ab49509daaa10e51bdcf2d",
+      "bytes": 14673
     },
     {
       "kind": "agents-file",
@@ -532,8 +514,8 @@
       "kind": "agents-file",
       "source_path": "agents/scripts/validate-cli-invocation.sh",
       "target_path": ".agents/scripts/validate-cli-invocation.sh",
-      "sha256": "6725693e91105068a76d579348ba550c4d0852765266954020e232b47d5a4b71",
-      "bytes": 33364
+      "sha256": "0ea81f57c6899127084544625ae02d196204b92ee3751fe49b02f012301bbd76",
+      "bytes": 33372
     },
     {
       "kind": "agents-file",
@@ -581,36 +563,29 @@
       "kind": "agents-file",
       "source_path": "agents/SKILL_REGISTRY.md",
       "target_path": ".agents/SKILL_REGISTRY.md",
-      "sha256": "1f2f4f1e7d588c40de561b72a9ddc5afc415bbc68afc9417d9e4f6874b1da7b9",
-      "bytes": 5529
+      "sha256": "16b3a1ac0cc317fb0ad0ec637a23eeec4a21a3c030c2064ddd0b6bc2fb815733",
+      "bytes": 5715
     },
     {
       "kind": "agents-file",
-      "source_path": "agents/skills/approved-spec-decomposition/references/cross-validation-lanes.md",
-      "target_path": ".agents/skills/approved-spec-decomposition/references/cross-validation-lanes.md",
-      "sha256": "4c2e7cc107837e9e43f96c7d600f580455442327cc3ba5da92a2fa1d2cfb9283",
-      "bytes": 2502
+      "source_path": "agents/skills/author-spec/references/reference-architecture.md",
+      "target_path": ".agents/skills/author-spec/references/reference-architecture.md",
+      "sha256": "50a2283f258eb690cd07e26d9e0b584cffb00f879c08565ae3a2dca563f49d7a",
+      "bytes": 3135
     },
     {
       "kind": "agents-file",
-      "source_path": "agents/skills/approved-spec-decomposition/SKILL.md",
-      "target_path": ".agents/skills/approved-spec-decomposition/SKILL.md",
-      "sha256": "3501cefd61f751c004cdd87ad3a74e63080e1111eb689a5a91b0b5899392f8a7",
-      "bytes": 11598
+      "source_path": "agents/skills/author-spec/references/studio-principles.md",
+      "target_path": ".agents/skills/author-spec/references/studio-principles.md",
+      "sha256": "961bf1afebe58721da31a4afb214b70a0418f8fe5fd59b385122f1c5f95d974c",
+      "bytes": 1443
     },
     {
       "kind": "agents-file",
-      "source_path": "agents/skills/code-review/references/multi-agent-review.md",
-      "target_path": ".agents/skills/code-review/references/multi-agent-review.md",
-      "sha256": "acf6ea32648a7b91e63939beec81f31a221f04154d08267920bab9356620818d",
-      "bytes": 4428
-    },
-    {
-      "kind": "agents-file",
-      "source_path": "agents/skills/code-review/SKILL.md",
-      "target_path": ".agents/skills/code-review/SKILL.md",
-      "sha256": "aab621804f082b95b3e34e44e52b76e3e088ce11aa9cd53ed403ee923c0bb4b9",
-      "bytes": 9813
+      "source_path": "agents/skills/author-spec/SKILL.md",
+      "target_path": ".agents/skills/author-spec/SKILL.md",
+      "sha256": "307f575aaaeac925f1fee0a047b406865675c64789e99780d92e701ccaea5abb",
+      "bytes": 16957
     },
     {
       "kind": "agents-file",
@@ -630,8 +605,8 @@
       "kind": "agents-file",
       "source_path": "agents/skills/cross-agent-cli-invocation/SKILL.md",
       "target_path": ".agents/skills/cross-agent-cli-invocation/SKILL.md",
-      "sha256": "8b3bea1b61d8cc9b6349db6417bedb2a2949e5caa6d07c737acdcc0f35005479",
-      "bytes": 9547
+      "sha256": "5c6d16469337586e31015850626280f6cc0819773c91a1fa2d5fc7bea05b3d79",
+      "bytes": 9551
     },
     {
       "kind": "agents-file",
@@ -639,6 +614,20 @@
       "target_path": ".agents/skills/cross-agent-cli-invocation/tests/run-tests.sh",
       "sha256": "fb444befd805f83aea616e37d9bb386fc1f8035a233e61dd1e788a145a9a779d",
       "bytes": 3134
+    },
+    {
+      "kind": "agents-file",
+      "source_path": "agents/skills/decompose-approved-spec/references/cross-validation-lanes.md",
+      "target_path": ".agents/skills/decompose-approved-spec/references/cross-validation-lanes.md",
+      "sha256": "81d0729bb0561674b3998a238bd3df32fb5cbfc2a1a730cf42d756f787ad8b47",
+      "bytes": 2544
+    },
+    {
+      "kind": "agents-file",
+      "source_path": "agents/skills/decompose-approved-spec/SKILL.md",
+      "target_path": ".agents/skills/decompose-approved-spec/SKILL.md",
+      "sha256": "8dd74b5426b7b42e5843ae5d737bc43b38d73c1f97db81f1fe7a3b628fd9bf1b",
+      "bytes": 11957
     },
     {
       "kind": "agents-file",
@@ -651,15 +640,22 @@
       "kind": "agents-file",
       "source_path": "agents/skills/evidence-cluster/SKILL.md",
       "target_path": ".agents/skills/evidence-cluster/SKILL.md",
-      "sha256": "2f76a683e7ec29a99d20920fa42276e5cbcc066d04a389c75621bf5f8ea6c7fc",
+      "sha256": "7b0c4e1fad033817478822e29c87dffda9d1e43618b3c917baf0f99fe7346433",
       "bytes": 4306
+    },
+    {
+      "kind": "agents-file",
+      "source_path": "agents/skills/execute-spec/SKILL.md",
+      "target_path": ".agents/skills/execute-spec/SKILL.md",
+      "sha256": "f5d36c9ef92c0ca386a20f8f7856f0123da342462d3c24bb4f23efcf425dd812",
+      "bytes": 3131
     },
     {
       "kind": "agents-file",
       "source_path": "agents/skills/execution-discipline-cluster/SKILL.md",
       "target_path": ".agents/skills/execution-discipline-cluster/SKILL.md",
-      "sha256": "8efe579d1f1a06d6904b950734fa45134d3f9fab2e72f485e0c695b799b058fe",
-      "bytes": 9689
+      "sha256": "d06591aeedc045a374b9ed4c22fe899d1b4de7023b2b49c201148d92624dd0d8",
+      "bytes": 9677
     },
     {
       "kind": "agents-file",
@@ -670,101 +666,94 @@
     },
     {
       "kind": "agents-file",
-      "source_path": "agents/skills/implementation-execution/SKILL.md",
-      "target_path": ".agents/skills/implementation-execution/SKILL.md",
-      "sha256": "1c8a5f631c928fb0202a79fb8d8e1129dab7adf24ca6e55bdaa8f290137dee0f",
-      "bytes": 3147
+      "source_path": "agents/skills/idea-capture/SKILL.md",
+      "target_path": ".agents/skills/idea-capture/SKILL.md",
+      "sha256": "d093221eff12e61ff20a84f5765619a8c16de8ca39336a5bffa3ce84495ed3a0",
+      "bytes": 3762
     },
     {
       "kind": "agents-file",
-      "source_path": "agents/skills/repo-orientation/SKILL.md",
-      "target_path": ".agents/skills/repo-orientation/SKILL.md",
-      "sha256": "3d405023c06e4e078411cbe22d99dc370aa4b6cec7b69a56fa39dc38a7274bfb",
-      "bytes": 3094
+      "source_path": "agents/skills/orient/SKILL.md",
+      "target_path": ".agents/skills/orient/SKILL.md",
+      "sha256": "07a9843752a46b5fe029291eceae3ca6474d98e0090eb7cdd66853fd061b5bad",
+      "bytes": 3084
     },
     {
       "kind": "agents-file",
-      "source_path": "agents/skills/spec-authoring/references/reference-architecture.md",
-      "target_path": ".agents/skills/spec-authoring/references/reference-architecture.md",
-      "sha256": "50a2283f258eb690cd07e26d9e0b584cffb00f879c08565ae3a2dca563f49d7a",
-      "bytes": 3135
+      "source_path": "agents/skills/review-diff/references/multi-agent-review.md",
+      "target_path": ".agents/skills/review-diff/references/multi-agent-review.md",
+      "sha256": "e92dfe6a0a8adc36c3d8290ff46e0b1d5aca844a637c4d5855a1d6fde7f99bbc",
+      "bytes": 4428
     },
     {
       "kind": "agents-file",
-      "source_path": "agents/skills/spec-authoring/references/studio-principles.md",
-      "target_path": ".agents/skills/spec-authoring/references/studio-principles.md",
-      "sha256": "c82ca7df2aaf08087a51228bbf07cd65cbb45c0a37a3378da40843e423466cce",
-      "bytes": 1443
+      "source_path": "agents/skills/review-diff/SKILL.md",
+      "target_path": ".agents/skills/review-diff/SKILL.md",
+      "sha256": "2168887080af94480ba3e7af467973603db22a82dfe838d57c0cf2c42ea74017",
+      "bytes": 10432
     },
     {
       "kind": "agents-file",
-      "source_path": "agents/skills/spec-authoring/SKILL.md",
-      "target_path": ".agents/skills/spec-authoring/SKILL.md",
-      "sha256": "4e5b2499bb70bad23d13ce9ce3227d23e8968eae872d3602b4f52582395cd07e",
-      "bytes": 16984
+      "source_path": "agents/skills/review-spec/references/per-type-gates.md",
+      "target_path": ".agents/skills/review-spec/references/per-type-gates.md",
+      "sha256": "5cc480bf8e82ed5081fcac15bfe160b4f707b84ff20174a98e5aa21bb4180770",
+      "bytes": 4943
+    },
+    {
+      "kind": "agents-file",
+      "source_path": "agents/skills/review-spec/SKILL.md",
+      "target_path": ".agents/skills/review-spec/SKILL.md",
+      "sha256": "1564a49a1e57e6341afccc19d04656ad90f8531fc1889058f95bcdad186be345",
+      "bytes": 11992
     },
     {
       "kind": "agents-file",
       "source_path": "agents/skills/spec-driven-development/references/capture-after-and-fastpath.md",
       "target_path": ".agents/skills/spec-driven-development/references/capture-after-and-fastpath.md",
-      "sha256": "55d8e4724c43c34e9a5cf4ed7c75d19889e2e2084c9b49236ef33b329e7fe576",
-      "bytes": 2313
+      "sha256": "1d40692d4497c556f1adb414befdc8a49f816c108ee9e2564d0915a7983054cd",
+      "bytes": 2349
     },
     {
       "kind": "agents-file",
       "source_path": "agents/skills/spec-driven-development/references/cascade-by-id-citation.md",
       "target_path": ".agents/skills/spec-driven-development/references/cascade-by-id-citation.md",
-      "sha256": "921a8e4e780d4075a24864ba9223f25a408e71a288a4c89cbe24a6aa643acb0d",
+      "sha256": "ff4b9be53110ea1d31526858e9e946ad1d49330af97dfc16be244a41af1435aa",
       "bytes": 1135
     },
     {
       "kind": "agents-file",
       "source_path": "agents/skills/spec-driven-development/references/lifecycle-router.md",
       "target_path": ".agents/skills/spec-driven-development/references/lifecycle-router.md",
-      "sha256": "1e0cef7475a9a616fec7000f337f67f7ca4d4b4ad116d9d5be9cc2b6cd5352ee",
-      "bytes": 3618
+      "sha256": "d0f909a9abd14c13c96d3ead2831dd431068ae72ff429fa241031def5d0b5d59",
+      "bytes": 3604
     },
     {
       "kind": "agents-file",
       "source_path": "agents/skills/spec-driven-development/SKILL.md",
       "target_path": ".agents/skills/spec-driven-development/SKILL.md",
-      "sha256": "08746753bdb82422e25ae90aba88106ad6eba59277f3d633e6435a37ad90a0b9",
-      "bytes": 4077
+      "sha256": "77283c12a61cc37f016e80e007b9be63fc32f684b3306c5c4686e1e02d3a8831",
+      "bytes": 4043
     },
     {
       "kind": "agents-file",
-      "source_path": "agents/skills/spec-evidence-governance/SKILL.md",
-      "target_path": ".agents/skills/spec-evidence-governance/SKILL.md",
-      "sha256": "86474927cc342a805690a7afe617300c0c124e13cd590d0f88b7044ca12db521",
-      "bytes": 1774
-    },
-    {
-      "kind": "agents-file",
-      "source_path": "agents/skills/spec-review/references/per-type-gates.md",
-      "target_path": ".agents/skills/spec-review/references/per-type-gates.md",
-      "sha256": "1663fe260f7a230f0f153232f71f3bae620b57a0f22b3fc4b856bd5726ed27ef",
-      "bytes": 4946
-    },
-    {
-      "kind": "agents-file",
-      "source_path": "agents/skills/spec-review/SKILL.md",
-      "target_path": ".agents/skills/spec-review/SKILL.md",
-      "sha256": "559fd353549d7e151e121561d45a7f2f7ee34701790f984912c53ada43c6158b",
-      "bytes": 11995
+      "source_path": "agents/skills/spec-evidence/SKILL.md",
+      "target_path": ".agents/skills/spec-evidence/SKILL.md",
+      "sha256": "bcaed5c67f785762600a390ddac673fb65e9eeeab9e9263d3dde115d1514ba67",
+      "bytes": 1949
     },
     {
       "kind": "agents-file",
       "source_path": "agents/skills/tdd/SKILL.md",
       "target_path": ".agents/skills/tdd/SKILL.md",
-      "sha256": "4796d9e05234f0126d0acecd74da4355d0931802910a737e2345ce2e715c508e",
-      "bytes": 3748
+      "sha256": "9b44a0372c62628b6c41e9edeafe6cbb7d89ad8d97dcb40fc48b1dc36a94eac4",
+      "bytes": 3736
     },
     {
       "kind": "agents-file",
-      "source_path": "agents/skills/verification/SKILL.md",
-      "target_path": ".agents/skills/verification/SKILL.md",
-      "sha256": "81577f31d1548b9147db99a355f8e56e934bf813a57a2d772ee643c762579133",
-      "bytes": 5610
+      "source_path": "agents/skills/verify-spec/SKILL.md",
+      "target_path": ".agents/skills/verify-spec/SKILL.md",
+      "sha256": "3edc016d8ce692e481255ccc96f661c5bde4307c80625dc52f1831f44a5a4891",
+      "bytes": 5609
     },
     {
       "kind": "agents-file",
@@ -777,29 +766,29 @@
       "kind": "agents-file",
       "source_path": "agents/specs/SPEC.fastpath.template.md",
       "target_path": ".agents/specs/SPEC.fastpath.template.md",
-      "sha256": "8d7944c839073ed38dc28d3e8c8ed85330efb436c552fb93157be5d5f12e8742",
-      "bytes": 2843
+      "sha256": "71f963a6af0f15b16093e713d1bf2f826a105ab6d7f3b3052a67e743d6a59f5e",
+      "bytes": 3484
     },
     {
       "kind": "agents-file",
       "source_path": "agents/specs/SPEC.schema.md",
       "target_path": ".agents/specs/SPEC.schema.md",
-      "sha256": "fb3e10eecb4e918d09685e4a34990620a6ea78e6e2eb1f0034a0631ad5436780",
-      "bytes": 17406
+      "sha256": "9cde8763ee2221f625399e61634d967098ac87a8817447e4b48af81d238f827b",
+      "bytes": 19306
     },
     {
       "kind": "agents-file",
       "source_path": "agents/specs/SPEC.template.md",
       "target_path": ".agents/specs/SPEC.template.md",
-      "sha256": "0c2aa9d6db4b532b7c6bdc3842742ad96290a4bdbc089fe0b166f3d5ebd63956",
-      "bytes": 3152
+      "sha256": "f687c950b04afd3361484228f4440f365a1d42cf4693b0ce5d006be46fe61ac3",
+      "bytes": 3174
     },
     {
       "kind": "agents-file",
       "source_path": "agents/specs/TASK.template.md",
       "target_path": ".agents/specs/TASK.template.md",
-      "sha256": "5f4aada6b5f2711ceee5cfc092db9aca73b2b6d28ca3e8ee5af53f498ab82411",
-      "bytes": 3427
+      "sha256": "c1c07edd5a877514d2d662c7ec321f595ce863597e1d00859b535bb7e7119560",
+      "bytes": 3619
     },
     {
       "kind": "agents-file",
@@ -826,7 +815,7 @@
       "kind": "agents-file",
       "source_path": "agents/standards/UNIVERSAL.md",
       "target_path": ".agents/standards/UNIVERSAL.md",
-      "sha256": "9e78465c6194bd1916e36dbb7995aec20849618721ab0098b152809aaf962e86",
+      "sha256": "2926efec6d4805c7d8e49b625e9798066f1e725b156d55f93377c41b3bd352a4",
       "bytes": 5748
     },
     {
@@ -840,50 +829,50 @@
       "kind": "agents-file",
       "source_path": "agents/templates/WORKFLOW.body.md",
       "target_path": ".agents/templates/WORKFLOW.body.md",
-      "sha256": "aa5e3c448547e6b30fea18b769529ccfe298f592cc7ceefbd4eb27be99321520",
-      "bytes": 12610
+      "sha256": "393bdad1a0d89eea5f3b6ad0e50425aa21d3be509039fff469c1bfe654b34808",
+      "bytes": 12635
     },
     {
       "kind": "agents-file",
       "source_path": "agents/workflows/author-spec.md",
       "target_path": ".agents/workflows/author-spec.md",
-      "sha256": "e701f07aae6444518f32ce2d9465853ced60be690e83214ab0178ec2873ca86e",
-      "bytes": 378
+      "sha256": "a1a97d8cf4d77aa88be2ac500ad5f186e2b36bb3cd898be7b1af2ac0b786b52c",
+      "bytes": 311
     },
     {
       "kind": "agents-file",
       "source_path": "agents/workflows/decompose-approved-spec.md",
       "target_path": ".agents/workflows/decompose-approved-spec.md",
-      "sha256": "73442dad047d7de07196c06472b5cf7dae8fa5bf58178c559610f165377a31c9",
-      "bytes": 532
+      "sha256": "e129b062ea7acf587b86a1a4a30c9508254b9631d6c8f8cc9a6d3e4363883369",
+      "bytes": 451
     },
     {
       "kind": "agents-file",
       "source_path": "agents/workflows/execute-spec.md",
       "target_path": ".agents/workflows/execute-spec.md",
-      "sha256": "f9890c0d6f2d1aef8b51a203a09a0d60d9b20f3a93f7284d9adc95ec27e1eacd",
-      "bytes": 238
+      "sha256": "8049f7c2ba7d574fc27c99308e1fef72a53a09db5bde08279fd87d6a19df80cc",
+      "bytes": 152
     },
     {
       "kind": "agents-file",
       "source_path": "agents/workflows/fleet-enforce.md",
       "target_path": ".agents/workflows/fleet-enforce.md",
-      "sha256": "3331d4f10b92a4c2332466da2006939429b2f29f487df9fb4481c49141ec4f79",
-      "bytes": 357
+      "sha256": "b4bc2f3763dbf597a9c1c105be3b069f9439b768753886b474d952a4e88988f5",
+      "bytes": 294
     },
     {
       "kind": "agents-file",
       "source_path": "agents/workflows/idea-capture.md",
       "target_path": ".agents/workflows/idea-capture.md",
-      "sha256": "dbcbc4ce43affff0edcb280f290b99b1a6bbff7350ad77d09ec6a057f644a9cf",
-      "bytes": 446
+      "sha256": "9e33c0c2599c18d55d14db37f8cf38297c4f5d230a4f4fd09c9addbf6e076c58",
+      "bytes": 378
     },
     {
       "kind": "agents-file",
       "source_path": "agents/workflows/orient.md",
       "target_path": ".agents/workflows/orient.md",
-      "sha256": "0b526d5be3b646dae5c624552f9d0293d57f6a7e35045290f2dd4b01085627f8",
-      "bytes": 204
+      "sha256": "3c8564cb484f476bb7a0d8357766162e73fbf512246d5f7ac617d873dc609521",
+      "bytes": 128
     },
     {
       "kind": "agents-file",
@@ -896,106 +885,36 @@
       "kind": "agents-file",
       "source_path": "agents/workflows/review-diff.md",
       "target_path": ".agents/workflows/review-diff.md",
-      "sha256": "f9426c9180c7ead7fdae4a8b96cebb05b622e74b555490f15906f8202c5c1435",
-      "bytes": 209
+      "sha256": "d3ce6498a64a40d6ced281f02c07e498ebd8517796741eb44dcc9164a025d83e",
+      "bytes": 148
     },
     {
       "kind": "agents-file",
       "source_path": "agents/workflows/review-spec.md",
       "target_path": ".agents/workflows/review-spec.md",
-      "sha256": "58c379b76816e40dc516e6a21ea8c10e3e5aaac39db8032cd46497a1b817f15c",
-      "bytes": 366
+      "sha256": "e42658079b3ca568b08df50e70be5707340542bf2d289ea7ac2ac0bdb31929aa",
+      "bytes": 305
     },
     {
       "kind": "agents-file",
       "source_path": "agents/workflows/spec-evidence.md",
       "target_path": ".agents/workflows/spec-evidence.md",
-      "sha256": "a06298f5bc469c0f5598fee72da2eb16b2c425f45c89a89a2664b81ce8bc1398",
-      "bytes": 241
+      "sha256": "c7f128e7718c54510bb4fa2211090ee3df9810534b39bb1dc16fb38d11f50556",
+      "bytes": 156
     },
     {
       "kind": "agents-file",
       "source_path": "agents/workflows/verify-spec.md",
       "target_path": ".agents/workflows/verify-spec.md",
-      "sha256": "f7862b9ec79ad43204f01d8bdc0d371c9a941ec0d8166cd4b067db5173ae2a72",
-      "bytes": 211
+      "sha256": "1afb17cdb6415d7f9ee3780d8c32d94eb66e7f4ae75294b1b819eb9045851a6f",
+      "bytes": 148
     },
     {
       "kind": "agents-file",
       "source_path": "agents/WORKSPACE_LAYOUT.md",
       "target_path": ".agents/WORKSPACE_LAYOUT.md",
-      "sha256": "56ddffa81adce860adb946cb685e73d8a1e9c321d8e927fe5aa5f2155e543aa1",
-      "bytes": 4590
-    },
-    {
-      "kind": "command",
-      "source_path": ".claude/commands/author-spec.md",
-      "target_path": ".claude/commands/author-spec.md",
-      "sha256": "9795e480a2d546af6ed3076d774e8b1b114c9f65dd5968bc9dfb795f59e9cf60",
-      "bytes": 1464
-    },
-    {
-      "kind": "command",
-      "source_path": ".claude/commands/decompose-approved-spec.md",
-      "target_path": ".claude/commands/decompose-approved-spec.md",
-      "sha256": "81cdca14e1b72f426770cb01cc4e7b7aa1b2c0c4f95322b5a2923db1b0758e43",
-      "bytes": 1503
-    },
-    {
-      "kind": "command",
-      "source_path": ".claude/commands/execute-spec.md",
-      "target_path": ".claude/commands/execute-spec.md",
-      "sha256": "60039667f8da8dfb657b3fd940100d410bf2226d0d6718cc3b0f0b86e0898b98",
-      "bytes": 1063
-    },
-    {
-      "kind": "command",
-      "source_path": ".claude/commands/fleet-enforce.md",
-      "target_path": ".claude/commands/fleet-enforce.md",
-      "sha256": "5149bd03f8ea729d94d247c6f8d5af4c75ee5701678689d5368c09faa5f507f9",
-      "bytes": 2313
-    },
-    {
-      "kind": "command",
-      "source_path": ".claude/commands/idea-capture.md",
-      "target_path": ".claude/commands/idea-capture.md",
-      "sha256": "bc1cacdedf39cfd028a1ae82c0c7d404d316a45295eff72418515819ee292f2a",
-      "bytes": 1400
-    },
-    {
-      "kind": "command",
-      "source_path": ".claude/commands/orient.md",
-      "target_path": ".claude/commands/orient.md",
-      "sha256": "cf130e120bd14ca4fcc56702641b9b6f41d31f1b2a0c2f2b2a5736aea04b00d6",
-      "bytes": 447
-    },
-    {
-      "kind": "command",
-      "source_path": ".claude/commands/review-diff.md",
-      "target_path": ".claude/commands/review-diff.md",
-      "sha256": "6ce6842db46b86297254bce1fdfd8a29f1c072fcb11371d762af4f79fc688f50",
-      "bytes": 434
-    },
-    {
-      "kind": "command",
-      "source_path": ".claude/commands/review-spec.md",
-      "target_path": ".claude/commands/review-spec.md",
-      "sha256": "bbe2a9d57d7d2c682a362d91f82efbae3efb7b77abd836afe74cfcf19dc8c709",
-      "bytes": 1487
-    },
-    {
-      "kind": "command",
-      "source_path": ".claude/commands/spec-evidence.md",
-      "target_path": ".claude/commands/spec-evidence.md",
-      "sha256": "22d3f66453526efac17560786010b68ca16737c61885937bb66ba5136bffe1c1",
-      "bytes": 688
-    },
-    {
-      "kind": "command",
-      "source_path": ".claude/commands/verify-spec.md",
-      "target_path": ".claude/commands/verify-spec.md",
-      "sha256": "f0fdad03e85667e2864f20c5f9be250c25ae443738e4fc29b681afada960384d",
-      "bytes": 1144
+      "sha256": "0f957eeb861d749bfc509cb28e0c54f08e77b4f92bb92984fca5d676f04c925e",
+      "bytes": 4562
     },
     {
       "kind": "hook",
@@ -1043,7 +962,7 @@
       "kind": "hook",
       "source_path": ".claude/hooks/block-probe-residue.sh",
       "target_path": ".claude/hooks/block-probe-residue.sh",
-      "sha256": "9b571b42a18a6ebc45d406178175a30304a7c1eefbe0c572e8b9f1d20b7c1ac3",
+      "sha256": "2ab3d3f980f6a63ddd0e21986cef8a1fef556bb06df21a8c71c2e0fda7799bd9",
       "bytes": 6338
     },
     {
@@ -1106,8 +1025,8 @@
       "kind": "harness",
       "source_path": ".claude/hooks/tests/run-tests.sh",
       "target_path": ".claude/hooks/tests/run-tests.sh",
-      "sha256": "59464e7f6843b9bb26479021100844203778383c87ae25f3533c45a80aa76be0",
-      "bytes": 58046
+      "sha256": "75a8b1f1224e578b4f2e8842e724ae859bff17f17559da9cb9a4cc9015ab7789",
+      "bytes": 58054
     },
     {
       "kind": "hook",
@@ -1146,38 +1065,45 @@
     },
     {
       "kind": "skill-reference",
-      "source_path": "agents/skills/approved-spec-decomposition/references/cross-validation-lanes.md",
-      "target_path": ".claude/skills/approved-spec-decomposition/references/cross-validation-lanes.md",
-      "sha256": "4c2e7cc107837e9e43f96c7d600f580455442327cc3ba5da92a2fa1d2cfb9283",
-      "bytes": 2502
-    },
-    {
-      "kind": "skill",
-      "source_path": "agents/skills/approved-spec-decomposition/SKILL.md",
-      "target_path": ".claude/skills/approved-spec-decomposition/SKILL.md",
-      "sha256": "3501cefd61f751c004cdd87ad3a74e63080e1111eb689a5a91b0b5899392f8a7",
-      "bytes": 11598
+      "source_path": "agents/skills/author-spec/references/reference-architecture.md",
+      "target_path": ".claude/skills/author-spec/references/reference-architecture.md",
+      "sha256": "50a2283f258eb690cd07e26d9e0b584cffb00f879c08565ae3a2dca563f49d7a",
+      "bytes": 3135
     },
     {
       "kind": "skill-reference",
-      "source_path": "agents/skills/code-review/references/multi-agent-review.md",
-      "target_path": ".claude/skills/code-review/references/multi-agent-review.md",
-      "sha256": "acf6ea32648a7b91e63939beec81f31a221f04154d08267920bab9356620818d",
-      "bytes": 4428
+      "source_path": "agents/skills/author-spec/references/studio-principles.md",
+      "target_path": ".claude/skills/author-spec/references/studio-principles.md",
+      "sha256": "961bf1afebe58721da31a4afb214b70a0418f8fe5fd59b385122f1c5f95d974c",
+      "bytes": 1443
     },
     {
       "kind": "skill",
-      "source_path": "agents/skills/code-review/SKILL.md",
-      "target_path": ".claude/skills/code-review/SKILL.md",
-      "sha256": "aab621804f082b95b3e34e44e52b76e3e088ce11aa9cd53ed403ee923c0bb4b9",
-      "bytes": 9813
+      "source_path": "agents/skills/author-spec/SKILL.md",
+      "target_path": ".claude/skills/author-spec/SKILL.md",
+      "sha256": "307f575aaaeac925f1fee0a047b406865675c64789e99780d92e701ccaea5abb",
+      "bytes": 16957
     },
     {
       "kind": "skill",
       "source_path": "agents/skills/cross-agent-cli-invocation/SKILL.md",
       "target_path": ".claude/skills/cross-agent-cli-invocation/SKILL.md",
-      "sha256": "8b3bea1b61d8cc9b6349db6417bedb2a2949e5caa6d07c737acdcc0f35005479",
-      "bytes": 9547
+      "sha256": "5c6d16469337586e31015850626280f6cc0819773c91a1fa2d5fc7bea05b3d79",
+      "bytes": 9551
+    },
+    {
+      "kind": "skill-reference",
+      "source_path": "agents/skills/decompose-approved-spec/references/cross-validation-lanes.md",
+      "target_path": ".claude/skills/decompose-approved-spec/references/cross-validation-lanes.md",
+      "sha256": "81d0729bb0561674b3998a238bd3df32fb5cbfc2a1a730cf42d756f787ad8b47",
+      "bytes": 2544
+    },
+    {
+      "kind": "skill",
+      "source_path": "agents/skills/decompose-approved-spec/SKILL.md",
+      "target_path": ".claude/skills/decompose-approved-spec/SKILL.md",
+      "sha256": "8dd74b5426b7b42e5843ae5d737bc43b38d73c1f97db81f1fe7a3b628fd9bf1b",
+      "bytes": 11957
     },
     {
       "kind": "skill",
@@ -1190,15 +1116,22 @@
       "kind": "skill",
       "source_path": "agents/skills/evidence-cluster/SKILL.md",
       "target_path": ".claude/skills/evidence-cluster/SKILL.md",
-      "sha256": "2f76a683e7ec29a99d20920fa42276e5cbcc066d04a389c75621bf5f8ea6c7fc",
+      "sha256": "7b0c4e1fad033817478822e29c87dffda9d1e43618b3c917baf0f99fe7346433",
       "bytes": 4306
+    },
+    {
+      "kind": "skill",
+      "source_path": "agents/skills/execute-spec/SKILL.md",
+      "target_path": ".claude/skills/execute-spec/SKILL.md",
+      "sha256": "f5d36c9ef92c0ca386a20f8f7856f0123da342462d3c24bb4f23efcf425dd812",
+      "bytes": 3131
     },
     {
       "kind": "skill",
       "source_path": "agents/skills/execution-discipline-cluster/SKILL.md",
       "target_path": ".claude/skills/execution-discipline-cluster/SKILL.md",
-      "sha256": "8efe579d1f1a06d6904b950734fa45134d3f9fab2e72f485e0c695b799b058fe",
-      "bytes": 9689
+      "sha256": "d06591aeedc045a374b9ed4c22fe899d1b4de7023b2b49c201148d92624dd0d8",
+      "bytes": 9677
     },
     {
       "kind": "skill",
@@ -1209,101 +1142,94 @@
     },
     {
       "kind": "skill",
-      "source_path": "agents/skills/implementation-execution/SKILL.md",
-      "target_path": ".claude/skills/implementation-execution/SKILL.md",
-      "sha256": "1c8a5f631c928fb0202a79fb8d8e1129dab7adf24ca6e55bdaa8f290137dee0f",
-      "bytes": 3147
+      "source_path": "agents/skills/idea-capture/SKILL.md",
+      "target_path": ".claude/skills/idea-capture/SKILL.md",
+      "sha256": "d093221eff12e61ff20a84f5765619a8c16de8ca39336a5bffa3ce84495ed3a0",
+      "bytes": 3762
     },
     {
       "kind": "skill",
-      "source_path": "agents/skills/repo-orientation/SKILL.md",
-      "target_path": ".claude/skills/repo-orientation/SKILL.md",
-      "sha256": "3d405023c06e4e078411cbe22d99dc370aa4b6cec7b69a56fa39dc38a7274bfb",
-      "bytes": 3094
+      "source_path": "agents/skills/orient/SKILL.md",
+      "target_path": ".claude/skills/orient/SKILL.md",
+      "sha256": "07a9843752a46b5fe029291eceae3ca6474d98e0090eb7cdd66853fd061b5bad",
+      "bytes": 3084
     },
     {
       "kind": "skill-reference",
-      "source_path": "agents/skills/spec-authoring/references/reference-architecture.md",
-      "target_path": ".claude/skills/spec-authoring/references/reference-architecture.md",
-      "sha256": "50a2283f258eb690cd07e26d9e0b584cffb00f879c08565ae3a2dca563f49d7a",
-      "bytes": 3135
-    },
-    {
-      "kind": "skill-reference",
-      "source_path": "agents/skills/spec-authoring/references/studio-principles.md",
-      "target_path": ".claude/skills/spec-authoring/references/studio-principles.md",
-      "sha256": "c82ca7df2aaf08087a51228bbf07cd65cbb45c0a37a3378da40843e423466cce",
-      "bytes": 1443
+      "source_path": "agents/skills/review-diff/references/multi-agent-review.md",
+      "target_path": ".claude/skills/review-diff/references/multi-agent-review.md",
+      "sha256": "e92dfe6a0a8adc36c3d8290ff46e0b1d5aca844a637c4d5855a1d6fde7f99bbc",
+      "bytes": 4428
     },
     {
       "kind": "skill",
-      "source_path": "agents/skills/spec-authoring/SKILL.md",
-      "target_path": ".claude/skills/spec-authoring/SKILL.md",
-      "sha256": "4e5b2499bb70bad23d13ce9ce3227d23e8968eae872d3602b4f52582395cd07e",
-      "bytes": 16984
+      "source_path": "agents/skills/review-diff/SKILL.md",
+      "target_path": ".claude/skills/review-diff/SKILL.md",
+      "sha256": "2168887080af94480ba3e7af467973603db22a82dfe838d57c0cf2c42ea74017",
+      "bytes": 10432
+    },
+    {
+      "kind": "skill-reference",
+      "source_path": "agents/skills/review-spec/references/per-type-gates.md",
+      "target_path": ".claude/skills/review-spec/references/per-type-gates.md",
+      "sha256": "5cc480bf8e82ed5081fcac15bfe160b4f707b84ff20174a98e5aa21bb4180770",
+      "bytes": 4943
+    },
+    {
+      "kind": "skill",
+      "source_path": "agents/skills/review-spec/SKILL.md",
+      "target_path": ".claude/skills/review-spec/SKILL.md",
+      "sha256": "1564a49a1e57e6341afccc19d04656ad90f8531fc1889058f95bcdad186be345",
+      "bytes": 11992
     },
     {
       "kind": "skill-reference",
       "source_path": "agents/skills/spec-driven-development/references/capture-after-and-fastpath.md",
       "target_path": ".claude/skills/spec-driven-development/references/capture-after-and-fastpath.md",
-      "sha256": "55d8e4724c43c34e9a5cf4ed7c75d19889e2e2084c9b49236ef33b329e7fe576",
-      "bytes": 2313
+      "sha256": "1d40692d4497c556f1adb414befdc8a49f816c108ee9e2564d0915a7983054cd",
+      "bytes": 2349
     },
     {
       "kind": "skill-reference",
       "source_path": "agents/skills/spec-driven-development/references/cascade-by-id-citation.md",
       "target_path": ".claude/skills/spec-driven-development/references/cascade-by-id-citation.md",
-      "sha256": "921a8e4e780d4075a24864ba9223f25a408e71a288a4c89cbe24a6aa643acb0d",
+      "sha256": "ff4b9be53110ea1d31526858e9e946ad1d49330af97dfc16be244a41af1435aa",
       "bytes": 1135
     },
     {
       "kind": "skill-reference",
       "source_path": "agents/skills/spec-driven-development/references/lifecycle-router.md",
       "target_path": ".claude/skills/spec-driven-development/references/lifecycle-router.md",
-      "sha256": "1e0cef7475a9a616fec7000f337f67f7ca4d4b4ad116d9d5be9cc2b6cd5352ee",
-      "bytes": 3618
+      "sha256": "d0f909a9abd14c13c96d3ead2831dd431068ae72ff429fa241031def5d0b5d59",
+      "bytes": 3604
     },
     {
       "kind": "skill",
       "source_path": "agents/skills/spec-driven-development/SKILL.md",
       "target_path": ".claude/skills/spec-driven-development/SKILL.md",
-      "sha256": "08746753bdb82422e25ae90aba88106ad6eba59277f3d633e6435a37ad90a0b9",
-      "bytes": 4077
+      "sha256": "77283c12a61cc37f016e80e007b9be63fc32f684b3306c5c4686e1e02d3a8831",
+      "bytes": 4043
     },
     {
       "kind": "skill",
-      "source_path": "agents/skills/spec-evidence-governance/SKILL.md",
-      "target_path": ".claude/skills/spec-evidence-governance/SKILL.md",
-      "sha256": "86474927cc342a805690a7afe617300c0c124e13cd590d0f88b7044ca12db521",
-      "bytes": 1774
-    },
-    {
-      "kind": "skill-reference",
-      "source_path": "agents/skills/spec-review/references/per-type-gates.md",
-      "target_path": ".claude/skills/spec-review/references/per-type-gates.md",
-      "sha256": "1663fe260f7a230f0f153232f71f3bae620b57a0f22b3fc4b856bd5726ed27ef",
-      "bytes": 4946
-    },
-    {
-      "kind": "skill",
-      "source_path": "agents/skills/spec-review/SKILL.md",
-      "target_path": ".claude/skills/spec-review/SKILL.md",
-      "sha256": "559fd353549d7e151e121561d45a7f2f7ee34701790f984912c53ada43c6158b",
-      "bytes": 11995
+      "source_path": "agents/skills/spec-evidence/SKILL.md",
+      "target_path": ".claude/skills/spec-evidence/SKILL.md",
+      "sha256": "bcaed5c67f785762600a390ddac673fb65e9eeeab9e9263d3dde115d1514ba67",
+      "bytes": 1949
     },
     {
       "kind": "skill",
       "source_path": "agents/skills/tdd/SKILL.md",
       "target_path": ".claude/skills/tdd/SKILL.md",
-      "sha256": "4796d9e05234f0126d0acecd74da4355d0931802910a737e2345ce2e715c508e",
-      "bytes": 3748
+      "sha256": "9b44a0372c62628b6c41e9edeafe6cbb7d89ad8d97dcb40fc48b1dc36a94eac4",
+      "bytes": 3736
     },
     {
       "kind": "skill",
-      "source_path": "agents/skills/verification/SKILL.md",
-      "target_path": ".claude/skills/verification/SKILL.md",
-      "sha256": "81577f31d1548b9147db99a355f8e56e934bf813a57a2d772ee643c762579133",
-      "bytes": 5610
+      "source_path": "agents/skills/verify-spec/SKILL.md",
+      "target_path": ".claude/skills/verify-spec/SKILL.md",
+      "sha256": "3edc016d8ce692e481255ccc96f661c5bde4307c80625dc52f1831f44a5a4891",
+      "bytes": 5609
     },
     {
       "kind": "githook",

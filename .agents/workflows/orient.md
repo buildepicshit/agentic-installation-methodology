@@ -1,6 +1,4 @@
 # Orient
 
-Single source: the `/orient` slash-command
-(`.claude/commands/orient.md`) is the invocation surface; the
-`repo-orientation` skill (`agents/skills/repo-orientation/SKILL.md`)
-owns the mechanics.
+Single source: `/orient` is served by the `orient` skill
+(`agents/skills/orient/SKILL.md`), which owns the mechanics.

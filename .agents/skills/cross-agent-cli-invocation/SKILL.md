@@ -79,7 +79,7 @@ The executable resolves as bare `copilot` when on PATH, else the
 
 ```bash
 gh copilot -- -p "$(cat specs/<id>/reviews/PROMPT.md)" \
-  --model gpt-5.5 \
+  --model gpt-5.6-sol \
   -s \
   --no-custom-instructions \
   --disable-builtin-mcps \
@@ -122,7 +122,7 @@ repos). You can dry-run a proposed invocation yourself:
 
 ```bash
 bash agents/scripts/validate-cli-invocation.sh \
-  'gh copilot -- -p "p" --model gpt-5.5 --no-custom-instructions --disable-builtin-mcps < /dev/null'
+  'gh copilot -- -p "p" --model gpt-5.6-sol --no-custom-instructions --disable-builtin-mcps < /dev/null'
 ```
 
 Exit codes:
@@ -186,7 +186,7 @@ do NOT apply to them.
 
 For subagent dispatch patterns see
 `file://agents/MODEL_ROUTING.md` (model and agent selection) and
-`file://agents/skills/approved-spec-decomposition/SKILL.md`
+`file://agents/skills/decompose-approved-spec/SKILL.md`
 (TASK.md dispatch shape).
 
 ## Hard Rules

@@ -1,6 +1,6 @@
 ---
 name: tdd
-description: "Use when implementing a behavior change (feature, bug fix) where a runnable test can describe the expected behavior. Write the check first (red), implement (green), refactor. Do not use for refactors that preserve behavior — use implementation-execution alone."
+description: "Use when implementing a behavior change (feature, bug fix) where a runnable test can describe the expected behavior. Write the check first (red), implement (green), refactor. Do not use for refactors that preserve behavior — use execute-spec alone."
 license: unknown
 compatibility:
   - copilot

@@ -19,8 +19,8 @@ ideated_in: specs/<id>/IDEA.md
 > below are REQUIRED for every spec. All other sections are OPTIONAL —
 > include the ones that carry weight for THIS change and delete the rest.
 > `type` only flavours which optional sections are worth keeping; it no
-> longer selects a template. For ≤1-file / ≤50-line / reversible /
-> owner-directed work, use `SPEC.fastpath.template.md` instead.
+> longer selects a template. For ≤5-file / ≤300-line / reversible work with
+> NO manifest-carried touch points, use `SPEC.fastpath.template.md` instead.
 
 <!-- ============================ CORE (required) ============================ -->
 

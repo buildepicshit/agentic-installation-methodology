@@ -667,9 +667,9 @@ EOF
     # T60-T66: copilot lane cases per
     # specs/2026-06-05-copilot-cli-cross-validation-lane/SPEC.md §8.
     run_case "T60-copilot-well-formed" \
-        'copilot -p "review the diff and report issues" --model gpt-5.5 -s --no-custom-instructions --disable-builtin-mcps --deny-tool write --deny-tool shell < /dev/null' 0
+        'copilot -p "review the diff and report issues" --model gpt-5.6-sol -s --no-custom-instructions --disable-builtin-mcps --deny-tool write --deny-tool shell < /dev/null' 0
     run_case "T61-gh-copilot-wrapper-well-formed" \
-        'gh copilot -- -p "review the diff and report issues" --model gpt-5.5 -s --no-custom-instructions --disable-builtin-mcps --deny-tool write --deny-tool shell < /dev/null' 0
+        'gh copilot -- -p "review the diff and report issues" --model gpt-5.6-sol -s --no-custom-instructions --disable-builtin-mcps --deny-tool write --deny-tool shell < /dev/null' 0
     run_case "T62-copilot-model-auto-blocked" \
         'copilot -p "p" --model auto' 2
     run_case "T63-gh-copilot-model-auto-blocked" \

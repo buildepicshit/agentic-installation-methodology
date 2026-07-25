@@ -149,7 +149,7 @@ the boundary via a runtime validator
 ## Manual-review-only standards (not mechanically enforced)
 
 These ride on top of the mechanical layer; reviewers
-flag violations during `code-review`:
+flag violations during `review-diff`:
 
 - **Naming quality** beyond min-length (semantic
   appropriateness).

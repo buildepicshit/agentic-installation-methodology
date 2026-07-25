@@ -14,12 +14,22 @@ ideated_in: null
 
 <!--
 Fast-path SPEC template. Use ONLY when ALL fast-path thresholds are
-met: <= 1 file changed, <= 50 insert/delete lines, one component, no
+met: <= 5 files changed, <= 300 insert/delete lines, one component, no
 public-contract impact, no persisted-state impact, reversible in one
-commit, explicit owner directive, and no cross-session compounding
-risk. If your work exceeds any threshold, escalate to a full task /
-contract / decision SPEC via the standard `/idea-capture` ->
+commit, no cross-session compounding risk, and **NO manifest-carried
+touch points**. If your work exceeds any threshold, escalate to a full
+task / contract / decision SPEC via the standard `/idea-capture` ->
 `/author-spec` flow.
+
+The manifest-carried threshold is LOAD-BEARING, not hygiene. Fastpath
+lands at `status: closed` and so passes through NEITHER Rule 20 gate
+(`approved-pending-owner` and `verified`). Without this threshold a
+fleet-propagating guardrail change could reach every child repo with no
+cross-family review at all. Grep the touch points against
+`agents/scripts/fleet-{files,hooks,skills,commands}.txt`: any hit means
+this template is the wrong template. Added 2026-07-24 after a
+cross-family reviewer traced the bypass
+(`file://specs/2026-07-24-lifecycle-lean-execution/SPEC.md` §8).
 
 Fast-path SPECs use the **capture-after** pattern by default
 (`file://agents/skills/spec-driven-development/SKILL.md`
@@ -30,8 +40,9 @@ as the work itself, never later.
 
 NO ceremony: no IDEA artefact, no blocking review gate, no
 decomposition, no cross-validation lane (covered by the work
-itself being small enough to be reviewed inline). Owner approval
-is the inline commit message.
+itself being small enough to be reviewed inline, AND by guardrail
+paths being excluded outright). Owner approval is the inline commit
+message.
 
 Fast-path SPECs MUST cite their authorising owner directive in §3.
 -->
@@ -45,7 +56,7 @@ owner message that surfaced it.]
 
 ## 2. Files changed
 
-[List the files touched. Single component, ≤ 1 file or ≤ 50 lines
+[List the files touched. Single component, ≤ 5 files, ≤ 300 lines,
 total. If this list exceeds the threshold, this SPEC is wrong-typed
 — rewrite as task/contract.]
 

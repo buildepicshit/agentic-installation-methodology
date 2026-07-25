@@ -90,7 +90,6 @@ function listMarkdownFiles(absDir) {
 const manifests = {
   fleet_files: readManifest("agents/scripts/fleet-files.txt"),
   fleet_skills: readManifest("agents/scripts/fleet-skills.txt"),
-  fleet_commands: readManifest("agents/scripts/fleet-commands.txt"),
   fleet_hooks: readManifest("agents/scripts/fleet-hooks.txt"),
   fleet_hook_fixtures: readManifest("agents/scripts/fleet-hook-fixtures.txt"),
 };
@@ -102,15 +101,8 @@ for (const file of manifests.fleet_files) {
   entries.push(entry("agents-file", `agents/${file}`, `.agents/${file}`));
 }
 
-for (const command of manifests.fleet_commands) {
-  entries.push(
-    entry(
-      "command",
-      `.claude/commands/${command}.md`,
-      `.claude/commands/${command}.md`,
-    ),
-  );
-}
+// Slash-commands retired 2026-07-24: they are skills now, so the "command"
+// entry class no longer exists. See specs/2026-07-24-command-skill-collapse.
 
 for (const skill of manifests.fleet_skills) {
   entries.push(

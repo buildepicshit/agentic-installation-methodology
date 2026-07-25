@@ -1,6 +1,6 @@
 ---
 name: evidence-cluster
-description: "Use during code authoring + spec-review. Four practices bundled: (1) impact-aware test selection — run tests the changed files transitively reach, not just the ones you wrote; (2) anti-over-mock cue — no mocks outside test files; (3) complexity-delta gate during review — measure lines vs behaviour; (4) dual-reader ambiguity probe at SPEC review — second reviewer asks 'what does this permit/forbid that disagrees'."
+description: "Use during code authoring + review-spec. Four practices bundled: (1) impact-aware test selection — run tests the changed files transitively reach, not just the ones you wrote; (2) anti-over-mock cue — no mocks outside test files; (3) complexity-delta gate during review — measure lines vs behaviour; (4) dual-reader ambiguity probe at SPEC review — second reviewer asks 'what does this permit/forbid that disagrees'."
 license: internal-only
 compatibility:
   - copilot
@@ -120,5 +120,5 @@ surface, not the implementation.
 ## Cross-references
 
 Host skills per practice: `tdd` (impact-aware selection),
-`code-review` (complexity-delta), `spec-review` (ambiguity probe),
+`review-diff` (complexity-delta), `review-spec` (ambiguity probe),
 `execution-discipline-cluster` (tool receipts).
