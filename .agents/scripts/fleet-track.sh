@@ -183,18 +183,39 @@ set_tracker_ref() {  # set_tracker_ref <spec> <value>
     fi
 }
 
-find_issue() {  # find_issue <repo> <title-prefix>  -> url or empty
-    gh issue list --repo "$1" --state all --search "$2 in:title" \
-        --json title,url --limit 100 2>/dev/null \
+# find_issue <repo> <title-prefix> [require-label]  -> url or empty
+#
+# The parent MUST be looked up with require-label=fleet-tracked. Prefix alone
+# is NOT an identity key for the parent: every sub-issue title also starts with
+# "[<spec_id>]", results come back newest-first, so a prefix-only lookup
+# returned the most recent CHILD as the parent and wrote a sub-issue URL into
+# tracker_ref. Only the parent carries the label, so the label is the key.
+find_issue() {
+    local repo="$1" prefix="$2" want_label="${3:-}"
+    gh issue list --repo "$repo" --state all --search "$prefix in:title" \
+        --json title,url,labels --limit 100 2>/dev/null \
       | python3 -c '
 import json,sys
 try: rows = json.load(sys.stdin)
 except Exception: sys.exit(0)
-p = sys.argv[1]
+prefix = sys.argv[1]; want = sys.argv[2]
 for r in rows:
-    if r.get("title","").startswith(p):
-        print(r["url"]); break
-' "$2" 2>/dev/null
+    if not r.get("title","").startswith(prefix):
+        continue
+    if want:
+        if want not in [l.get("name") for l in (r.get("labels") or [])]:
+            continue
+    print(r["url"]); break
+' "$prefix" "$want_label" 2>/dev/null
+}
+
+# `gh issue create --label X` FAILS OUTRIGHT when X does not exist, which took
+# down parent creation on the very first live run. Create it idempotently and
+# never let the attempt itself fail the caller.
+ensure_label() {  # ensure_label <repo>
+    gh label create fleet-tracked --repo "$1" \
+        --color 0E8A16 --description "Tier 2 work-visibility tracker (fleet)" \
+        >/dev/null 2>&1 || true
 }
 
 phase2() {  # phase2 <spec_path>
@@ -207,7 +228,8 @@ phase2() {  # phase2 <spec_path>
 
     prefix="[$SPEC_ID]"
     title=$(awk '/^# /{sub(/^# /,""); print; exit}' "$spec")
-    parent=$(find_issue "$TARGET" "$prefix")
+    ensure_label "$TARGET"
+    parent=$(find_issue "$TARGET" "$prefix" fleet-tracked)
     if [[ -z "$parent" ]]; then
         parent=$(gh issue create --repo "$TARGET" \
                    --title "$prefix $title" \
@@ -235,7 +257,18 @@ Acceptance criteria live in the SPEC §4." 2>/dev/null) || parent=""
                     --body "Slice of $parent" \
                     --parent "$parent" 2>/dev/null) || url=""
         fi
-        [[ -z "$url" ]] && { unresolved+=("$u_id"); warn "unit $u_id ($u_repo) unresolved"; }
+        if [[ -z "$url" ]]; then
+            # Distinguish "has no GitHub remote" (permanent and expected —
+            # bes-fleet-runtime is local-only) from "failed this time" (retryable).
+            # Reporting the first as unresolved would emit a warning on every run
+            # forever, and a warning that always fires teaches readers to ignore
+            # warnings — the dead-gate lesson from the 2026-07-24 audit.
+            if gh api "repos/$u_repo" --jq '.name' >/dev/null 2>&1; then
+                unresolved+=("$u_id"); warn "unit $u_id ($u_repo) unresolved — retry"
+            else
+                warn "unit $u_id ($u_repo) has no GitHub remote — no issue possible (expected)"
+            fi
+        fi
     done < "$UNITS_FILE"
 
     set_tracker_ref "$spec" "$parent"
@@ -325,6 +358,32 @@ self_test() {
       phase2 "$tmp/deg.md" >/dev/null 2>&1 )
     ck "degrade: gh absent exits 0" 0 "$?"
     ck "degrade: wrote pending" "pending" "$(fm_field "$tmp/deg.md" tracker_ref)"
+
+    # --- parent lookup MUST NOT match a sub-issue (live regression, 2026-07-26)
+    # Sub-issue titles also start with "[<spec_id>]" and gh returns newest-first,
+    # so a prefix-only lookup picked the most recent CHILD as the parent and
+    # wrote a sub-issue URL into tracker_ref. Only the parent carries the label.
+    local fixture='[{"number":17,"title":"[X] T-07","url":"u/child","labels":[]},
+                    {"number":10,"title":"[X] Bundle","url":"u/parent","labels":[{"name":"fleet-tracked"}]}]'
+    local pick_labelled pick_plain
+    pick_labelled=$(printf '%s' "$fixture" | python3 -c '
+import json,sys
+rows=json.load(sys.stdin); prefix=sys.argv[1]; want=sys.argv[2]
+for r in rows:
+    if not r.get("title","").startswith(prefix): continue
+    if want and want not in [l.get("name") for l in (r.get("labels") or [])]: continue
+    print(r["url"]); break
+' '[X]' 'fleet-tracked')
+    pick_plain=$(printf '%s' "$fixture" | python3 -c '
+import json,sys
+rows=json.load(sys.stdin); prefix=sys.argv[1]; want=sys.argv[2]
+for r in rows:
+    if not r.get("title","").startswith(prefix): continue
+    if want and want not in [l.get("name") for l in (r.get("labels") or [])]: continue
+    print(r["url"]); break
+' '[X]' '')
+    ck "parent lookup: label filter finds the parent" "u/parent" "$pick_labelled"
+    ck "parent lookup: prefix alone WOULD pick a child" "u/child" "$pick_plain"
 
     printf '\n=== fleet-track self-test: %d pass / %d fail ===\n' "$st_pass" "$st_fail"
     [[ "$st_fail" -eq 0 ]]

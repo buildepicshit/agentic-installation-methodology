@@ -1,9 +1,9 @@
 {
   "schema_version": 1,
-  "generated_at": "2026-07-27T03:56:44.558Z",
+  "generated_at": "2026-07-27T04:14:05.770Z",
   "source": {
     "repo": "bes-fleet-policy",
-    "commit": "6a08f8d91f3039d90c065fe92a26d2f21ffdc9e0",
+    "commit": "fa784c6ae29de443f9a101231b1a8a0911bd056b",
     "dirty": true
   },
   "manifests": {
@@ -79,6 +79,7 @@
       "scripts/audit-entry-docs.sh",
       "scripts/audit-hook-decisions.sh",
       "scripts/fleet-track.sh",
+      "scripts/audit-tracker-drift.sh",
       "skills/decompose-approved-spec/SKILL.md",
       "skills/diagnosis/SKILL.md",
       "skills/tdd/SKILL.md",
@@ -367,6 +368,13 @@
     },
     {
       "kind": "agents-file",
+      "source_path": "agents/scripts/audit-tracker-drift.sh",
+      "target_path": ".agents/scripts/audit-tracker-drift.sh",
+      "sha256": "7877b6782343b42aee3cdd91b070f72765f74af4c888619918c187df0599a9a1",
+      "bytes": 7643
+    },
+    {
+      "kind": "agents-file",
       "source_path": "agents/scripts/fleet-ci-oss-enabled.txt",
       "target_path": ".agents/scripts/fleet-ci-oss-enabled.txt",
       "sha256": "782cdcb9209e821543e7f5d4590a058bfb9ea285089fc5b0b322f6cdc2c9aa05",
@@ -439,8 +447,8 @@
       "kind": "agents-file",
       "source_path": "agents/scripts/fleet-track.sh",
       "target_path": ".agents/scripts/fleet-track.sh",
-      "sha256": "6d509e6d8cfec1f0c1e39e7aae0d1304f8fe46e8b815b34d8a5206eef4c6663d",
-      "bytes": 16147
+      "sha256": "666f5ea8b9719894d3777d5e7df03cb74ae4b9bda5f96c76b003a160b387a94d",
+      "bytes": 19272
     },
     {
       "kind": "agents-file",
