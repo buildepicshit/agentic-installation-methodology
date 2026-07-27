@@ -127,6 +127,52 @@ if [[ "$ARTEFACT" == "spec" && "$TYPE" != "fastpath" && $OWNER_SEALED -eq 0 ]]; 
     fi
 fi
 
+# ---------- tracker_ref: form + the >3-slice arm of the Tier 2 trigger ------
+# Schema §1.2 makes tracker_ref CONDITIONAL: REQUIRED on a tracked bundle
+# (OPERATING_MODEL "Work visibility"). Cross-family gate 2 correctly refused
+# the schema-only version of this field as "prose-only" — a guardrail that
+# lint cannot check is a guardrail an author can forget.
+#
+# MECHANICAL SCOPE, stated honestly: only the >3-slice arm of the §7.2 trigger
+# is enforced here, because slice count is objectively countable from the
+# Execution Plan. The "manifest-carried AND >=2 tracked units" arm needs the
+# touch-point expansion that `fleet-track.sh` performs and is NOT yet enforced
+# — it stays advisory until that helper lands (slice 3). Do not read a clean
+# lint as proof a bundle is correctly tracked.
+# Authority: file://specs/2026-07-26-agent-work-tracking-surface/SPEC.md §7.2
+if [[ "$ARTEFACT" == "spec" && "$TYPE" != "fastpath" ]]; then
+    tr_raw="${FM[tracker_ref]:-}"
+    tr_raw="${tr_raw%"${tr_raw##*[![:space:]]}"}"   # trim trailing whitespace
+    if [[ -n "$tr_raw" \
+       && "$tr_raw" != "pending" \
+       && ! "$tr_raw" =~ ^https://github\.com/[A-Za-z0-9._-]+/[A-Za-z0-9._-]+/issues/[0-9]+$ ]]; then
+        emit_err "front-matter" "$fm_end" "tracker_ref '$tr_raw' must be a GitHub issue URL or the literal 'pending' (schema §1.2)"
+    fi
+    # Count slices under an Execution Plan heading.
+    #
+    # Round-2 review defeated the first version three ways: it counted numbered
+    # lines inside fenced code blocks (false REQUIRE on a SPEC whose plan quotes
+    # a numbered example), it missed plans written as bullets or as `### T-NN`
+    # sub-headings (false PASS), and it missed combined headings like the
+    # unified template's "Reality Check · Interfaces / Files · Execution Plan".
+    # So: strip fenced regions first, match the heading anywhere on the line,
+    # and take the MAX across the three legal shapes rather than summing them
+    # (summing would double-count a plan that numbers AND sub-heads its slices).
+    slice_count=$(awk '
+        /^[[:space:]]*(```|~~~)/ { fence = !fence; next }
+        fence                    { next }
+        /^##+[[:space:]].*Execution Plan/ { inplan=1; next }
+        inplan && /^##+[[:space:]]/       { inplan=0 }
+        inplan && /^[0-9]+\.[[:space:]]/            { num++ }
+        inplan && /^###+[[:space:]]/                { head++ }
+        inplan && /^[-*][[:space:]]+\*\*/           { bul++ }
+        END { m = num; if (head > m) m = head; if (bul > m) m = bul; print m+0 }
+    ' "$TARGET")
+    if [[ "$slice_count" -gt 3 && -z "$tr_raw" && $OWNER_SEALED -eq 0 ]]; then
+        emit_err "front-matter" "$fm_end" "tracker_ref REQUIRED: Execution Plan names $slice_count slices (>3), which is a tracked bundle (OPERATING_MODEL 'Work visibility')"
+    fi
+fi
+
 # ---------- Fastpath may NEVER carry guardrail paths (mechanical) ----------
 # Fastpath lands at `status: closed`, so it passes through NEITHER Rule 20 gate
 # (`approved-pending-owner`, `verified`). Prose alone therefore cannot hold this

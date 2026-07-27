@@ -11,8 +11,14 @@ this body; the body itself is fleet-uniform.
 This file is the **per-repo engagement contract**, not a setup
 checklist. It applies to every agent operating in this repo
 regardless of dispatch surface; Section 1 below is the whole
-contract. **The fleet uses no external tracker or dispatcher — do
-not install one; none is configured.** Use the v1 SPEC procedure via
+contract. **The fleet uses no external DISPATCHER — nothing may own
+scheduling or assignment of fleet work; do not install one.** Tracking
+is different and is REQUIRED: keep the harness task list current during
+every `execute-spec` run (fastpath and trivial work are exempt), and
+carry a GitHub issue tree only when the exact trigger in
+`.agents/OPERATING_MODEL.md` "Work visibility" is met — manifest-carried
+AND ≥2 tracked units, OR more than three slices, OR owner-directed. Do
+not hold execution state only in context. Use the v1 SPEC procedure via
 the `/idea-capture`, `/author-spec`, `/review-spec`, `/execute-spec`,
 `/verify-spec` slash-commands (see
 `.agents/skills/spec-driven-development/SKILL.md`). For small

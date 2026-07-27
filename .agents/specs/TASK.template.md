@@ -10,6 +10,7 @@ mode: HITL
 deps: []
 write_scope: disjoint
 acceptance_commands: []
+tracker_ref: pending   # slice sub-issue URL; delete this line if the parent bundle is untracked
 ---
 
 <!--

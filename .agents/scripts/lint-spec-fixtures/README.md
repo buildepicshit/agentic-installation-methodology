@@ -8,6 +8,7 @@ SPEC. The lint script is run against each file and exit code asserted.
 | `good-task.md` | `0` | Minimal valid Task SPEC. Front-matter complete, all §9.2 sections present, every claim cites a source per `agents/specs/SPEC.schema.md` §2. |
 | `bad-uncited.md` | `1` | Same shape as `good-task.md` but two paragraphs in §1 and §5 omit any citation prefix. Exercises SPEC §19 T10. |
 | `bad-missing-section.md` | `1` | Same shape as `good-task.md` but the `## 14. Acceptance Criteria` section is removed. Exercises SPEC §19 T11. |
+| `bad-untracked-bundle.md` | `1` | Same shape as `good-task.md`, with an Execution Plan naming four slices and no `tracker_ref`. Exercises the Tier 2 tracked-bundle rule (`agents/OPERATING_MODEL.md` "Work visibility"). |
 
 Authority: `specs/2026-05-01-bes-spec-authoring-procedure-v1/SPEC.md`
 §10.5 (lint requirements), §19 T09–T11 (test cases).

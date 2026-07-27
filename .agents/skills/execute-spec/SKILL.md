@@ -33,6 +33,19 @@ Use only after a spec is approved by the owner or controlling workflow.
 
 ## Steps
 
+0. **Open the task list before the first edit.** Maintain the harness's
+   native task list, one item per Execution Plan step, marked
+   in-progress as you start each and complete as you finish. This is
+   Tier 1 of `.agents/OPERATING_MODEL.md` "Work visibility" and is NOT
+   optional: execution state held only in context is invisible to the
+   owner and lost at session end.
+
+   Then run the Tier 2 helper, which self-exits for untracked work:
+   `bash .agents/scripts/fleet-track.sh <spec_path>` in a child repo, or
+   `bash agents/scripts/fleet-track.sh <spec_path>` in `bes-fleet-policy`.
+   It is repo-relative and never on `$PATH`. If the script is absent,
+   skip it and note that in the Completion Report — it MUST NOT block
+   execution.
 1. Re-read the approved `SPEC.md`.
 2. Re-read the repo `AGENTS.md` and relevant docs.
 3. Confirm branch/worktree state with `git status --short --branch`.
@@ -45,9 +58,11 @@ Use only after a spec is approved by the owner or controlling workflow.
    split vertical HITL/AFK slices before dispatching workers. Slices
    remain subordinate to SPEC.md.
 8. If the approved scope calls for a prototype, make it explicitly
-   throwaway: answer one question, keep state in memory by default,
-   provide one command to run it, and delete or absorb it before
-   completion.
+   throwaway: answer one question, hold ITS OWN runtime state in memory
+   rather than persisting anything, provide one command to run it, and
+   delete or absorb it before completion. This concerns the prototype's
+   data, never your execution state — that is governed by step 0 and
+   MUST be on the task list regardless.
 9. Add or update tests before or with production changes when behavior
    changes and the approved spec's verification method supports it.
 10. Keep unrelated refactors out of scope.

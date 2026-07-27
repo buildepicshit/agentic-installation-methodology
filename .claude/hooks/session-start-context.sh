@@ -14,6 +14,7 @@
 # Always exits 0. Stdout is emitted as Markdown for context injection.
 
 set -uo pipefail
+PAYLOAD=$(cat 2>/dev/null || true)
 
 # Drain stdin defensively (Claude Code passes a JSON envelope).
 cat >/dev/null 2>&1 || true
@@ -101,5 +102,14 @@ printf 'Norm: on any load-bearing knowledge gap, research it from primary source
 
 # Hint to read the full state if it changes the agent's plan.
 printf 'For full state read `STATUS.md` and `AGENTS.md`. For active SPEC read its body and §17 Completion Report.\n'
+
+# Seed the journal-exit-gate baseline for this session (SPEC 2026-07-26-journal-exit-gate).
+# Written ONLY when absent for this session id: settings.json matches
+# startup|clear|compact, so a compaction re-fires this hook mid-session and a
+# blind rewrite would fold pre-compaction work into a fresh baseline and
+# silently allow it.
+if [ -x "${CLAUDE_PROJECT_DIR:-.}/.claude/hooks/block-journal-skip.sh" ]; then
+    printf '%s' "$PAYLOAD" | SEED_ONLY=1 "${CLAUDE_PROJECT_DIR:-.}/.claude/hooks/block-journal-skip.sh" >/dev/null 2>&1 || true
+fi
 
 exit 0
