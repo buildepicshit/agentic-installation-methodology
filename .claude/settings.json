@@ -1,6 +1,6 @@
 {
   "$schema": "https://json.schemastore.org/claude-code-settings.json",
-  "$comment": "Fleet baseline shared settings. MOST Bash hooks use the `if` field with permission-rule syntax so triggers match Claude Code's command parser instead of regex on raw text. ONE self-classifying hook (block-bad-cli-invocation) plus the advisory warn-security-surface are intentionally wired UN-GATED on the Bash matcher (no `if`): they fail-open cheaply and MUST see wrapped forms a name-prefixed matcher would miss (timeout/env/VAR=val prefixes) — prefilter breadth >= classifier breadth (SE-2, 2026-07-01-hook-guardrail-hardening). block-undeclared-deps stays GATED on package-manager prefixes (un-gating it false-positived on manifest strings in quoted args — 2026-07-10 cross-family review). Per-repo permissions belong in .claude/settings.local.json (gitignored). Hook commands MUST use ${CLAUDE_PROJECT_DIR} so they resolve from the project root regardless of subprocess cwd drift.",
+  "$comment": "Fleet baseline shared settings. MOST Bash hooks use the `if` field with permission-rule syntax so triggers match Claude Code's command parser instead of regex on raw text. ONE self-classifying hook (block-bad-cli-invocation) plus the advisory warn-security-surface are intentionally wired UN-GATED on the Bash matcher (no `if`): they fail-open cheaply and MUST see wrapped forms a name-prefixed matcher would miss (timeout/env/VAR=val prefixes) \u2014 prefilter breadth >= classifier breadth (SE-2, 2026-07-01-hook-guardrail-hardening). block-undeclared-deps stays GATED on package-manager prefixes (un-gating it false-positived on manifest strings in quoted args \u2014 2026-07-10 cross-family review). Per-repo permissions belong in .claude/settings.local.json (gitignored). Hook commands MUST use ${CLAUDE_PROJECT_DIR} so they resolve from the project root regardless of subprocess cwd drift.",
   "autoMemoryEnabled": false,
   "attribution": {
     "commit": "",
@@ -67,7 +67,7 @@
           },
           {
             "type": "command",
-            "$comment": "Un-gated on Bash: the hook self-classifies (greps the command for claude/copilot and fail-opens otherwise) and MUST see wrapped invocations too — timeout/env/VAR=val prefixes never start with the CLI name, so a name-prefixed matcher would miss them. Prefilter breadth >= classifier breadth (SE-2, 2026-07-01-hook-guardrail-hardening).",
+            "$comment": "Un-gated on Bash: the hook self-classifies (greps the command for claude/copilot and fail-opens otherwise) and MUST see wrapped invocations too \u2014 timeout/env/VAR=val prefixes never start with the CLI name, so a name-prefixed matcher would miss them. Prefilter breadth >= classifier breadth (SE-2, 2026-07-01-hook-guardrail-hardening).",
             "command": "${CLAUDE_PROJECT_DIR}/.claude/hooks/block-bad-cli-invocation.sh"
           },
           {
@@ -155,6 +155,10 @@
           {
             "type": "command",
             "command": "${CLAUDE_PROJECT_DIR}/.claude/hooks/verify-reminder.sh"
+          },
+          {
+            "type": "command",
+            "command": "${CLAUDE_PROJECT_DIR}/.claude/hooks/block-journal-skip.sh"
           }
         ]
       }

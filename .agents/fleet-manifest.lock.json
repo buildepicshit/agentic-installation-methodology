@@ -1,9 +1,9 @@
 {
   "schema_version": 1,
-  "generated_at": "2026-07-27T04:14:05.770Z",
+  "generated_at": "2026-07-27T04:30:25.069Z",
   "source": {
     "repo": "bes-fleet-policy",
-    "commit": "fa784c6ae29de443f9a101231b1a8a0911bd056b",
+    "commit": "79aa2de8ef998ca303b194d4b0ae7f2ec5d9dd4d",
     "dirty": true
   },
   "manifests": {
@@ -155,7 +155,8 @@
       "warn-subagent-routing.sh",
       "block-fleet-commit-sweep.sh",
       "lib/log-decision.sh",
-      ".gitignore"
+      ".gitignore",
+      "block-journal-skip.sh"
     ],
     "fleet_hook_fixtures": [
       "msg-clean.txt",
@@ -398,8 +399,8 @@
       "kind": "agents-file",
       "source_path": "agents/scripts/fleet-hooks.txt",
       "target_path": ".agents/scripts/fleet-hooks.txt",
-      "sha256": "52632df4553469dab757b46005eada15d21ba54c4b61109c4559110c78bdd024",
-      "bytes": 374
+      "sha256": "90812ae7c781b10838cbf509f12fd4cbc46edc4e71139a47a98f68bfe14c183d",
+      "bytes": 396
     },
     {
       "kind": "agents-file",
@@ -984,6 +985,13 @@
     },
     {
       "kind": "hook",
+      "source_path": ".claude/hooks/block-journal-skip.sh",
+      "target_path": ".claude/hooks/block-journal-skip.sh",
+      "sha256": "4617d32a9b209feb59dfb23a88699c861850523dedeb70ce5bc731469155e0ac",
+      "bytes": 8266
+    },
+    {
+      "kind": "hook",
       "source_path": ".claude/hooks/block-probe-residue.sh",
       "target_path": ".claude/hooks/block-probe-residue.sh",
       "sha256": "2ab3d3f980f6a63ddd0e21986cef8a1fef556bb06df21a8c71c2e0fda7799bd9",
@@ -1028,8 +1036,8 @@
       "kind": "hook",
       "source_path": ".claude/hooks/session-start-context.sh",
       "target_path": ".claude/hooks/session-start-context.sh",
-      "sha256": "ad2a73b16026028eb5f3a0d70054fea025ceac3e761ce43b447996ec1aa24b8a",
-      "bytes": 4403
+      "sha256": "03a41a30a63e87ee1f895cfa571a3f3cb737ec63e793719f7f6a81ed60c9fa53",
+      "bytes": 4982
     },
     {
       "kind": "hook-fixture",
@@ -1084,8 +1092,8 @@
       "kind": "harness",
       "source_path": ".claude/settings.json",
       "target_path": ".claude/settings.json",
-      "sha256": "f1e1aaba98d72bb9d63520365f2808968afa40f9a6b19f69e85407e6b7754c4d",
-      "bytes": 6579
+      "sha256": "9c70f96b7a06b108ca1532e5abcd435ee95d7ada6279097dfeb456788fcec94d",
+      "bytes": 6727
     },
     {
       "kind": "skill-reference",
