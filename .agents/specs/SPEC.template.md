@@ -10,6 +10,7 @@ requires_network: false
 requires_secrets: []
 acceptance_commands:
   - <command that mechanically proves the change; exit 0 = pass>
+tracker_ref: <issue-url | pending>   # REQUIRED for tracked bundles (OPERATING_MODEL "Work visibility")
 ideated_in: specs/<id>/IDEA.md
 ---
 

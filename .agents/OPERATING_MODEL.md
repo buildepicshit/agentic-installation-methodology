@@ -320,6 +320,41 @@ Those responsibilities belong to the runner, OS sandbox, GitHub,
 CI, Copilot / Claude, worktree tooling, or future approved systems. BES may define how agents interact with those tools,
 but it MUST NOT claim to provide those capabilities itself.
 
+**Not implementing a tracker is not the same as not using one.** BES
+builds no issue-tracker; it DOES define how agents record work in
+GitHub's (see "Work visibility" below). The earlier reading — that the
+fleet must not use any tracker at all — contradicted this very list,
+which delegates tracking to GitHub, and is retired
+(`file://specs/2026-07-26-agent-work-tracking-surface/SPEC.md` §1).
+
+## Work visibility (the two tiers)
+
+Agents MUST NOT hold in-flight execution state only in context. Memory
+is not evidence (see "Memory Policy"), and state that lives nowhere else
+is state the owner cannot see and the next session cannot inherit.
+
+- **Tier 1 — in-session.** Work that enters `execute-spec` MUST
+  maintain the harness's native task list, one item per Execution Plan
+  step, kept current as work proceeds. Ephemeral is correct here: it is
+  visible while it matters. **Fastpath and trivial work are exempt** —
+  they do not enter `execute-spec` and get no tier at all.
+- **Tier 2 — durable.** Work that is manifest-carried AND expands to
+  two or more tracked units, or names more than three slices, or that
+  the owner directs, MUST additionally carry a GitHub issue tree — one
+  parent per bundle, one sub-issue per tracked unit, `tracker_ref` on
+  the SPEC. Internal repos only; public OSS repos are fenced out.
+
+Work that enters `execute-spec` but misses the Tier 2 trigger gets
+Tier 1 only. Fastpath and trivial work get neither. This is a floor on
+visibility, not a licence to add ceremony: the trigger is deliberately
+narrow and mechanically checkable
+(`file://specs/2026-07-26-agent-work-tracking-surface/SPEC.md` §7.2).
+
+**What remains forbidden is a DISPATCHER** — any system that owns
+scheduling or assignment of fleet work. A list the owner can read is
+not a dispatcher. Lock L1 is preserved in substance
+(`file://agents/skills/decompose-approved-spec/SKILL.md`).
+
 ## Exhaustive Spec Rule
 
 Agents do not deliver opinions as implementation authority. An executable
@@ -406,8 +441,9 @@ changes — accepted changes flow through the normal SPEC procedure
 
 The fleet's alignment posture toward Pocock is
 **adopt-closely-with-caveats**: Pocock v1.1 is the alignment standard and
-the fleet diverges only with recorded cause, holding the tracker-free
-substrate, owner-only gates, and the 15-skill corpus constant
+the fleet diverges only with recorded cause, holding the
+dispatcher-free substrate (NOT tracker-free — see "Work visibility"),
+owner-only gates, and the 15-skill corpus constant
 (`file://specs/2026-07-08-pocock-v1.1-alignment-rebaseline/SPEC.md`).
 
 ## Session Continuity (universal workpad)
