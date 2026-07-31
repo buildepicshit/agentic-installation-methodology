@@ -1,43 +1,8 @@
 ---
-tracker:
-  kind: linear
-  endpoint: https://api.linear.app/graphql
-  api_key: $LINEAR_API_KEY
-  project_slug: agentic-installation-methodology
-  active_states:
-    - Todo
-    - In Progress
-    - In Review
-  terminal_states:
-    - Done
-    - Canceled
-    - Duplicate
-polling:
-  interval_ms: 30000
-workspace:
-  root: /var/home/hasnobeef/buildepicshit/.symphony/workspaces/agentic-installation-methodology
-hooks:
-  after_create: |
-    git clone git@github.com:buildepicshit/agentic-installation-methodology.git .
-  before_run: null
-  after_run: null
-  before_remove: null
-  timeout_ms: 60000
-agent:
-  max_concurrent_agents: 1
-  max_turns: 20
-  max_retry_backoff_ms: 300000
-codex:
-  command: codex app-server
-  approval_policy: on-request
-  thread_sandbox: workspace-write
-  turn_timeout_ms: 3600000
-  read_timeout_ms: 5000
-  stall_timeout_ms: 300000
-bes:
-  repo: agentic-installation-methodology
-  posture: oss-public
-  default_branch: main
+# Per-repo engagement config — intentionally empty. The fleet uses no
+# external dispatcher; per-repo customization lives in the intro
+# paragraph below this block. Purged of dispatcher-era config by
+# bes-fleet-policy specs/2026-07-30-workflow-yaml-dispatcher-purge.
 ---
 
 
