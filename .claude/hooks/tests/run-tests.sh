@@ -834,6 +834,56 @@ printf '%s' '{"tool_name":"Task","tool_input":{"subagent_type":"general-purpose"
   | BES_LOG_FILE="$LOGTEST/decisions.log" "$HOOK_DIR/warn-subagent-routing.sh" >/dev/null 2>&1
 assert_log "instrumentation: advisory records WARN not ALLOW" 1 WARN
 
+# --- instrumentation: cleanup registry (specs/2026-07-31-hook-decision-log-integrity) ---
+# The defect this guards against: a hook that installs its own `trap ... EXIT`
+# replaces the logging trap, and every decision it reaches thereafter goes
+# unrecorded. block-journal-skip.sh did exactly that from 2026-07-27 until
+# 2026-07-31 — four of its five blocking paths, and every post-lock allow, were
+# invisible, including a gate that blocked a real session. Nothing caught it
+# because every test asserted exit codes, and the verdicts were always correct.
+# These cases assert that the DECISION REACHES THE LOG, which is the property
+# that was silently false.
+: > "$LOGTEST/decisions.log"; rm -f "$LOGTEST/cleanup-ran"
+( source "$HOOK_DIR/lib/log-decision.sh" 2>/dev/null
+  BES_LOG_FILE="$LOGTEST/decisions.log"
+  bes_log_install_trap "probe-cleanup.sh"
+  probe_cleanup() { : > "$LOGTEST/cleanup-ran"; exit 9; }
+  bes_log_add_cleanup probe_cleanup
+  exit 2 ) >/dev/null 2>&1
+assert_log "instrumentation: cleanup cannot suppress record" 1 BLOCK
+
+if [ -f "$LOGTEST/cleanup-ran" ]; then
+    PASS=$((PASS+1)); printf 'PASS %-50s [%s]\n' "instrumentation: registered cleanup runs" "log-decision.sh"
+else
+    FAIL=$((FAIL+1))
+    FAILURES+=("instrumentation: registered cleanup runs [log-decision.sh]: cleanup did not execute")
+    printf 'FAIL %-50s [%s]\n' "instrumentation: registered cleanup runs" "log-decision.sh"
+fi
+
+# A cleanup registered as a command STRING must be rejected, not eval'd: a
+# string containing `exit` would terminate the trap before the write and
+# reintroduce the defect. Names only. (Cross-family review, gate 1 BLOCKING-2.)
+: > "$LOGTEST/decisions.log"
+( source "$HOOK_DIR/lib/log-decision.sh" 2>/dev/null
+  BES_LOG_FILE="$LOGTEST/decisions.log"
+  bes_log_install_trap "probe-cleanup.sh"
+  bes_log_add_cleanup 'rm -f /nonexistent; exit 9'
+  exit 2 ) >/dev/null 2>&1
+assert_log "instrumentation: command string not eval'd" 1 BLOCK
+
+# Structural guard: no hook may install a competing single-line EXIT trap
+# without the fallback marker. Scoped to what the scanner recognises —
+# multiline traps are out of reach of a line-oriented grep.
+trapscan=$(grep -nE '^[[:space:]]*trap .*(EXIT|[[:space:]]0)([[:space:]]|$)' "$HOOK_DIR"/*.sh 2>/dev/null \
+             | grep -v 'bes-log-cleanup-fallback' || true)
+if [ -z "$trapscan" ]; then
+    PASS=$((PASS+1)); printf 'PASS %-50s [%s]\n' "instrumentation: no unmarked competing EXIT trap" "hook corpus"
+else
+    FAIL=$((FAIL+1))
+    FAILURES+=("instrumentation: no unmarked competing EXIT trap [hook corpus]: $trapscan")
+    printf 'FAIL %-50s [%s]\n' "instrumentation: no unmarked competing EXIT trap" "hook corpus"
+fi
+
 # TSV integrity: a tab or newline in ANY field must not shift columns.
 # INJ must be built as a VARIABLE: `$(printf '\n')` strips the trailing
 # newline via command substitution, and `$'\t\n'` does not expand inside

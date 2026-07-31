@@ -103,6 +103,55 @@ bes_log_write() {
     return 0
 }
 
+# bes_log_add_cleanup <function-name>
+# Register an EXIT-time cleanup that runs INSIDE the logging trap.
+#
+# WHY THIS EXISTS
+#   Bash keeps exactly one EXIT trap. A hook that installs its own
+#   `trap ... EXIT` after sourcing this lib silently REPLACES the logging
+#   trap, and every decision it reaches thereafter goes unrecorded.
+#   Measured 2026-07-31 in block-journal-skip.sh, whose lock cleanup did
+#   exactly this: four of its five blocking paths, and every post-lock
+#   allow, were invisible — including a gate that blocked a real session.
+#   Authority: file://specs/2026-07-31-hook-decision-log-integrity/SPEC.md §3.1
+#
+# NAMES ONLY, NEVER COMMAND STRINGS
+#   The argument is a function NAME, validated against a strict pattern and
+#   confirmed to be a defined function. It is never `eval`'d as a command.
+#   A registry of arbitrary strings would let a cleanup containing `exit`
+#   terminate the trap before the write — reintroducing the very defect this
+#   closes — and `|| true` cannot contain shell termination. Caught by
+#   cross-family review (gpt-5.6-sol, 2026-07-31, gate 1 round 1 BLOCKING-2).
+#
+# Registration is idempotent: a name already registered is not added twice,
+# so each cleanup runs at most once.
+bes_log_add_cleanup() {
+    local fn="${1-}"
+    case "$fn" in
+        ''|*[!A-Za-z0-9_]*) return 0 ;;   # reject anything but a bare identifier
+        [0-9]*) return 0 ;;               # identifiers cannot lead with a digit
+    esac
+    declare -F "$fn" >/dev/null 2>&1 || return 0
+    case " ${BES_LOG_CLEANUPS-} " in
+        *" $fn "*) return 0 ;;
+    esac
+    BES_LOG_CLEANUPS="${BES_LOG_CLEANUPS-}${BES_LOG_CLEANUPS:+ }$fn"
+    return 0
+}
+
+# bes_log_run_cleanups
+# Runs every registered cleanup, each in its OWN SUBSHELL. The subshell is
+# load-bearing, not defensive habit: it contains `exit`, `exec` and any
+# non-zero return, so a misbehaving cleanup can neither terminate the trap
+# before the record is written nor leak a status into the verdict.
+bes_log_run_cleanups() {
+    local fn
+    for fn in ${BES_LOG_CLEANUPS-}; do
+        ( "$fn" ) >/dev/null 2>&1 || true
+    done
+    return 0
+}
+
 # bes_log_install_trap <hook-name>
 # Maps the hook's final exit code onto a decision and records it.
 #   0 -> ALLOW (or WARN when the hook set BES_LOG_DECISION=WARN)
@@ -111,6 +160,9 @@ bes_log_write() {
 # Any other value a hook puts in BES_LOG_DECISION is mapped to UNKNOWN,
 # which is part of the enum for exactly this reason.
 # The trap never calls `exit`, so it cannot alter the gate's verdict.
+# Order inside the trap is fixed: capture $? FIRST, then run cleanups, then
+# write. The status the record carries is the one the gate actually exited
+# with, whatever the cleanups do.
 bes_log_install_trap() {
     BES_LOG_HOOK="${1:-$(basename "${BASH_SOURCE[1]:-unknown}" 2>/dev/null)}"
     trap 'bes_log_rc=$?
@@ -119,6 +171,7 @@ bes_log_install_trap() {
             2) bes_log_decision="BLOCK" ;;
             *) bes_log_decision="ERROR" ;;
           esac
+          bes_log_run_cleanups
           bes_log_write "$BES_LOG_HOOK" "$bes_log_decision" "${BES_LOG_RULE:--}" "${BES_LOG_DETAIL-}"' EXIT
     return 0
 }

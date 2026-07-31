@@ -1,9 +1,9 @@
 {
   "schema_version": 1,
-  "generated_at": "2026-07-27T04:30:25.069Z",
+  "generated_at": "2026-07-31T21:51:52.309Z",
   "source": {
     "repo": "bes-fleet-policy",
-    "commit": "79aa2de8ef998ca303b194d4b0ae7f2ec5d9dd4d",
+    "commit": "6deaeee8c7a8727600473010c8de3700f1fba10b",
     "dirty": true
   },
   "manifests": {
@@ -95,6 +95,12 @@
       "scripts/audit-entry-docs-fixtures/bad-claude-md-no-import/AGENTS.md",
       "scripts/audit-entry-docs-fixtures/bad-claude-md-no-import/CLAUDE.md",
       "scripts/audit-entry-docs-fixtures/bad-claude-md-no-import/WORKFLOW.md",
+      "scripts/audit-entry-docs-fixtures/bad-workflow-dispatcher-yaml/AGENTS.md",
+      "scripts/audit-entry-docs-fixtures/bad-workflow-dispatcher-yaml/CLAUDE.md",
+      "scripts/audit-entry-docs-fixtures/bad-workflow-dispatcher-yaml/WORKFLOW.md",
+      "scripts/audit-entry-docs-fixtures/bad-workflow-dispatcher-yaml-crlf/AGENTS.md",
+      "scripts/audit-entry-docs-fixtures/bad-workflow-dispatcher-yaml-crlf/CLAUDE.md",
+      "scripts/audit-entry-docs-fixtures/bad-workflow-dispatcher-yaml-crlf/WORKFLOW.md",
       "scripts/audit-entry-docs-fixtures/edge-leading-whitespace-import/AGENTS.md",
       "scripts/audit-entry-docs-fixtures/edge-leading-whitespace-import/CLAUDE.md",
       "scripts/audit-entry-docs-fixtures/edge-leading-whitespace-import/WORKFLOW.md",
@@ -292,6 +298,48 @@
     },
     {
       "kind": "agents-file",
+      "source_path": "agents/scripts/audit-entry-docs-fixtures/bad-workflow-dispatcher-yaml-crlf/AGENTS.md",
+      "target_path": ".agents/scripts/audit-entry-docs-fixtures/bad-workflow-dispatcher-yaml-crlf/AGENTS.md",
+      "sha256": "74d47967ecbdc1d9b573380481142bd67e7ddfc0a2f0e61c371c433427626225",
+      "bytes": 391
+    },
+    {
+      "kind": "agents-file",
+      "source_path": "agents/scripts/audit-entry-docs-fixtures/bad-workflow-dispatcher-yaml-crlf/CLAUDE.md",
+      "target_path": ".agents/scripts/audit-entry-docs-fixtures/bad-workflow-dispatcher-yaml-crlf/CLAUDE.md",
+      "sha256": "9629c3736fd71ff2ae511cbe136fe306a286d9822a5ddd6a238db7986a359928",
+      "bytes": 122
+    },
+    {
+      "kind": "agents-file",
+      "source_path": "agents/scripts/audit-entry-docs-fixtures/bad-workflow-dispatcher-yaml-crlf/WORKFLOW.md",
+      "target_path": ".agents/scripts/audit-entry-docs-fixtures/bad-workflow-dispatcher-yaml-crlf/WORKFLOW.md",
+      "sha256": "e3f53e93e3b757bb92864079885750ad77dfc62fa6740d6b6c0bfd3eb3d9042b",
+      "bytes": 802
+    },
+    {
+      "kind": "agents-file",
+      "source_path": "agents/scripts/audit-entry-docs-fixtures/bad-workflow-dispatcher-yaml/AGENTS.md",
+      "target_path": ".agents/scripts/audit-entry-docs-fixtures/bad-workflow-dispatcher-yaml/AGENTS.md",
+      "sha256": "74d47967ecbdc1d9b573380481142bd67e7ddfc0a2f0e61c371c433427626225",
+      "bytes": 391
+    },
+    {
+      "kind": "agents-file",
+      "source_path": "agents/scripts/audit-entry-docs-fixtures/bad-workflow-dispatcher-yaml/CLAUDE.md",
+      "target_path": ".agents/scripts/audit-entry-docs-fixtures/bad-workflow-dispatcher-yaml/CLAUDE.md",
+      "sha256": "9629c3736fd71ff2ae511cbe136fe306a286d9822a5ddd6a238db7986a359928",
+      "bytes": 122
+    },
+    {
+      "kind": "agents-file",
+      "source_path": "agents/scripts/audit-entry-docs-fixtures/bad-workflow-dispatcher-yaml/WORKFLOW.md",
+      "target_path": ".agents/scripts/audit-entry-docs-fixtures/bad-workflow-dispatcher-yaml/WORKFLOW.md",
+      "sha256": "bec04dd7889b2f005e4de15b27acebf73ae8dfb2489bcf9b90622ff9ea010ae5",
+      "bytes": 763
+    },
+    {
+      "kind": "agents-file",
       "source_path": "agents/scripts/audit-entry-docs-fixtures/edge-leading-whitespace-import/AGENTS.md",
       "target_path": ".agents/scripts/audit-entry-docs-fixtures/edge-leading-whitespace-import/AGENTS.md",
       "sha256": "c4152f4fc1dacaaf567392bbaae4c58d17e1cc8600f7a64879a44f32c345f6dd",
@@ -329,22 +377,22 @@
       "kind": "agents-file",
       "source_path": "agents/scripts/audit-entry-docs-fixtures/good-internal/WORKFLOW.md",
       "target_path": ".agents/scripts/audit-entry-docs-fixtures/good-internal/WORKFLOW.md",
-      "sha256": "7bea235fce50e46ef36565fc8ea9146d31b7b1adfd1cc45462a26d637ced2df7",
-      "bytes": 92
+      "sha256": "48b2f6d2604d6372ea49feb02febb1e6c10c030923d730f46ebf1b67da4f3dc9",
+      "bytes": 693
     },
     {
       "kind": "agents-file",
       "source_path": "agents/scripts/audit-entry-docs-fixtures/README.md",
       "target_path": ".agents/scripts/audit-entry-docs-fixtures/README.md",
-      "sha256": "3744ee8f830be8a2af88b8895d73223ddd81593fd1a3295fb62180adece5c7bb",
-      "bytes": 1391
+      "sha256": "67349c8208800939ca694b194a5183c2fb758e7bb08d5588b3cb439af716ceca",
+      "bytes": 2206
     },
     {
       "kind": "agents-file",
       "source_path": "agents/scripts/audit-entry-docs.sh",
       "target_path": ".agents/scripts/audit-entry-docs.sh",
-      "sha256": "37f6361c5c753a0122752524e3971733c00e3ddfa3a1691e3f417713f743ebb5",
-      "bytes": 10521
+      "sha256": "3505c71bbcd4e0c569bc414aa483e0f870c26f96300d846ffabbf344b8a7d6cf",
+      "bytes": 12574
     },
     {
       "kind": "agents-file",
@@ -357,8 +405,8 @@
       "kind": "agents-file",
       "source_path": "agents/scripts/audit-hook-decisions.sh",
       "target_path": ".agents/scripts/audit-hook-decisions.sh",
-      "sha256": "a6485190b45e8152b594f45b878cc0a966b7ebd649df218b73eb6f227caae8f0",
-      "bytes": 5285
+      "sha256": "c5dc565857a06b1d59fc9bee5db73fbc6d45b534e10e937f7d92d54aafda37f6",
+      "bytes": 14281
     },
     {
       "kind": "agents-file",
@@ -987,8 +1035,8 @@
       "kind": "hook",
       "source_path": ".claude/hooks/block-journal-skip.sh",
       "target_path": ".claude/hooks/block-journal-skip.sh",
-      "sha256": "4617d32a9b209feb59dfb23a88699c861850523dedeb70ce5bc731469155e0ac",
-      "bytes": 8266
+      "sha256": "e585c3cb89cc1048c4d0513930e6cb5e7cc1779f0f68281d7d074aa57c27917d",
+      "bytes": 14096
     },
     {
       "kind": "hook",
@@ -1029,8 +1077,8 @@
       "kind": "hook",
       "source_path": ".claude/hooks/lib/log-decision.sh",
       "target_path": ".claude/hooks/lib/log-decision.sh",
-      "sha256": "7f1993e03e1179c498bb8c5dfda0c2c78a7e67c2ee8e152008ebcc946be9922c",
-      "bytes": 5961
+      "sha256": "d5bbf652e04397e4b772530e9c44f01326d292afb08c39f58fa36cc4a0d2c485",
+      "bytes": 8322
     },
     {
       "kind": "hook",
@@ -1057,8 +1105,8 @@
       "kind": "harness",
       "source_path": ".claude/hooks/tests/run-tests.sh",
       "target_path": ".claude/hooks/tests/run-tests.sh",
-      "sha256": "75a8b1f1224e578b4f2e8842e724ae859bff17f17559da9cb9a4cc9015ab7789",
-      "bytes": 58054
+      "sha256": "20c33f75eb23f80bc1f7089505022e7f25883877cf5579161a94a071f1aa62f4",
+      "bytes": 60745
     },
     {
       "kind": "hook",
