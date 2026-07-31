@@ -158,15 +158,27 @@ bes_log_add_cleanup() {
 # so anything that assigns it between registration and exit would otherwise
 # reach execution unchecked. The lib's own functions are refused outright —
 # running the runner from inside the runner is the recursion above.
+# Each cleanup is also TIME-BOUNDED. A cleanup that blocks would hang the trap
+# and the gate would never return a verdict — measured at exit 124 with a
+# registered `sleep 30`. That risk is independent of how the name was
+# registered, so bounding the run closes it for legitimately registered
+# cleanups too, which validation alone cannot do. Hooks that register nothing
+# never enter this loop and pay nothing.
 bes_log_run_cleanups() {
-    local fn
+    local fn pid watchdog
     for fn in ${BES_LOG_CLEANUPS-}; do
         case "$fn" in
             ''|*[!A-Za-z0-9_]*|[0-9]*) continue ;;
             bes_log_run_cleanups|bes_log_add_cleanup|bes_log_write|bes_log_install_trap) continue ;;
         esac
         declare -F "$fn" >/dev/null 2>&1 || continue
-        ( "$fn" ) >/dev/null 2>&1 || true
+        ( "$fn" ) >/dev/null 2>&1 &
+        pid=$!
+        ( sleep "${BES_LOG_CLEANUP_TIMEOUT:-5}"; kill -KILL "$pid" ) >/dev/null 2>&1 &
+        watchdog=$!
+        wait "$pid" >/dev/null 2>&1 || true
+        kill "$watchdog" >/dev/null 2>&1 || true
+        wait "$watchdog" >/dev/null 2>&1 || true
     done
     return 0
 }

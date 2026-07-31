@@ -1,9 +1,9 @@
 {
   "schema_version": 1,
-  "generated_at": "2026-07-31T22:26:12.178Z",
+  "generated_at": "2026-07-31T22:33:17.780Z",
   "source": {
     "repo": "bes-fleet-policy",
-    "commit": "aa2b212b5f3e8cdbbf6586c58acb3f566c298d32",
+    "commit": "9eb39049b5aca45891dbc0c53737d95108e341a6",
     "dirty": true
   },
   "manifests": {
@@ -1077,8 +1077,8 @@
       "kind": "hook",
       "source_path": ".claude/hooks/lib/log-decision.sh",
       "target_path": ".claude/hooks/lib/log-decision.sh",
-      "sha256": "dd698f5951e028e75ed24a7f5e8112f539ce1f2a0e184009923b449736ce8ca6",
-      "bytes": 9382
+      "sha256": "a8643661cb9ffd1d04b9a9c7efae1c1410680b7b42dad4c1b535bca02ae04784",
+      "bytes": 10069
     },
     {
       "kind": "hook",
@@ -1105,8 +1105,8 @@
       "kind": "harness",
       "source_path": ".claude/hooks/tests/run-tests.sh",
       "target_path": ".claude/hooks/tests/run-tests.sh",
-      "sha256": "d5701594598c38e47648226b866c59943a21daa492f2e730405037e8fa88f8b4",
-      "bytes": 62553
+      "sha256": "e68d409aea0843c8d9ff08278556220c538fa0d08aee201f32a0ad01d520c7bb",
+      "bytes": 63672
     },
     {
       "kind": "hook",

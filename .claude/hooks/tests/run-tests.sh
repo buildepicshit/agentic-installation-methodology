@@ -900,6 +900,30 @@ else
 fi
 assert_log "instrumentation: inherited registry still records" 1 BLOCK
 
+# A BLOCKING cleanup must not hang the gate. Validation cannot prevent this —
+# a legitimately registered cleanup can block just as easily as an injected one
+# — so the runner bounds each cleanup instead. Measured before the bound: a
+# registered `sleep 30` held the trap and no verdict was ever delivered.
+: > "$LOGTEST/decisions.log"
+cat > "$LOGTEST/hang.sh" <<HANG
+source "$HOOK_DIR/lib/log-decision.sh" 2>/dev/null
+bes_log_install_trap "probe-cleanup.sh"
+probe_slow() { sleep 30; }
+bes_log_add_cleanup probe_slow
+exit 2
+HANG
+BES_LOG_CLEANUP_TIMEOUT=2 BES_LOG_FILE="$LOGTEST/decisions.log" \
+    timeout 15 bash "$LOGTEST/hang.sh" >/dev/null 2>&1
+hang_rc=$?
+if [ "$hang_rc" = "2" ]; then
+    PASS=$((PASS+1)); printf 'PASS %-50s [%s]\n' "instrumentation: blocking cleanup is bounded" "log-decision.sh"
+else
+    FAIL=$((FAIL+1))
+    FAILURES+=("instrumentation: blocking cleanup is bounded [log-decision.sh]: gate exited $hang_rc (124 = hung)")
+    printf 'FAIL %-50s [%s]\n' "instrumentation: blocking cleanup is bounded" "log-decision.sh"
+fi
+assert_log "instrumentation: bounded cleanup still records" 1 BLOCK
+
 # A cleanup registered as a command STRING must be rejected, not eval'd: a
 # string containing `exit` would terminate the trap before the write and
 # reintroduce the defect. Names only. (Cross-family review, gate 1 BLOCKING-2.)
