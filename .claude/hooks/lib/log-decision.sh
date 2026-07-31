@@ -125,6 +125,15 @@ bes_log_write() {
 #
 # Registration is idempotent: a name already registered is not added twice,
 # so each cleanup runs at most once.
+#
+# THE REGISTRY IS RESET AT SOURCE TIME AND NEVER EXPORTED. It is process-local
+# state, so inherited environment MUST NOT seed it: an exported
+# BES_LOG_CLEANUPS=bes_log_run_cleanups recursed inside the trap and hung the
+# gate outright — exit 124 under timeout, no verdict delivered and no record
+# written, in a library every gate hook sources. Found by cross-family review
+# at gate 2 and reproduced before fixing.
+BES_LOG_CLEANUPS=""
+
 bes_log_add_cleanup() {
     local fn="${1-}"
     case "$fn" in
@@ -144,9 +153,19 @@ bes_log_add_cleanup() {
 # load-bearing, not defensive habit: it contains `exit`, `exec` and any
 # non-zero return, so a misbehaving cleanup can neither terminate the trap
 # before the record is written nor leak a status into the verdict.
+# Names are re-validated HERE as well as at registration. Registration-time
+# checks are not sufficient on their own: this list is a plain shell variable,
+# so anything that assigns it between registration and exit would otherwise
+# reach execution unchecked. The lib's own functions are refused outright —
+# running the runner from inside the runner is the recursion above.
 bes_log_run_cleanups() {
     local fn
     for fn in ${BES_LOG_CLEANUPS-}; do
+        case "$fn" in
+            ''|*[!A-Za-z0-9_]*|[0-9]*) continue ;;
+            bes_log_run_cleanups|bes_log_add_cleanup|bes_log_write|bes_log_install_trap) continue ;;
+        esac
+        declare -F "$fn" >/dev/null 2>&1 || continue
         ( "$fn" ) >/dev/null 2>&1 || true
     done
     return 0

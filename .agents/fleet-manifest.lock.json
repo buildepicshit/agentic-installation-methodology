@@ -1,9 +1,9 @@
 {
   "schema_version": 1,
-  "generated_at": "2026-07-31T21:51:52.309Z",
+  "generated_at": "2026-07-31T22:26:12.178Z",
   "source": {
     "repo": "bes-fleet-policy",
-    "commit": "6deaeee8c7a8727600473010c8de3700f1fba10b",
+    "commit": "aa2b212b5f3e8cdbbf6586c58acb3f566c298d32",
     "dirty": true
   },
   "manifests": {
@@ -1035,8 +1035,8 @@
       "kind": "hook",
       "source_path": ".claude/hooks/block-journal-skip.sh",
       "target_path": ".claude/hooks/block-journal-skip.sh",
-      "sha256": "e585c3cb89cc1048c4d0513930e6cb5e7cc1779f0f68281d7d074aa57c27917d",
-      "bytes": 14096
+      "sha256": "8af97ca803595cc8dd6418485a7b057d3db1156e0558895e7218914b830d681a",
+      "bytes": 14994
     },
     {
       "kind": "hook",
@@ -1077,8 +1077,8 @@
       "kind": "hook",
       "source_path": ".claude/hooks/lib/log-decision.sh",
       "target_path": ".claude/hooks/lib/log-decision.sh",
-      "sha256": "d5bbf652e04397e4b772530e9c44f01326d292afb08c39f58fa36cc4a0d2c485",
-      "bytes": 8322
+      "sha256": "dd698f5951e028e75ed24a7f5e8112f539ce1f2a0e184009923b449736ce8ca6",
+      "bytes": 9382
     },
     {
       "kind": "hook",
@@ -1105,8 +1105,8 @@
       "kind": "harness",
       "source_path": ".claude/hooks/tests/run-tests.sh",
       "target_path": ".claude/hooks/tests/run-tests.sh",
-      "sha256": "20c33f75eb23f80bc1f7089505022e7f25883877cf5579161a94a071f1aa62f4",
-      "bytes": 60745
+      "sha256": "d5701594598c38e47648226b866c59943a21daa492f2e730405037e8fa88f8b4",
+      "bytes": 62553
     },
     {
       "kind": "hook",

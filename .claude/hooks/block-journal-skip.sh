@@ -212,15 +212,32 @@ if [ "${1:-}" = "--self-test" ]; then
     # carries a real lib, BES_LOG_FILE unset — and asserts nothing lands there.
     # Before the fix this injected 22 synthetic records into the production log.
     # BJS_SELFTEST_INNER stops the inner run from recursing on this same case.
-    if [ -z "${BJS_SELFTEST_INNER:-}" ] && [ -f "$(dirname "$HOOK")/lib/log-decision.sh" ]; then
+    if [ "${2:-}" = "--inner" ]; then
+        # Recursion stop, passed as an ARGUMENT rather than an environment
+        # variable: an inherited env var would silently disable this case in
+        # any session that happened to export it, and a check that can be
+        # switched off from outside is not a check.
+        :
+    elif [ -f "$(dirname "$HOOK")/lib/log-decision.sh" ]; then
         decoy=$(mktemp -d); mkdir -p "$decoy/.claude/hooks/lib"
         cp "$(dirname "$HOOK")/lib/log-decision.sh" "$decoy/.claude/hooks/lib/"
-        env -u BES_LOG_FILE BJS_SELFTEST_INNER=1 CLAUDE_PROJECT_DIR="$decoy" \
-            bash "$HOOK" --self-test >/dev/null 2>&1
+        env -u BES_LOG_FILE CLAUDE_PROJECT_DIR="$decoy" \
+            bash "$HOOK" --self-test --inner >/dev/null 2>&1
+        inner_rc=$?
+        # Assert the inner suite actually RAN and passed. Without this, an inner
+        # crash leaves no decoy log and the emptiness assertion below passes for
+        # entirely the wrong reason.
+        ck "decoy inner suite passes" 0 "$inner_rc"
         ck "self-test leaves project log empty" "0" \
            "$( [ -f "$decoy/.claude/hooks/decisions.log" ] \
                 && wc -l < "$decoy/.claude/hooks/decisions.log" | tr -d ' ' || echo 0 )"
         rm -rf "$decoy"
+    else
+        # ANNOUNCE the skip. A case that vanishes silently when run from an
+        # unexpected location is the rot this suite exists to prevent: the
+        # pass count drops by one and nothing says why.
+        printf 'SKIP self-test leaves project log empty (no logger at %s)\n' \
+            "$(dirname "$HOOK")/lib/log-decision.sh"
     fi
 
     printf '\n=== block-journal-skip self-test: %d pass / %d fail ===\n' "$P" "$F"

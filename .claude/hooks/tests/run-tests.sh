@@ -860,6 +860,46 @@ else
     printf 'FAIL %-50s [%s]\n' "instrumentation: registered cleanup runs" "log-decision.sh"
 fi
 
+# A cleanup that simply RETURNS non-zero must also leave the verdict and the
+# record intact — the common case, distinct from the `exit` case above.
+: > "$LOGTEST/decisions.log"
+( source "$HOOK_DIR/lib/log-decision.sh" 2>/dev/null
+  BES_LOG_FILE="$LOGTEST/decisions.log"
+  bes_log_install_trap "probe-cleanup.sh"
+  probe_ret1() { return 1; }
+  bes_log_add_cleanup probe_ret1
+  exit 0 ) >/dev/null 2>&1
+assert_log "instrumentation: cleanup returning 1 is harmless" 1 ALLOW
+
+# And a hook that registers nothing behaves exactly as before.
+: > "$LOGTEST/decisions.log"
+( source "$HOOK_DIR/lib/log-decision.sh" 2>/dev/null
+  BES_LOG_FILE="$LOGTEST/decisions.log"
+  bes_log_install_trap "probe-cleanup.sh"
+  exit 2 ) >/dev/null 2>&1
+assert_log "instrumentation: no cleanup registered" 1 BLOCK
+
+# The registry is process-local: an INHERITED BES_LOG_CLEANUPS must not seed
+# it. Exporting the runner's own name recursed inside the trap and hung the
+# gate — exit 124, no verdict, no record. (Cross-family review, gate 2 HIGH-1.)
+: > "$LOGTEST/decisions.log"
+cat > "$LOGTEST/inherit.sh" <<INHERIT
+source "$HOOK_DIR/lib/log-decision.sh" 2>/dev/null
+bes_log_install_trap "probe-cleanup.sh"
+exit 2
+INHERIT
+BES_LOG_CLEANUPS=bes_log_run_cleanups BES_LOG_FILE="$LOGTEST/decisions.log" \
+    timeout 10 bash "$LOGTEST/inherit.sh" >/dev/null 2>&1
+inherit_rc=$?
+if [ "$inherit_rc" = "2" ]; then
+    PASS=$((PASS+1)); printf 'PASS %-50s [%s]\n' "instrumentation: inherited registry ignored" "log-decision.sh"
+else
+    FAIL=$((FAIL+1))
+    FAILURES+=("instrumentation: inherited registry ignored [log-decision.sh]: gate exited $inherit_rc (124 = hung)")
+    printf 'FAIL %-50s [%s]\n' "instrumentation: inherited registry ignored" "log-decision.sh"
+fi
+assert_log "instrumentation: inherited registry still records" 1 BLOCK
+
 # A cleanup registered as a command STRING must be rejected, not eval'd: a
 # string containing `exit` would terminate the trap before the write and
 # reintroduce the defect. Names only. (Cross-family review, gate 1 BLOCKING-2.)
