@@ -834,6 +834,120 @@ printf '%s' '{"tool_name":"Task","tool_input":{"subagent_type":"general-purpose"
   | BES_LOG_FILE="$LOGTEST/decisions.log" "$HOOK_DIR/warn-subagent-routing.sh" >/dev/null 2>&1
 assert_log "instrumentation: advisory records WARN not ALLOW" 1 WARN
 
+# --- instrumentation: cleanup registry (specs/2026-07-31-hook-decision-log-integrity) ---
+# The defect this guards against: a hook that installs its own `trap ... EXIT`
+# replaces the logging trap, and every decision it reaches thereafter goes
+# unrecorded. block-journal-skip.sh did exactly that from 2026-07-27 until
+# 2026-07-31 — four of its five blocking paths, and every post-lock allow, were
+# invisible, including a gate that blocked a real session. Nothing caught it
+# because every test asserted exit codes, and the verdicts were always correct.
+# These cases assert that the DECISION REACHES THE LOG, which is the property
+# that was silently false.
+: > "$LOGTEST/decisions.log"; rm -f "$LOGTEST/cleanup-ran"
+( source "$HOOK_DIR/lib/log-decision.sh" 2>/dev/null
+  BES_LOG_FILE="$LOGTEST/decisions.log"
+  bes_log_install_trap "probe-cleanup.sh"
+  probe_cleanup() { : > "$LOGTEST/cleanup-ran"; exit 9; }
+  bes_log_add_cleanup probe_cleanup
+  exit 2 ) >/dev/null 2>&1
+assert_log "instrumentation: cleanup cannot suppress record" 1 BLOCK
+
+if [ -f "$LOGTEST/cleanup-ran" ]; then
+    PASS=$((PASS+1)); printf 'PASS %-50s [%s]\n' "instrumentation: registered cleanup runs" "log-decision.sh"
+else
+    FAIL=$((FAIL+1))
+    FAILURES+=("instrumentation: registered cleanup runs [log-decision.sh]: cleanup did not execute")
+    printf 'FAIL %-50s [%s]\n' "instrumentation: registered cleanup runs" "log-decision.sh"
+fi
+
+# A cleanup that simply RETURNS non-zero must also leave the verdict and the
+# record intact — the common case, distinct from the `exit` case above.
+: > "$LOGTEST/decisions.log"
+( source "$HOOK_DIR/lib/log-decision.sh" 2>/dev/null
+  BES_LOG_FILE="$LOGTEST/decisions.log"
+  bes_log_install_trap "probe-cleanup.sh"
+  probe_ret1() { return 1; }
+  bes_log_add_cleanup probe_ret1
+  exit 0 ) >/dev/null 2>&1
+assert_log "instrumentation: cleanup returning 1 is harmless" 1 ALLOW
+
+# And a hook that registers nothing behaves exactly as before.
+: > "$LOGTEST/decisions.log"
+( source "$HOOK_DIR/lib/log-decision.sh" 2>/dev/null
+  BES_LOG_FILE="$LOGTEST/decisions.log"
+  bes_log_install_trap "probe-cleanup.sh"
+  exit 2 ) >/dev/null 2>&1
+assert_log "instrumentation: no cleanup registered" 1 BLOCK
+
+# The registry is process-local: an INHERITED BES_LOG_CLEANUPS must not seed
+# it. Exporting the runner's own name recursed inside the trap and hung the
+# gate — exit 124, no verdict, no record. (Cross-family review, gate 2 HIGH-1.)
+: > "$LOGTEST/decisions.log"
+cat > "$LOGTEST/inherit.sh" <<INHERIT
+source "$HOOK_DIR/lib/log-decision.sh" 2>/dev/null
+bes_log_install_trap "probe-cleanup.sh"
+exit 2
+INHERIT
+BES_LOG_CLEANUPS=bes_log_run_cleanups BES_LOG_FILE="$LOGTEST/decisions.log" \
+    timeout 10 bash "$LOGTEST/inherit.sh" >/dev/null 2>&1
+inherit_rc=$?
+if [ "$inherit_rc" = "2" ]; then
+    PASS=$((PASS+1)); printf 'PASS %-50s [%s]\n' "instrumentation: inherited registry ignored" "log-decision.sh"
+else
+    FAIL=$((FAIL+1))
+    FAILURES+=("instrumentation: inherited registry ignored [log-decision.sh]: gate exited $inherit_rc (124 = hung)")
+    printf 'FAIL %-50s [%s]\n' "instrumentation: inherited registry ignored" "log-decision.sh"
+fi
+assert_log "instrumentation: inherited registry still records" 1 BLOCK
+
+# A BLOCKING cleanup must not hang the gate. Validation cannot prevent this —
+# a legitimately registered cleanup can block just as easily as an injected one
+# — so the runner bounds each cleanup instead. Measured before the bound: a
+# registered `sleep 30` held the trap and no verdict was ever delivered.
+: > "$LOGTEST/decisions.log"
+cat > "$LOGTEST/hang.sh" <<HANG
+source "$HOOK_DIR/lib/log-decision.sh" 2>/dev/null
+bes_log_install_trap "probe-cleanup.sh"
+probe_slow() { sleep 30; }
+bes_log_add_cleanup probe_slow
+exit 2
+HANG
+BES_LOG_CLEANUP_TIMEOUT=2 BES_LOG_FILE="$LOGTEST/decisions.log" \
+    timeout 15 bash "$LOGTEST/hang.sh" >/dev/null 2>&1
+hang_rc=$?
+if [ "$hang_rc" = "2" ]; then
+    PASS=$((PASS+1)); printf 'PASS %-50s [%s]\n' "instrumentation: blocking cleanup is bounded" "log-decision.sh"
+else
+    FAIL=$((FAIL+1))
+    FAILURES+=("instrumentation: blocking cleanup is bounded [log-decision.sh]: gate exited $hang_rc (124 = hung)")
+    printf 'FAIL %-50s [%s]\n' "instrumentation: blocking cleanup is bounded" "log-decision.sh"
+fi
+assert_log "instrumentation: bounded cleanup still records" 1 BLOCK
+
+# A cleanup registered as a command STRING must be rejected, not eval'd: a
+# string containing `exit` would terminate the trap before the write and
+# reintroduce the defect. Names only. (Cross-family review, gate 1 BLOCKING-2.)
+: > "$LOGTEST/decisions.log"
+( source "$HOOK_DIR/lib/log-decision.sh" 2>/dev/null
+  BES_LOG_FILE="$LOGTEST/decisions.log"
+  bes_log_install_trap "probe-cleanup.sh"
+  bes_log_add_cleanup 'rm -f /nonexistent; exit 9'
+  exit 2 ) >/dev/null 2>&1
+assert_log "instrumentation: command string not eval'd" 1 BLOCK
+
+# Structural guard: no hook may install a competing single-line EXIT trap
+# without the fallback marker. Scoped to what the scanner recognises —
+# multiline traps are out of reach of a line-oriented grep.
+trapscan=$(grep -nE '^[[:space:]]*trap .*(EXIT|[[:space:]]0)([[:space:]]|$)' "$HOOK_DIR"/*.sh 2>/dev/null \
+             | grep -v 'bes-log-cleanup-fallback' || true)
+if [ -z "$trapscan" ]; then
+    PASS=$((PASS+1)); printf 'PASS %-50s [%s]\n' "instrumentation: no unmarked competing EXIT trap" "hook corpus"
+else
+    FAIL=$((FAIL+1))
+    FAILURES+=("instrumentation: no unmarked competing EXIT trap [hook corpus]: $trapscan")
+    printf 'FAIL %-50s [%s]\n' "instrumentation: no unmarked competing EXIT trap" "hook corpus"
+fi
+
 # TSV integrity: a tab or newline in ANY field must not shift columns.
 # INJ must be built as a VARIABLE: `$(printf '\n')` strips the trailing
 # newline via command substitution, and `$'\t\n'` does not expand inside

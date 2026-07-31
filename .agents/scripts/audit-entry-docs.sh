@@ -54,6 +54,24 @@ detect_root() {
 
 mode="$(detect_root)"
 
+# Dispatcher-era front-matter gate
+# (specs/2026-07-30-workflow-yaml-dispatcher-purge). A composed
+# WORKFLOW.md's front-matter region is an ALLOWLIST: blank lines and
+# '#' comment lines only, and no symphony/linear token in any case.
+# Anything else is dispatcher-era config. Emits the first offending
+# lines (empty output = clean or no front matter to check).
+workflow_frontmatter_violations() {
+    local file="$1"
+    [ -f "$file" ] || return 0
+    # CR-strip BEFORE every match: a CRLF '---\r' opener otherwise fails
+    # the exact '^---$' checks and the whole gate fails OPEN
+    # (cross-family gate-2 finding, 2026-07-30).
+    head -1 "$file" | tr -d '\r' | grep -q '^---$' || return 0
+    tr -d '\r' < "$file" \
+        | awk 'BEGIN{c=0} /^---$/{c++; next} c==1{print} c>=2{exit}' \
+        | grep -niE '^[[:space:]]*[^#[:space:]]|symphony|linear' | head -3
+}
+
 # --- Per-repo checks ---
 
 audit_internal_repo() {
@@ -107,7 +125,16 @@ audit_internal_repo() {
             missing_markers="${missing_markers} 'Applicability preamble'"
         fi
         if [ -n "$missing_markers" ]; then
-            printf '%s/WORKFLOW.md:1: BLOCKING — fleet-baseline body drift; missing marker(s):%s. Body source: agents/templates/WORKFLOW.body.md (or .agents/templates/WORKFLOW.body.md). Recompose: per-repo YAML + intro + fleet body verbatim.\n' "$repo_name" "$missing_markers" >&2
+            printf '%s/WORKFLOW.md:1: BLOCKING — fleet-baseline body drift; missing marker(s):%s. Body source: agents/templates/WORKFLOW.body.md (or .agents/templates/WORKFLOW.body.md). Recompose: per-repo front-matter + intro + fleet body verbatim.\n' "$repo_name" "$missing_markers" >&2
+            repo_failures=$((repo_failures + 1))
+        fi
+    fi
+
+    if [ -f "$repo_dir/WORKFLOW.md" ]; then
+        local fm_violations
+        fm_violations=$(workflow_frontmatter_violations "$repo_dir/WORKFLOW.md")
+        if [ -n "$fm_violations" ]; then
+            printf '%s/WORKFLOW.md:1: BLOCKING — dispatcher-era front-matter (allowlist: blank/comment lines only, no symphony/linear token in any case); first offending line(s): %s\n' "$repo_name" "$(printf '%s' "$fm_violations" | tr '\n' ';')" >&2
             repo_failures=$((repo_failures + 1))
         fi
     fi
@@ -160,6 +187,17 @@ audit_public_oss_repo() {
             fi
         fi
     done
+
+    # Fleet content deploys to OSS working trees (untracked); the same
+    # dispatcher-era front-matter gate applies to the copy when present.
+    if [ -f "$repo_dir/WORKFLOW.md" ]; then
+        local fm_violations
+        fm_violations=$(workflow_frontmatter_violations "$repo_dir/WORKFLOW.md")
+        if [ -n "$fm_violations" ]; then
+            printf '%s/WORKFLOW.md:1: BLOCKING — dispatcher-era front-matter (allowlist: blank/comment lines only, no symphony/linear token in any case); first offending line(s): %s\n' "$repo_name" "$(printf '%s' "$fm_violations" | tr '\n' ';')" >&2
+            repo_failures=$((repo_failures + 1))
+        fi
+    fi
 
     # .agents/ and .claude/ MUST be gitignored (NOT tracked).
     for forbidden_dir in .agents .claude; do
