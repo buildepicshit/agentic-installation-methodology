@@ -1,6 +1,6 @@
 ---
 name: spec-evidence
-description: "Use to convert durable lessons from a completed task into spec evidence candidates — claims with scope, evidence citation, confidence, and a suggested route. Fires once per SPEC after it reaches status: verified, after a substantial review, or after incident resolution — NOT once per TASK slice (scoped 2026-07-24: a per-slice harvest produced near-duplicate candidates from one body of work and made the owner triage the same lesson N times). Do not write trusted shared memory directly; emit candidates for owner triage only."
+description: "OPT-IN ONLY — use when the OWNER asks to capture a lesson, or when you have found something that should change a fleet rule and you are about to propose that change. Do NOT run it as a routine close-out step. Scoped 2026-07-31 (owner-directed): running it once per SPEC accumulated 54 untriaged candidates across 14 SPECs since 2026-05-28, nearly all on already-closed work, with no consumer — an arrival rate with no service rate, which made finished SPECs read as open work. If a lesson is worth keeping, propose the rule change directly; if it is not worth a rule change, it is not worth writing down."
 license: internal-only
 compatibility:
   - copilot

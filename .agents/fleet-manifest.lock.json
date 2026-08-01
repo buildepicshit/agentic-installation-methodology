@@ -1,9 +1,9 @@
 {
   "schema_version": 1,
-  "generated_at": "2026-07-31T22:33:17.780Z",
+  "generated_at": "2026-08-01T02:33:08.548Z",
   "source": {
     "repo": "bes-fleet-policy",
-    "commit": "9eb39049b5aca45891dbc0c53737d95108e341a6",
+    "commit": "74acc5b4ae126c390eff1d246a5c4ff069da188d",
     "dirty": true
   },
   "manifests": {
@@ -251,15 +251,15 @@
       "kind": "agents-file",
       "source_path": "agents/MODEL_ROUTING.md",
       "target_path": ".agents/MODEL_ROUTING.md",
-      "sha256": "e9573fd03aeb3110b8eebc2e0a5d00d69510ef2c15af9ebe62b6e7b48261f679",
-      "bytes": 52516
+      "sha256": "1c815dde560f58ece334c6d8f975378cbe89cfc69a9cf65f074abe0dad416d59",
+      "bytes": 52728
     },
     {
       "kind": "agents-file",
       "source_path": "agents/OPERATING_MODEL.md",
       "target_path": ".agents/OPERATING_MODEL.md",
-      "sha256": "c47bf6b0eb906de926ca721268a4147d70d890ba08e73603755f851822a48c01",
-      "bytes": 31936
+      "sha256": "53b6fb2daa2bb16927cf52d95a926f85ad7390780e70bb815ccd016645feb62a",
+      "bytes": 33149
     },
     {
       "kind": "agents-file",
@@ -804,15 +804,15 @@
       "kind": "agents-file",
       "source_path": "agents/skills/spec-driven-development/SKILL.md",
       "target_path": ".agents/skills/spec-driven-development/SKILL.md",
-      "sha256": "77283c12a61cc37f016e80e007b9be63fc32f684b3306c5c4686e1e02d3a8831",
-      "bytes": 4043
+      "sha256": "29cd36bb478c66ef066bd14638f6bfc152814ca2caeeaeda37d432f1c66851bd",
+      "bytes": 4074
     },
     {
       "kind": "agents-file",
       "source_path": "agents/skills/spec-evidence/SKILL.md",
       "target_path": ".agents/skills/spec-evidence/SKILL.md",
-      "sha256": "bcaed5c67f785762600a390ddac673fb65e9eeeab9e9263d3dde115d1514ba67",
-      "bytes": 1949
+      "sha256": "503baa2b56815949eb1b3a0c2de5ff72ef332c2500d772c1aa3cdc8ee6c1b7ea",
+      "bytes": 2025
     },
     {
       "kind": "agents-file",
@@ -1287,15 +1287,15 @@
       "kind": "skill",
       "source_path": "agents/skills/spec-driven-development/SKILL.md",
       "target_path": ".claude/skills/spec-driven-development/SKILL.md",
-      "sha256": "77283c12a61cc37f016e80e007b9be63fc32f684b3306c5c4686e1e02d3a8831",
-      "bytes": 4043
+      "sha256": "29cd36bb478c66ef066bd14638f6bfc152814ca2caeeaeda37d432f1c66851bd",
+      "bytes": 4074
     },
     {
       "kind": "skill",
       "source_path": "agents/skills/spec-evidence/SKILL.md",
       "target_path": ".claude/skills/spec-evidence/SKILL.md",
-      "sha256": "bcaed5c67f785762600a390ddac673fb65e9eeeab9e9263d3dde115d1514ba67",
-      "bytes": 1949
+      "sha256": "503baa2b56815949eb1b3a0c2de5ff72ef332c2500d772c1aa3cdc8ee6c1b7ea",
+      "bytes": 2025
     },
     {
       "kind": "skill",
