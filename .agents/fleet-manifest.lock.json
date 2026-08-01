@@ -1,9 +1,9 @@
 {
   "schema_version": 1,
-  "generated_at": "2026-08-01T02:33:08.548Z",
+  "generated_at": "2026-08-01T02:56:35.524Z",
   "source": {
     "repo": "bes-fleet-policy",
-    "commit": "74acc5b4ae126c390eff1d246a5c4ff069da188d",
+    "commit": "e4205887b63c64d80099d2911e9060985fadcd12",
     "dirty": true
   },
   "manifests": {
@@ -114,6 +114,7 @@
       "ci/github-actions/bes-ci.yml",
       "ci/gate-contract.md",
       "githooks/pre-push",
+      "githooks/pre-commit",
       "scripts/validate-deps-declaration.sh",
       "ci/gates/dep-hygiene-verify.sh",
       "standards/UNIVERSAL.md",
@@ -216,8 +217,15 @@
       "kind": "agents-file",
       "source_path": "agents/githooks/commit-msg",
       "target_path": ".agents/githooks/commit-msg",
-      "sha256": "093b7983ab149c9d6211f93866e0f8b81f31aecf0dfce708e2da91f62c255bb6",
-      "bytes": 1250
+      "sha256": "7ca985a467feaa37f2cfec63aae9ece0876f06811f4263bf4ea3a06b44a33bf9",
+      "bytes": 1760
+    },
+    {
+      "kind": "agents-file",
+      "source_path": "agents/githooks/pre-commit",
+      "target_path": ".agents/githooks/pre-commit",
+      "sha256": "292fb28a110f796fbe6c382be99b870ffb5ecd93ab970996ce72e034f12a98e6",
+      "bytes": 6684
     },
     {
       "kind": "agents-file",
@@ -1315,8 +1323,8 @@
       "kind": "githook",
       "source_path": "agents/githooks/commit-msg",
       "target_path": ".githooks/commit-msg",
-      "sha256": "093b7983ab149c9d6211f93866e0f8b81f31aecf0dfce708e2da91f62c255bb6",
-      "bytes": 1250
+      "sha256": "7ca985a467feaa37f2cfec63aae9ece0876f06811f4263bf4ea3a06b44a33bf9",
+      "bytes": 1760
     },
     {
       "kind": "githook",
