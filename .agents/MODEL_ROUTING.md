@@ -644,14 +644,18 @@ changes, integration, research, and final calls.
     approved files. In non-interactive runs it can deny `Write` and `Bash`.
     Use a writer-capable mode with strict allowed files, or make the Claude run
     return full markdown and have the root fleet manager write it.
-20. Rule 20: Cross-family review is REQUIRED — not merely recommended — on any
-    **fleet-propagating guardrail SPEC**: a SPEC whose touch points include
-    paths carried by the propagation manifests
-    (`agents/scripts/fleet-files.txt`, `fleet-hooks.txt`,
-    `fleet-skills.txt`). REQUIRED at two gates: before the artefact
-    transitions to `approved-pending-owner` (spec review) and before the
-    parent SPEC flips to `verified` (execution diff review). The
-    `same-family-review` escape hatch applies only to non-guardrail work.
+20. Rule 20: Cross-family review is REQUIRED — not merely recommended — on a
+    change that **alters what a gate blocks or allows**, touches **secrets or
+    a security surface**, or changes **branch/push protection**. One gate, on
+    the execution diff, before the work lands.
+
+    **Narrowed 2026-07-31 (owner-directed).** It formerly fired on any SPEC
+    touching a path in the propagation manifests, at TWO gates, each up to two
+    rounds — so a logging fix that could not change any verdict drew four
+    review rounds. Path is not risk. If the change cannot alter a decision the
+    fleet makes, no cross-family review is required; run the gates and land it.
+
+    The `same-family-review` escape hatch applies to everything below that bar.
     Adopted 2026-06-10 after four consecutive guardrail SPECs where
     cross-family review caught defects same-family work missed
     (`specs/2026-06-09-mutation-probe-isolation-discipline/SPEC_EVIDENCE.md`

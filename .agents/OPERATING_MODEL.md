@@ -132,16 +132,30 @@ if it changes one of:
 
 - a public contract, API, or published interface
 - persisted state, a data model, or a migration
-- a guardrail: a hook, a lint, or any manifest-carried policy path
-- CI, release, or propagation machinery
+- a guardrail change that alters WHAT IS BLOCKED OR ALLOWED — a new
+  gate, a removed gate, or a changed verdict
 - a security surface or secrets handling
-- an internal architecture or operational-workflow replacement, even
-  with no public-interface or persisted-state change
-- fleet-propagating policy (see "Fleet Rule Origination")
+- an architecture or operational-workflow replacement
+- a fleet-propagating policy RULE (what agents must or must not do)
 
 Everything else — ordinary implementation, refactors, tests, bug fixes,
 repo-local docs — takes the light lane. Inverted from an open-ended list
 2026-07-24; rationale in `file://specs/2026-07-24-lifecycle-lean-execution/SPEC.md` §1.
+
+**Narrowed 2026-07-31 (owner-directed) to price work by CONSEQUENCE, not
+by PATH.** The former list said "a guardrail: a hook, a lint, or any
+manifest-carried policy path", which meant editing a comment in a hook
+cost exactly as much as changing a security boundary. Measured instance:
+a six-line fix to a logging helper — which could not change any gate's
+verdict — drew a 500-line SPEC, four cross-family review rounds, a
+twelve-issue tracker tree and a seven-repo propagation wave. That is the
+regrowth mechanism `file://specs/2026-07-24-ceremony-weight-audit/SPEC.md`
+§5 named, arriving through the trigger rather than through volume.
+
+So: **touching a manifest-carried file is NOT by itself a trigger.** Fix
+the bug, run the gates, propagate, done. Ask "if this is wrong, what
+breaks?" If the answer is "a log line is inaccurate" or "a comment is
+stale", it is light-lane work no matter which file it lives in.
 
 The DEFAULT lifecycle is a 5-gate flow
 (`file://specs/2026-06-30-operating-model-lean-down/SPEC.md` §7):
@@ -181,8 +195,10 @@ The DEFAULT lifecycle is a 5-gate flow
    silently.
 5. **Verify**: run the spec acceptance commands and the repo's normal
    gate. Write a completion report with changed files, verification
-   output, residual risk, and spec evidence candidates; capture
-   durable lessons as spec evidence candidates. Do not write
+   output and residual risk. **Do NOT harvest spec evidence as a routine
+   step** — that is opt-in, on owner request or when you are about to
+   propose a rule change (narrowed 2026-07-31; the routine harvest
+   accumulated 54 untriaged candidates with no consumer). Do not write
    cross-project instructions directly from an agent session.
 
 The full 13-phase path (adding decompose / dispatch / cross-validate)
@@ -338,11 +354,15 @@ is state the owner cannot see and the next session cannot inherit.
   step, kept current as work proceeds. Ephemeral is correct here: it is
   visible while it matters. **Fastpath and trivial work are exempt** —
   they do not enter `execute-spec` and get no tier at all.
-- **Tier 2 — durable.** Work that is manifest-carried AND expands to
-  two or more tracked units, or names more than three slices, or that
-  the owner directs, MUST additionally carry a GitHub issue tree — one
-  parent per bundle, one sub-issue per tracked unit, `tracker_ref` on
-  the SPEC. Internal repos only; public OSS repos are fenced out.
+- **Tier 2 — durable.** A GitHub issue tree is REQUIRED only when the
+  **owner asks for one**. Nothing else triggers it.
+
+  **Narrowed 2026-07-31 (owner-directed).** The former trigger —
+  manifest-carried AND ≥2 tracked units or >3 slices — fired on routine
+  fleet changes and produced twelve GitHub issues for a four-file fix,
+  all of which then had to be closed by hand. The task list plus the
+  SPEC's own Completion Report already carry the state; the issue tree
+  added a second ledger to maintain and nothing else.
 
 Work that enters `execute-spec` but misses the Tier 2 trigger gets
 Tier 1 only. Fastpath and trivial work get neither. This is a floor on

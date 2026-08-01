@@ -68,7 +68,7 @@ Decompose → Dispatch → Cross-validate between Approve and Execute (see
 | Split approved multi-slice work | `decompose-approved-spec` |
 | Execute approved scope | `execute-spec` |
 | Prove the change | `verify-spec` |
-| Capture durable lessons | `spec-evidence` |
+| Capture durable lessons (OPT-IN, owner-requested only) | `spec-evidence` |
 | Check a small reversible exception | `author-spec` + `SPEC.fastpath.template.md` |
 
 ## Hard Stops
