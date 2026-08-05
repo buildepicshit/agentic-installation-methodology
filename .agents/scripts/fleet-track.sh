@@ -157,13 +157,20 @@ phase1() {  # phase1 <spec_path> ; sets SPEC_ID TARGET UNITS_FILE TRACKED
     [[ "$count" -le "$MAX_UNITS" ]] \
         || die "$count units exceeds the platform cap of $MAX_UNITS sub-issues per parent — split the SPEC"
 
-    # Trigger evaluated on EXPANDED UNITS, not slices: a one-slice SPEC that
-    # propagates to seven repos is seven units and must be tracked. (Gate 1 F-11.)
-    local manifest_carried=0
-    grep -qE '(^|[^A-Za-z])(agents/|\.agents/|\.claude/)' "$spec" && manifest_carried=1
+    # Tier 2 is OWNER-REQUEST-ONLY. The only signal that the owner asked is a
+    # `tracker_ref` in the SPEC front-matter; nothing else triggers tracking.
+    #
+    # This used to auto-fire on the pre-2026-07-31 trigger — manifest-carried
+    # text AND >=2 expanded units, OR >3 Execution Plan slices — which
+    # OPERATING_MODEL "Work visibility" retired: "A GitHub issue tree is
+    # REQUIRED only when the owner asks for one. Nothing else triggers it."
+    # The narrowing landed in the policy doc and never reached this script, so
+    # `execute-spec` (which invokes this helper on every run) would still have
+    # opened an issue tree for a SPEC whose owner never asked for one — the
+    # exact twelve-issues-for-a-four-file-fix outcome the narrowing named.
+    # Authority: file://agents/OPERATING_MODEL.md "Work visibility";
+    #            file://specs/2026-08-05-pocock-v1-2-and-harness-parity/SPEC.md S9
     TRACKED=0
-    [[ "$manifest_carried" -eq 1 && "$count" -ge 2 ]] && TRACKED=1
-    [[ $(plan_slice_count "$spec") -gt 3 ]] && TRACKED=1
     [[ -n "$(fm_field "$spec" tracker_ref)" ]] && TRACKED=1
     UNIT_COUNT="$count"
 }

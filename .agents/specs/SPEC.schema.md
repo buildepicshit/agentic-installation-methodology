@@ -58,7 +58,7 @@ Literal example: the front-matter block of
 | `acceptance_commands` | list[string] | REQUIRED | runnable commands | non-empty OR explicitly `[]` with reason in Acceptance Criteria section; `type: fastpath` MAY use `[]` with the checks inline in the fastpath §4 Acceptance-commands section |
 | `ideated_in` | string | REQUIRED | repo-relative path, `no-decision`, OR `null` | path to producing IDEA.md. `null` is valid for `type: fastpath` and for a SPEC declaring `capture_after`. **`no-decision`** records that the ideation conversation happened and yielded no decision — no approach chosen among alternatives, no owner-blocking question resolved — so no artefact was filed (`file://agents/OPERATING_MODEL.md` Required Work Model step 2). Added 2026-07-24: conditional IDEA otherwise had no honest encoding, and the only way to lint clean was to falsely declare `capture_after`. A rule that forces a false declaration is worse than the ceremony it replaced. |
 | `capture_after` | string | OPTIONAL | `owner://<ref>` | REQUIRED to use `ideated_in: null` on a non-fastpath SPEC. Declares that the work landed BEFORE the SPEC was filed under an explicit owner directive, per `file://agents/OPERATING_MODEL.md` "Capture-after" — so no IDEA ever existed. MUST match `owner://<ref>` with a non-empty reference starting alphanumeric — never a bare `true` and never a bare scheme: capture-after requires an *explicit* owner directive, and an unattributable flag would let an agent self-authorise skipping the IDEA phase. |
-| `tracker_ref` | string | CONDITIONAL | a `https://github.com/<owner>/<repo>/issues/<n>` URL, or the literal `pending` | REQUIRED when the SPEC is a **tracked bundle** — manifest-carried AND expanding to ≥2 tracked units, OR >3 Execution Plan slices, OR owner-directed (`file://agents/OPERATING_MODEL.md` "Work visibility"). Points at the parent tracker issue. `pending` is the legal degraded value written when `gh` is unreachable; the drift audit reports it and nothing gates on it. Any other non-URL value is an error. Forward-only: the owner-sealed exemption below covers this field too, so no landed SPEC is edited to satisfy it. Restored 2026-07-26 (`file://specs/2026-07-26-agent-work-tracking-surface/SPEC.md`) after `3ab9f6c` removed it as ceremony — its absence left agents with nowhere to record work state but memory. |
+| `tracker_ref` | string | CONDITIONAL | a `https://github.com/<owner>/<repo>/issues/<n>` URL, or the literal `pending` | REQUIRED **only when the owner asks for a GitHub issue tree** — nothing else triggers it (`file://agents/OPERATING_MODEL.md` "Work visibility"). Points at the parent tracker issue. `pending` has two legitimate uses: it is the **seed an author writes to REQUEST the issue tree** before the helper has created it (a URL cannot exist beforehand, so absence would mean the request could never be expressed), and it is the degraded value written when `gh` is unreachable. The drift audit reports it and nothing gates on it. Any other non-URL value is an error. Forward-only: the owner-sealed exemption below covers this field too, so no landed SPEC is edited to satisfy it. Restored 2026-07-26 (`file://specs/2026-07-26-agent-work-tracking-surface/SPEC.md`) after `3ab9f6c` removed it as ceremony. **Realigned 2026-08-05**: this row and `lint-spec.sh` still carried the pre-2026-07-31 trigger (manifest-carried AND ≥2 tracked units, OR >3 Execution Plan slices) after OPERATING_MODEL narrowed it to owner-request-only, so the lint refused a SPEC with four honest slices its own quality gate (`file://specs/2026-08-05-pocock-v1-2-and-harness-parity/SPEC.md` OQ-1). |
 | — | — | — | — | **Owner-sealed exemption.** At `status: approved`, `decomposed`, `closed` or `superseded`, `lint-spec.sh` skips the `ideated_in` / `capture_after` advisories entirely. Those four are owner-only flips (§1.3), so an agent cannot self-exempt; everything pre-seal is fully checked. Rationale: a landed record MUST NOT be edited to satisfy a rule introduced after it (`file://agents/OPERATING_MODEL.md` "Capture-after"), so warning about it forever is noise that teaches readers to ignore lint. |
 | `superseded_by` | string | OPTIONAL | spec id or citation-grammar string | REQUIRED at `status: superseded` unless the superseding authority is stated in the spec body (a commit message alone is NOT sufficient); empty string invalid |
 
@@ -87,22 +87,28 @@ IDEA.draft ───────────────────────
                                   │           ▼
                                   │   SPEC.approved
                                   │           │
-                                  │           │ /decompose-approved-spec
-                                  │           │ (BLOCKING for Contract/Task with ≥2 slices)
-                                  │           │ emits specs/<id>/tasks/T*.md
-                                  │           ▼
-                                  │   SPEC.<owner sets decomposed>
                                   │           │
-                                  │           │ TASK.md set dispatched to agents;
-                                  │           │ execution begins
-                                  │           ▼
-                                  │   SPEC.in-execution
+                                  │           ├──── 5-gate default: execute ────┐
+                                  │           │                                 │
+                                  │           │ /decompose-approved-spec         │
+                                  │           │ (EXCEPTION path: high-risk /     │
+                                  │           │  multi-agent work only)          │
+                                  │           │ emits specs/<id>/tasks/T*.md     │
+                                  │           ▼                                 │
+                                  │   SPEC.<owner sets decomposed>               │
+                                  │           │                                 │
+                                  │           │ TASK.md set dispatched;          │
+                                  │           │ execution begins                 │
+                                  │           ▼                                 ▼
+                                  │   SPEC.in-execution ◄─────────────────────────
                                   │           │
                                   │           │ acceptance_commands pass + Completion Report filled
                                   │           ▼
                                   │   SPEC.verified
                                   │           │
-                                  │           │ spec evidence captured
+                                  │           │ owner closes
+                                  │           │ (spec-evidence is OPT-IN, not a
+                                  │           │  precondition — schema note below)
                                   │           ▼
                                   │   SPEC.closed
                                   │
@@ -113,6 +119,24 @@ IDEA.draft ───────────────────────
                                   │           ▼
                                   │   SPEC.superseded  (terminal; no exit edges)
 ```
+
+**Two corrections to this diagram, 2026-08-05** (`file://specs/2026-08-05-pocock-v1-2-and-harness-parity/SPEC.md` S9):
+
+- **Decomposition is the EXCEPTION, not the only route out of `approved`.**
+  The diagram annotated the edge "BLOCKING for Contract/Task with ≥2
+  slices", making a mechanical slice count the trigger and leaving no
+  drawn path from `approved` to `in-execution`. The router is canonical
+  and says otherwise — *"Decomposition is the exception, not the 5-gate
+  default"* (`file://agents/skills/spec-driven-development/SKILL.md`) — as
+  does `file://agents/OPERATING_MODEL.md` "Required Work Model", which
+  reserves the full 13-phase path for high-risk / multi-agent work. The
+  5-gate default goes `approved → in-execution` directly.
+- **`spec-evidence` is opt-in and is NOT a precondition for `closed`.**
+  The `verified → closed` edge was labelled "spec evidence captured",
+  which made a harvest read as required. It was scoped to opt-in on
+  2026-07-31 (`file://agents/skills/spec-evidence/SKILL.md`) precisely
+  because running it per-SPEC accumulated 54 untriaged candidates with no
+  consumer. `closed` is an owner flip; the owner may close without one.
 
 `superseded` is the owner-set terminal status for a spec retired
 BEFORE execution — superseded by a later spec, a reset, or a
@@ -176,7 +200,7 @@ authority — TASK.md files are NOT peer authorities.
 | `tracker_ref` | string | OPTIONAL | issue URL, or `pending` | the slice sub-issue under the parent SPEC's tracker issue. Absent when the parent bundle is untracked. |
 | `owner` | string | REQUIRED | agent id or `unassigned` | |
 | `model_route` | string | REQUIRED | model slug from `agents/MODEL_ROUTING.md` Copilot or Claude routing | primary execution lane |
-| `cross_validation_lane` | string | CONDITIONAL | model slug; MUST be from a different family than `model_route` | independent diff/artefact reviewer. **REQUIRED only on Rule-20 guardrail work** (a TASK whose touch points include manifest-carried paths); OPTIONAL elsewhere. Scoped 2026-07-24 (owner-directed): it was REQUIRED on every TASK, so ordinary repo-local slices paid for a cross-family reviewer that Rule 20 never asked for. Rule 20 itself is unchanged — see `file://agents/MODEL_ROUTING.md` Rule 20. |
+| `cross_validation_lane` | string | CONDITIONAL | model slug; MUST be from a different family than `model_route` | independent diff/artefact reviewer. **REQUIRED only on Rule-20 work** — a TASK that alters what a gate blocks or allows, touches secrets or a security surface, or changes branch/push protection; OPTIONAL elsewhere. Scoped 2026-07-24 (owner-directed): it was REQUIRED on every TASK, so ordinary repo-local slices paid for a cross-family reviewer Rule 20 never asked for. **Reclassified 2026-08-05**: this row defined the class by PATH ("touch points include manifest-carried paths") after the 2026-07-31 narrowing replaced path with consequence — *"Path is not risk"* — so it kept demanding cross-family review on manifest-path work that could not alter any verdict (`file://specs/2026-08-05-pocock-v1-2-and-harness-parity/SPEC.md` S9). Rule 20 is the canonical statement; this row cites it, never restates it — see `file://agents/MODEL_ROUTING.md` Rule 20. |
 | `verification_lane` | string | REQUIRED | model slug | MAY equal `model_route` for mechanical verification; SHOULD differ for behavioral verification |
 | `mode` | enum | REQUIRED | `HITL` \| `AFK` | AFK requires bounded ownership and explicit acceptance |
 | `deps` | list[string] | REQUIRED | TASK ids that MUST reach `done` first; `[]` allowed | |

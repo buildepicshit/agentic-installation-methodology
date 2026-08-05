@@ -317,6 +317,26 @@ run "declared npm install allowed"          block-undeclared-deps.sh 0 "$(J 'npm
 run "non-manifest bash allowed"             block-undeclared-deps.sh 0 "$(J 'git status')"
 run "undeclared pip install blocked"        block-undeclared-deps.sh 2 "$(J 'pip install ghost-pkg')"
 run "cargo build manifest-path allowed"     block-undeclared-deps.sh 0 "$(J 'cargo build --manifest-path spike/Cargo.toml')"
+# S5 regression: READ commands naming a manifest are not edits. A grep over
+# package.json in a throwaway clone was hard-blocked 2026-08-05.
+run "grep over a manifest allowed"          block-undeclared-deps.sh 0 "$(J 'grep version package.json')"
+run "cat of a manifest allowed"             block-undeclared-deps.sh 0 "$(J 'cat package.json')"
+run "git show of a manifest allowed"        block-undeclared-deps.sh 0 "$(J 'git show HEAD:package.json')"
+run "read then install still blocked"       block-undeclared-deps.sh 2 "$(J 'grep x package.json && npm install ghost')"
+# ...but a REDIRECTION into one is still the edit it looks like. Detection is
+# what the READ_CMD_REGEX change could have broken, and detection only shows as
+# a block when NO active SPEC authorises manifest work — so point the resolver
+# at an empty dir for these two, then restore the fixture.
+mkdir -p "$SANDBOX/specs/none"
+export ACTIVE_SPEC_DIR="$SANDBOX/specs/none"
+run "redirect into a manifest blocked"      block-undeclared-deps.sh 2 "$(J 'cat > package.json')"
+run "jq redirect into a manifest blocked"   block-undeclared-deps.sh 2 "$(J 'jq . x.json > package.json')"
+run "pure read still allowed, no SPEC"      block-undeclared-deps.sh 0 "$(J 'grep version package.json')"
+# Cross-family reviewer finding 1: a read span must not swallow a command
+# substitution carrying a real edit.
+run "read span cannot hide \$() edit"        block-undeclared-deps.sh 2 "$(J 'cat package.json $(sed -i s/foo/bar/ package.json)')"
+run "read span cannot hide backtick edit"    block-undeclared-deps.sh 2 "$(J 'cat package.json `sed -i s/a/b/ package.json`')"
+export ACTIVE_SPEC_DIR="$SANDBOX/specs/active"
 unset CLAUDE_PROJECT_DIR
 unset ACTIVE_SPEC_DIR
 
@@ -325,6 +345,15 @@ unset ACTIVE_SPEC_DIR
 # fleet-policy root so the helper + known-good are found.
 export CLAUDE_PROJECT_DIR="$HOOK_DIR/../.."
 run "claude --print prompt allowed"                 block-bad-cli-invocation.sh 0 "$(J 'claude --print "p"')"
+# S5 regression: copilot admin subcommands and --help anywhere in the span are
+# metadata queries, not sessions. `copilot skill --help` was blocked 2026-08-05.
+run "copilot skill --help allowed"                  block-bad-cli-invocation.sh 0 "$(J 'copilot skill --help')"
+run "copilot skill list allowed"                    block-bad-cli-invocation.sh 0 "$(J 'copilot skill list')"
+run "copilot prompt-less session still blocked"     block-bad-cli-invocation.sh 2 "$(J 'copilot --model gpt-5.6-sol')"
+# Cross-family reviewer finding 2: --help must be read from argv, never from
+# quoted PROMPT TEXT. Matching the raw span let a non-GPT model skip the
+# family check entirely.
+run "quoted --help does not exempt a session"      block-bad-cli-invocation.sh 2 "$(J 'gh copilot -- --model claude-opus-5 -p \"review --help please\" --allow-all')"
 run "claude --bogus blocked"                        block-bad-cli-invocation.sh 2 "$(J 'claude --bogus "p"')"
 run "claude --output-format without --print blocked" block-bad-cli-invocation.sh 2 "$(J 'claude --output-format json "p"')"
 run "claude --version is admin-allowed"             block-bad-cli-invocation.sh 0 "$(J 'claude --version')"

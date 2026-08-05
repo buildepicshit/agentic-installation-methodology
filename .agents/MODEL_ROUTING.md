@@ -664,8 +664,7 @@ changes, integration, research, and final calls.
     `file://specs/2026-06-30-operating-model-lean-down/SPEC.md` §7); the
     review-spec, review-diff, and verify-spec skills cite it rather than
     restating it.
-    Classification check (2026-07-02): classify by grepping
-    the diff's touch points against the propagation manifests — the class
+
     **STOP RULE (added 2026-07-24, owner-directed).** Rule 20 requires
     review AT the gate; it does not require iterating until a reviewer stops
     producing observations, which it never will — an adversarial reviewer has
@@ -682,21 +681,34 @@ changes, integration, research, and final calls.
         reviewers have produced demonstrably wrong counts and refuted-then-
         reproposed fixes.
     Evidence: `file://specs/2026-07-24-capture-after-lint-declaration/SPEC.md`
-    §8 (SE-F). The classification rule below is UNCHANGED — the stop rule
-    bounds review DEPTH, never review SCOPE.
-    Classification check (2026-07-02): classify by grepping the diff's
-    touch points against the propagation manifests — the class is
-    touch-point-defined, and intent framing ("machinery", "just docs") is
-    not an exemption; three same-day misclassifications each hid real
-    review-caught defects
+    §8 (SE-F). The stop rule bounds review DEPTH, never review SCOPE.
+
+    **Classification (2026-07-31).** Classify by CONSEQUENCE, using the
+    three tests in the rule head: does the change alter what a gate blocks
+    or allows, touch secrets or a security surface, or change branch/push
+    protection? Intent framing ("machinery", "just docs") is not an
+    exemption — say what the change can and cannot alter, and check it
+    against those three.
+
+    The former test was path-based: grep the diff's touch points against
+    the propagation manifests, class is touch-point-defined. That was
+    retired by the 2026-07-31 narrowing above — *"Path is not risk"* — and
+    a truncated duplicate of it survived here until 2026-08-05, so this
+    rule contradicted its own narrowing four lines apart
+    (`file://specs/2026-08-05-pocock-v1-2-and-harness-parity/SPEC.md` S9).
+    The evidence behind the old test still stands on its own terms — three
+    same-day misclassifications each hid real review-caught defects
     (`file://specs/2026-07-01-propagation-machinery-fixes/SPEC_EVIDENCE.md`
-    SE-5). There is deliberately NO waiver mechanism (owner-affirmed
-    2026-07-02 against a recorded-waiver alternative: every waived or
-    misclassified review that week hid real defects, while the rule's one
-    hard stop proved correct). If the cross-family lane is unavailable,
-    the work HOLDS; a per-case owner override remains possible only as an
-    explicit in-transcript directive — an owner action, not a rule
-    feature.
+    SE-5) — which is why intent framing remains a non-exemption. What
+    changed is the trigger, not the rigour.
+
+    There is deliberately NO waiver mechanism for a change that DOES meet
+    the bar (owner-affirmed 2026-07-02 against a recorded-waiver
+    alternative: every waived or misclassified review that week hid real
+    defects, while the rule's one hard stop proved correct). If the
+    cross-family lane is unavailable for such a change, the work HOLDS; a
+    per-case owner override remains possible only as an explicit
+    in-transcript directive — an owner action, not a rule feature.
 
 ## Standard Prompts
 
