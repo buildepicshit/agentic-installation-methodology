@@ -21,7 +21,8 @@ ideated_in: specs/<id>/IDEA.md
 > include the ones that carry weight for THIS change and delete the rest.
 > `type` only flavours which optional sections are worth keeping; it no
 > longer selects a template. For ≤5-file / ≤300-line / reversible work with
-> NO manifest-carried touch points, use `SPEC.fastpath.template.md` instead.
+> NO Rule 20 consequence (no change to what a gate blocks or allows, no
+> secrets, no branch/push protection), use `SPEC.fastpath.template.md` instead.
 
 <!-- ============================ CORE (required) ============================ -->
 

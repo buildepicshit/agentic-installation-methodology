@@ -213,13 +213,19 @@ cross-validation; lands at `status: closed` in same commit as work.
 
 Widened 2026-07-24 from ≤ 1 file / ≤ 50 lines; the
 explicit-owner-directive precondition is REMOVED (`file://specs/2026-07-24-lifecycle-lean-execution/SPEC.md` §1).
-Fastpath does NOT override Rule 20. Note the two are separate bars: Rule 20
-fires on CONSEQUENCE (does the change alter a gate's verdict, touch secrets,
-change branch protection), while the manifest-carried exclusion below is a
-FASTPATH threshold in its own right — fastpath skips the review gates
-entirely, so propagation blast radius disqualifies it regardless of Rule 20.
-A manifest-carried path is NOT by itself Rule-20 work ("Path is not risk",
-narrowed 2026-07-31); it is simply not fastpath-eligible. See
+Fastpath does NOT override Rule 20 — it is barred by the SAME test. Fastpath
+skips both review gates, so the thing that must never take it is exactly the
+thing Rule 20 exists to catch: a change that alters what a gate blocks or
+allows, touches secrets or a security surface, or changes branch/push
+protection.
+
+**Realigned 2026-08-06.** This paragraph previously kept a manifest-carried
+exclusion as "a FASTPATH threshold in its own right". Path is a proxy for risk
+and it failed both ways — barring a typo fix in a propagating doc, while
+admitting `.github/workflows/ci.yml` and repo-local guardrails, which are in no
+manifest. Swapping it for the consequence test is net-tightening
+(`file://specs/2026-08-06-guardrail-proxies-to-consequence/SPEC.md` S1). A
+manifest hit is now an ADVISORY signal, not a bar. See
 `file://agents/specs/SPEC.fastpath.template.md` for the retained
 template and thresholds.
 If ANY threshold fails, escalate to task/contract/decision.

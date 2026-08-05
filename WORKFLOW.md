@@ -26,6 +26,7 @@
 
 
 
+
 # agentic-installation-methodology Workflow
 
 This is the **public OSS** repo for the agentic installation
@@ -169,7 +170,9 @@ Three minutes of reading, no edits:
 ## Step 1 — Pick the procedure
 
 - **Tiny non-trivial work under explicit owner directive**
-  (≤ 5 files, ≤ 300 lines, single component, reversible, no manifest-carried paths,
+  (≤ 5 files, ≤ 300 lines, single component, reversible, no Rule 20
+  consequence — nothing that alters a gate's verdict, touches secrets, or
+  changes branch/push protection,
   owner-cited): produce a fastpath SPEC from
   `.agents/specs/SPEC.fastpath.template.md` at `status: closed`.
   No IDEA, no review gate, no decomposition.
