@@ -174,7 +174,7 @@ normal lifecycle so the BLOCKING review gate runs before approval.
 (`file://agents/specs/SPEC.fastpath.template.md`) MAY land directly at
 `status: closed` in the same commit as the work it records, WITHOUT the
 IDEA / blocking-review / decomposition / cross-validation phases, when
-ALL fastpath thresholds hold (≤ 5 files, ≤ 300 lines, one component, no manifest-carried touch points, no
+ALL fastpath thresholds hold (≤ 5 files, ≤ 300 lines, one component, no Rule 20 consequence — no change to what a gate blocks or allows, no secrets or security surface, no branch/push protection (realigned 2026-08-06 from a manifest-path test), no
 public-contract or persisted-state impact, reversible in one commit)
 AND an explicit owner directive authorises it (cited in the fastpath
 §3). That owner directive supplies the owner action the `closed` flip

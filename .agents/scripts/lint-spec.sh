@@ -150,14 +150,23 @@ if [[ "$ARTEFACT" == "spec" && "$TYPE" != "fastpath" ]]; then
     fi
 fi
 
-# ---------- Fastpath may NEVER carry guardrail paths (mechanical) ----------
+# ---------- Fastpath may NEVER carry a Rule 20 CONSEQUENCE (mechanical) -----
 # Fastpath lands at `status: closed`, so it passes through NEITHER Rule 20 gate
-# (`approved-pending-owner`, `verified`). Prose alone therefore cannot hold this
-# line: an author who misclassifies touch points would land a fleet-propagating
-# change with no cross-family review at all. So it is enforced here, on the
-# declared file list, as an ERROR rather than an advisory.
-# Found by the r2 cross-family reviewer after the prose-only version shipped
+# (`approved-pending-owner`, `verified`). It is the one lane where a guardrail
+# change reaches production unreviewed, so the bar is enforced here as an ERROR
+# rather than left to prose
 # (`file://specs/2026-07-24-lifecycle-lean-execution/SPEC.md` §9).
+#
+# WHAT CHANGED 2026-08-06: the test was manifest-PATH membership — any hit
+# against fleet-{files,hooks,skills}.txt. Path is a proxy for risk, and after
+# Rule 20 narrowed to consequence on 2026-07-31 ("Path is not risk") the proxy
+# failed BOTH ways: it barred a typo fix in a propagating doc, and it ADMITTED
+# `.github/workflows/ci.yml`, a repo-local `.claude/hooks/<guard>.sh` and
+# `.github/hooks/*.json` — none manifest-carried — so removing a CI gate was
+# fastpath-eligible. Now the ENFORCEMENT SURFACE blocks and the manifest hit
+# only advises. Net-tightening.
+# Authority: file://specs/2026-08-06-guardrail-proxies-to-consequence/SPEC.md S1
+#
 # The rule has an EPOCH. Ten fastpath SPECs landed before 2026-07-24 naming
 # manifest-carried paths, which was permitted then; policy forbids editing a
 # landed record to satisfy a later rule (OPERATING_MODEL "Capture-after"), so
@@ -173,36 +182,75 @@ if [[ "${FM[id]:-}" =~ ^([0-9]{4})-([0-9]{2})-([0-9]{2})- ]]; then
     _fp_date="${BASH_REMATCH[1]}${BASH_REMATCH[2]}${BASH_REMATCH[3]}"
     (( _fp_date < _FP_EPOCH )) && _fp_enforce=0
 fi
+
+# Paths that ARE an enforcement surface: changing one alters what is blocked or
+# allowed, which is Rule 20's first test. Deliberately independent of the
+# propagation manifests — a repo-local guard is exactly the case the old test
+# missed.
+# Broadened 2026-08-06 after the cross-family reviewer probed it: the first
+# draft MISSED fleet-selfcheck.sh, tools/policy-check.sh, a guardrail outside
+# .claude/hooks/, and — found here — `agents/githooks/pre-commit`, this fleet's
+# OWN git hook, because the pattern demanded a literal dot on `.githooks`.
+_FP_CONSEQUENCE_RE='(^|/)\.?githooks/|(^|/)\.github/workflows/|(^|/)hooks?/|(^|/)ci/gates?/|(^|/)(block|warn)-[A-Za-z0-9_.-]+\.(sh|mjs)$|(^|/)(lint|validate|audit|verify|guard)[-_][A-Za-z0-9_.-]+\.(sh|mjs)$|[-_](check|selfcheck|verify|guard|guardrail|policy)\.(sh|mjs)$|(^|/)(settings|permissions)\.json$|guardrail'
+# Secrets / branch-protection are Rule 20's other two tests; they are claimed in
+# prose rather than by path, so they are matched on the BODY only.
+# Scoped and tightened after the first draft matched every SPEC alive: the
+# front-matter field `requires_secrets:` tripped `secrets?`, and a bare `token`
+# tripped the citation-grammar phrase "source token". A guardrail that fires on
+# every artefact is a guardrail nobody reads.
+# Broadened 2026-08-06: the tightened draft missed "rotate personal access
+# tokens", "the GitHub PAT", and "an SSH private key" — all plainly Rule 20
+# secrets work. Each alternative is anchored so the citation-grammar phrase
+# "source token" and the front-matter key `requires_secrets` still do not match.
+_FP_SECRET_RE='(credential|password|passphrase|private key|ssh key|api[_ -]?key|access[_ -]?tokens?|personal access tokens?|auth[_ -]?tokens?|bearer tokens?|github pat|\bPAT\b|\.env\b|branch[ -]protection|push[ -]protection|required reviewers|rotat(e|ing|ion)[a-z ]*(secret|token|key|credential)|secrets?[ -](handling|management|rotation)|handling secrets|a secret\b|secrets?\.(json|ya?ml))'
+
 if [[ "$ARTEFACT" == "spec" && "$TYPE" == "fastpath" && $_fp_enforce -eq 1 ]]; then
-    _mf_root="$(cd "$(dirname "$(readlink -f "$0")")/.." && pwd)"
-    _manifests=()
-    for _m in fleet-files.txt fleet-hooks.txt fleet-skills.txt; do
-        [[ -f "$_mf_root/scripts/$_m" ]] && _manifests+=("$_mf_root/scripts/$_m")
-    done
-    if (( ${#_manifests[@]} > 0 )); then
-        # Collect backticked paths from the whole SPEC body: the declared file
-        # list lives in "## 2. Files changed" but authors also name paths inline,
-        # and over-collecting is the fail-safe direction here.
-        while read -r _cand; do
-            [[ -z "$_cand" ]] && continue
-            # Match ONLY "a manifest entry is a path-boundary suffix of the
-            # candidate". The reverse direction over-rejects: a bare `README.md`
-            # matched the manifest's scripts/audit-entry-docs-fixtures/README.md
-            # and blocked an innocent fastpath. Caught by this check's own
-            # false-positive test row, not by review.
-            for _mf in "${_manifests[@]}"; do
-                if awk -v c="$_cand" '
-                        /^[[:space:]]*(#|$)/ {next}
-                        { e=$1
-                          if (c==e) {found=1; exit}
-                          n=length(c)-length(e)
-                          if (n>0 && substr(c,n+1)==e && substr(c,n,1)=="/") {found=1; exit} }
-                        END{exit(found?0:1)}' "$_mf" 2>/dev/null; then
-                    emit_err "fastpath" "$fm_end" "type: fastpath names a manifest-carried path ('$_cand') — fastpath skips the review gates entirely, and propagation blast radius disqualifies it. (This is a FASTPATH threshold, not a Rule-20 classification: since 2026-07-31 Rule 20 fires on consequence, not path.) Escalate to a task/contract/decision SPEC."
-                    break 2
-                fi
-            done
-        done < <(grep -oE '`[A-Za-z0-9_./-]+\.(md|sh|json|mjs|txt|ya?ml)`' "$TARGET" | tr -d '`' | sort -u)
+    _fp_paths="$(grep -oE '`[A-Za-z0-9_./-]+\.(md|sh|json|mjs|txt|ya?ml)`' "$TARGET" | tr -d '`' | sort -u)"
+
+    # (a) BLOCKING — an enforcement surface.
+    _fp_hit=""
+    while read -r _cand; do
+        [[ -z "$_cand" ]] && continue
+        if printf '%s' "$_cand" | grep -qE "$_FP_CONSEQUENCE_RE"; then _fp_hit="$_cand"; break; fi
+    done <<< "$_fp_paths"
+    if [[ -n "$_fp_hit" ]]; then
+        emit_err "fastpath" "$fm_end" "type: fastpath names an enforcement surface ('$_fp_hit') — that alters what a gate blocks or allows, which is the Rule 20 bar, and fastpath skips both review gates. Escalate to a task/contract/decision SPEC."
+    fi
+
+    # (b) BLOCKING — secrets or branch/push protection, claimed in prose.
+    if tail -n +$((fm_end + 1)) "$TARGET" | grep -qiE "$_FP_SECRET_RE"; then
+        emit_err "fastpath" "$fm_end" "type: fastpath mentions secrets, credentials or branch/push protection — both are Rule 20 tests, and fastpath skips both review gates. Escalate to a task/contract/decision SPEC."
+    fi
+
+    # (c) ADVISORY — manifest-carried, but no consequence detected. Propagating
+    # work correlates with risk without defining it, so this nudges, never blocks.
+    if [[ -z "$_fp_hit" ]]; then
+        _mf_root="$(cd "$(dirname "$(readlink -f "$0")")/.." && pwd)"
+        _manifests=()
+        for _m in fleet-files.txt fleet-hooks.txt fleet-skills.txt; do
+            [[ -f "$_mf_root/scripts/$_m" ]] && _manifests+=("$_mf_root/scripts/$_m")
+        done
+        if (( ${#_manifests[@]} > 0 )); then
+            while read -r _cand; do
+                [[ -z "$_cand" ]] && continue
+                # Match ONLY "a manifest entry is a path-boundary suffix of the
+                # candidate". The reverse direction over-rejects: a bare
+                # `README.md` matched scripts/audit-entry-docs-fixtures/README.md
+                # and blocked an innocent fastpath.
+                for _mf in "${_manifests[@]}"; do
+                    if awk -v c="$_cand" '
+                            /^[[:space:]]*(#|$)/ {next}
+                            { e=$1
+                              if (c==e) {found=1; exit}
+                              n=length(c)-length(e)
+                              if (n>0 && substr(c,n+1)==e && substr(c,n,1)=="/") {found=1; exit} }
+                            END{exit(found?0:1)}' "$_mf" 2>/dev/null; then
+                        emit_warn "fastpath" "$fm_end" "type: fastpath names a manifest-carried path ('$_cand'). Not blocking — path is not risk (Rule 20, narrowed 2026-07-31) — but propagating work often IS consequential: confirm it alters no gate verdict, no secret, no branch protection."
+                        break 2
+                    fi
+                done
+            done <<< "$_fp_paths"
+        fi
     fi
 fi
 

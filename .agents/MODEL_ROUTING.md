@@ -314,10 +314,12 @@ Refresh discipline: re-baseline this matrix on (a) an AA index
 version bump (a v4 → v5 bump is a deliberate re-baselining event
 with owner-visible diff, never a silent number swap), (b) a new
 stable-model GA, or (c) a needs-probe resolution. A refresh that
-meets every fastpath threshold (≤5 files, ≤300 lines, reversible, no
-manifest-carried touch points) MAY land via `SPEC.fastpath.template.md`;
-otherwise it is a Task SPEC. NOTE: this guide IS manifest-carried, so a
-refresh of it can never be fastpath.
+meets every fastpath threshold (≤5 files, ≤300 lines, reversible, no Rule 20
+consequence) MAY land via `SPEC.fastpath.template.md`; otherwise it is a Task
+SPEC. NOTE: a refresh of this guide changes routing DEFAULTS, not what any gate
+blocks, so it is fastpath-eligible on consequence — the previous note barred it
+because the guide is manifest-carried, which was the path proxy retired
+2026-08-06.
 Update the Snapshot line on every refresh.
 
 ## Version-Forward Proviso

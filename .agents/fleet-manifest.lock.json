@@ -1,9 +1,9 @@
 {
   "schema_version": 1,
-  "generated_at": "2026-08-05T22:29:25.070Z",
+  "generated_at": "2026-08-05T23:22:43.203Z",
   "source": {
     "repo": "bes-fleet-policy",
-    "commit": "1e0cf401b721ef0be6cd484f5d1f0f0881229c9d",
+    "commit": "6d82fa17a10b17c6eff7428a35ca3cddcc94912a",
     "dirty": true
   },
   "manifests": {
@@ -27,6 +27,8 @@
       "scripts/lint-spec-fixtures/bad-uncited.md",
       "scripts/lint-spec-fixtures/bad-missing-section.md",
       "scripts/lint-spec-fixtures/bad-untracked-bundle.md",
+      "scripts/lint-spec-fixtures/bad-fastpath-consequence.md",
+      "scripts/lint-spec-fixtures/good-fastpath-propagating-doc.md",
       "skills/review-diff/SKILL.md",
       "skills/review-diff/references/multi-agent-review.md",
       "skills/execute-spec/SKILL.md",
@@ -259,15 +261,15 @@
       "kind": "agents-file",
       "source_path": "agents/MODEL_ROUTING.md",
       "target_path": ".agents/MODEL_ROUTING.md",
-      "sha256": "3ae1c4642710ef6a6dee5a4a13f939278c826dd00711150efb49c52f84c40d4f",
-      "bytes": 53357
+      "sha256": "fe39a17195900e97511c8b8b412bdca83f731f49a2af1c97e01d411488d3f211",
+      "bytes": 53507
     },
     {
       "kind": "agents-file",
       "source_path": "agents/OPERATING_MODEL.md",
       "target_path": ".agents/OPERATING_MODEL.md",
-      "sha256": "c83fdcc20db5c598548f91c49802ac3c7dd661d625dfda54499b27ea0290b9e6",
-      "bytes": 36485
+      "sha256": "00159dc66169204784420478e77774f56270fe93229bcc48645bbb853ee96afd",
+      "bytes": 36789
     },
     {
       "kind": "agents-file",
@@ -523,6 +525,13 @@
     },
     {
       "kind": "agents-file",
+      "source_path": "agents/scripts/lint-spec-fixtures/bad-fastpath-consequence.md",
+      "target_path": ".agents/scripts/lint-spec-fixtures/bad-fastpath-consequence.md",
+      "sha256": "8815131b12a8a835a0bbc3805a208fad04ca415b0dafcf63559fa9f74af6f8f7",
+      "bytes": 930
+    },
+    {
+      "kind": "agents-file",
       "source_path": "agents/scripts/lint-spec-fixtures/bad-missing-section.md",
       "target_path": ".agents/scripts/lint-spec-fixtures/bad-missing-section.md",
       "sha256": "644f2537859c74ef62c48f0300b716b4d89708d7e96986834fbb726a0a329056",
@@ -544,6 +553,13 @@
     },
     {
       "kind": "agents-file",
+      "source_path": "agents/scripts/lint-spec-fixtures/good-fastpath-propagating-doc.md",
+      "target_path": ".agents/scripts/lint-spec-fixtures/good-fastpath-propagating-doc.md",
+      "sha256": "3f818a1b819215f41bc4c2b12080f7edd05522100fb5ca9eabb56efa743f3c75",
+      "bytes": 916
+    },
+    {
+      "kind": "agents-file",
       "source_path": "agents/scripts/lint-spec-fixtures/good-task.md",
       "target_path": ".agents/scripts/lint-spec-fixtures/good-task.md",
       "sha256": "c3003a91bbe88915a3a0d6ef37737b735e37995ee9433f5a97bf55e9f68e3b0f",
@@ -553,15 +569,15 @@
       "kind": "agents-file",
       "source_path": "agents/scripts/lint-spec-fixtures/README.md",
       "target_path": ".agents/scripts/lint-spec-fixtures/README.md",
-      "sha256": "1042f96a204f820d3d21a1cde4acc957081375339189a31b537d4445401ef89f",
-      "bytes": 1465
+      "sha256": "91bb231d2419f8b4cdc295b194face506349c469d9484e4650d042037ddf4c74",
+      "bytes": 2000
     },
     {
       "kind": "agents-file",
       "source_path": "agents/scripts/lint-spec.sh",
       "target_path": ".agents/scripts/lint-spec.sh",
-      "sha256": "14b1730f16d540cea892cadbbc03a4aabf5f1d9102d0216c2bfd2da117e534a4",
-      "bytes": 16137
+      "sha256": "e1632d4da96fc1fd104ed5b6adc4ed37f1f655b59d4f5046288d43cccfef7608",
+      "bytes": 19496
     },
     {
       "kind": "agents-file",
@@ -791,8 +807,8 @@
       "kind": "agents-file",
       "source_path": "agents/skills/spec-driven-development/references/capture-after-and-fastpath.md",
       "target_path": ".agents/skills/spec-driven-development/references/capture-after-and-fastpath.md",
-      "sha256": "1d40692d4497c556f1adb414befdc8a49f816c108ee9e2564d0915a7983054cd",
-      "bytes": 2349
+      "sha256": "969196d016bbecb8ca05b9f06108a3c515319743104eb110a75c61892433be60",
+      "bytes": 2611
     },
     {
       "kind": "agents-file",
@@ -847,22 +863,22 @@
       "kind": "agents-file",
       "source_path": "agents/specs/SPEC.fastpath.template.md",
       "target_path": ".agents/specs/SPEC.fastpath.template.md",
-      "sha256": "71f963a6af0f15b16093e713d1bf2f826a105ab6d7f3b3052a67e743d6a59f5e",
-      "bytes": 3484
+      "sha256": "d8ff090170ce9134520770f763d28b84b77e37e04721606d874b21cdaf4b65ff",
+      "bytes": 4547
     },
     {
       "kind": "agents-file",
       "source_path": "agents/specs/SPEC.schema.md",
       "target_path": ".agents/specs/SPEC.schema.md",
-      "sha256": "d72b2b12bd013a818963987f992a559f6cfc6095865ab7287394c7e0a29af0d3",
-      "bytes": 23533
+      "sha256": "45bfe1406ec73628ca1f984bbc23891a23ecc4af6ba8d0749676876a13fb5059",
+      "bytes": 23677
     },
     {
       "kind": "agents-file",
       "source_path": "agents/specs/SPEC.template.md",
       "target_path": ".agents/specs/SPEC.template.md",
-      "sha256": "fc6d2ff24ce480ef3bc8537276608ba0fc9d6040b3c4f8213cb280ee42dbaed0",
-      "bytes": 3390
+      "sha256": "e1def1e2ae8a6cd508508760dbf5e126a79ef6013966db86d820c67ed20c7867",
+      "bytes": 3465
     },
     {
       "kind": "agents-file",
@@ -910,8 +926,8 @@
       "kind": "agents-file",
       "source_path": "agents/templates/WORKFLOW.body.md",
       "target_path": ".agents/templates/WORKFLOW.body.md",
-      "sha256": "d1f17562871569be2dfa7bcdd992b42c41fc1b2b896c34a0d3234ff5875d43bb",
-      "bytes": 13780
+      "sha256": "232463ef20a0da52690981034c85ce2fa3a3c3b44577ecc506c67e9cb8ac0fb5",
+      "bytes": 13874
     },
     {
       "kind": "agents-file",
@@ -1113,8 +1129,8 @@
       "kind": "harness",
       "source_path": ".claude/hooks/tests/run-tests.sh",
       "target_path": ".claude/hooks/tests/run-tests.sh",
-      "sha256": "b4cd3f1a49bb9fd08bdf42f2111ef5936c464dd618e83455df9c82f3ca3cd079",
-      "bytes": 66189
+      "sha256": "a1b04ee4ce246370b4b9aa3671473db8a0a2ed9869d107f64d217e5a8dbb5d90",
+      "bytes": 68286
     },
     {
       "kind": "hook",
@@ -1148,8 +1164,8 @@
       "kind": "harness",
       "source_path": ".claude/settings.json",
       "target_path": ".claude/settings.json",
-      "sha256": "9c70f96b7a06b108ca1532e5abcd435ee95d7ada6279097dfeb456788fcec94d",
-      "bytes": 6727
+      "sha256": "6c797134f0e30e45e3410acc00523a6345bd13f91d4f49cb6e504a7e297d9eb4",
+      "bytes": 5963
     },
     {
       "kind": "skill-reference",
@@ -1274,8 +1290,8 @@
       "kind": "skill-reference",
       "source_path": "agents/skills/spec-driven-development/references/capture-after-and-fastpath.md",
       "target_path": ".claude/skills/spec-driven-development/references/capture-after-and-fastpath.md",
-      "sha256": "1d40692d4497c556f1adb414befdc8a49f816c108ee9e2564d0915a7983054cd",
-      "bytes": 2349
+      "sha256": "969196d016bbecb8ca05b9f06108a3c515319743104eb110a75c61892433be60",
+      "bytes": 2611
     },
     {
       "kind": "skill-reference",

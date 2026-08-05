@@ -1,6 +1,6 @@
 {
   "$schema": "https://json.schemastore.org/claude-code-settings.json",
-  "$comment": "Fleet baseline shared settings. MOST Bash hooks use the `if` field with permission-rule syntax so triggers match Claude Code's command parser instead of regex on raw text. ONE self-classifying hook (block-bad-cli-invocation) plus the advisory warn-security-surface are intentionally wired UN-GATED on the Bash matcher (no `if`): they fail-open cheaply and MUST see wrapped forms a name-prefixed matcher would miss (timeout/env/VAR=val prefixes) \u2014 prefilter breadth >= classifier breadth (SE-2, 2026-07-01-hook-guardrail-hardening). block-undeclared-deps stays GATED on package-manager prefixes (un-gating it false-positived on manifest strings in quoted args \u2014 2026-07-10 cross-family review). Per-repo permissions belong in .claude/settings.local.json (gitignored). Hook commands MUST use ${CLAUDE_PROJECT_DIR} so they resolve from the project root regardless of subprocess cwd drift.",
+  "$comment": "Fleet baseline shared settings. MOST Bash hooks use the `if` field with permission-rule syntax so triggers match Claude Code's command parser instead of regex on raw text. ONE self-classifying hook (block-bad-cli-invocation) plus the advisory warn-security-surface are intentionally wired UN-GATED on the Bash matcher (no `if`): they fail-open cheaply and MUST see wrapped forms a name-prefixed matcher would miss (timeout/env/VAR=val prefixes) — prefilter breadth >= classifier breadth (SE-2, 2026-07-01-hook-guardrail-hardening). block-undeclared-deps stays GATED on package-manager prefixes (un-gating it false-positived on manifest strings in quoted args — 2026-07-10 cross-family review). Per-repo permissions belong in .claude/settings.local.json (gitignored). Hook commands MUST use ${CLAUDE_PROJECT_DIR} so they resolve from the project root regardless of subprocess cwd drift.",
   "autoMemoryEnabled": false,
   "attribution": {
     "commit": "",
@@ -67,53 +67,12 @@
           },
           {
             "type": "command",
-            "$comment": "Un-gated on Bash: the hook self-classifies (greps the command for claude/copilot and fail-opens otherwise) and MUST see wrapped invocations too \u2014 timeout/env/VAR=val prefixes never start with the CLI name, so a name-prefixed matcher would miss them. Prefilter breadth >= classifier breadth (SE-2, 2026-07-01-hook-guardrail-hardening).",
+            "$comment": "Un-gated on Bash: the hook self-classifies (greps the command for claude/copilot and fail-opens otherwise) and MUST see wrapped invocations too — timeout/env/VAR=val prefixes never start with the CLI name, so a name-prefixed matcher would miss them. Prefilter breadth >= classifier breadth (SE-2, 2026-07-01-hook-guardrail-hardening).",
             "command": "${CLAUDE_PROJECT_DIR}/.claude/hooks/block-bad-cli-invocation.sh"
           },
           {
             "type": "command",
-            "$comment": "GATED on package-manager prefixes (deliberately NOT un-gated). Un-gating this hook made it scrutinize every Bash command and false-positive on manifest-write strings inside quoted args / mentions (cross-family review, 2026-07-10). The manual-manifest-write-via-Bash class (sed -i package.json, echo >> requirements.txt, tee go.mod) stays a DOCUMENTED RESIDUAL; the Edit|Write matcher below covers the normal manifest-editing path, and any install command is caught here.",
-            "if": "Bash(npm *)",
-            "command": "${CLAUDE_PROJECT_DIR}/.claude/hooks/block-undeclared-deps.sh"
-          },
-          {
-            "type": "command",
-            "if": "Bash(pnpm *)",
-            "command": "${CLAUDE_PROJECT_DIR}/.claude/hooks/block-undeclared-deps.sh"
-          },
-          {
-            "type": "command",
-            "if": "Bash(yarn *)",
-            "command": "${CLAUDE_PROJECT_DIR}/.claude/hooks/block-undeclared-deps.sh"
-          },
-          {
-            "type": "command",
-            "if": "Bash(pip *)",
-            "command": "${CLAUDE_PROJECT_DIR}/.claude/hooks/block-undeclared-deps.sh"
-          },
-          {
-            "type": "command",
-            "if": "Bash(pip3 *)",
-            "command": "${CLAUDE_PROJECT_DIR}/.claude/hooks/block-undeclared-deps.sh"
-          },
-          {
-            "type": "command",
-            "if": "Bash(uv *)",
-            "command": "${CLAUDE_PROJECT_DIR}/.claude/hooks/block-undeclared-deps.sh"
-          },
-          {
-            "type": "command",
-            "if": "Bash(poetry *)",
-            "command": "${CLAUDE_PROJECT_DIR}/.claude/hooks/block-undeclared-deps.sh"
-          },
-          {
-            "type": "command",
-            "if": "Bash(go *)",
-            "command": "${CLAUDE_PROJECT_DIR}/.claude/hooks/block-undeclared-deps.sh"
-          },
-          {
-            "type": "command",
-            "if": "Bash(cargo *)",
+            "$comment": "Registered ONCE and UN-GATED, deliberately. It carried nine `if` gates (one per package-manager prefix) until 2026-08-06, on the theory that gating kept it from scrutinising every Bash command. That theory does not hold: the vendor documents the `if` filter as best-effort — it runs the hook anyway on any command containing $(), a backtick or $VAR, and fails open when the command cannot be parsed — and says to use the permission system, not a hook, for hard enforcement (https://code.claude.com/docs/en/hooks, \"Bash if matching\"). Measured: 0 firings on `date; echo`, 9 on one command with a for loop and $(). So it was already un-gated for most real commands while paying nine identical executions for one verdict, and the 2026-07-10 false-positive class it was meant to prevent was reachable the whole time — which is exactly how a grep over package.json got hard-blocked on 2026-08-05. Scoping now lives in the hook, where it is testable: validate-deps-declaration.sh classifies the command itself (INSTALL_REGEX / MANIFEST_REGEX, with read and build spans stripped). Authority: specs/2026-08-06-guardrail-proxies-to-consequence/SPEC.md S2.",
             "command": "${CLAUDE_PROJECT_DIR}/.claude/hooks/block-undeclared-deps.sh"
           },
           {
