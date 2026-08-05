@@ -6,8 +6,9 @@ parent skill).
 
 ## Pattern
 
-A Rule-20 guardrail TASK.md (manifest-carried touch points) MUST name a
-`cross_validation_lane` of a different
+A Rule-20 TASK.md — one that alters what a gate blocks or allows, touches
+secrets or a security surface, or changes branch/push protection — MUST name
+a `cross_validation_lane` of a different
 model family from `model_route`. The cross-validation review
 runs between `in-progress` and `in-review`:
 
@@ -48,9 +49,11 @@ path is same-family proxy + clearly-labelled deferral. This
 fallback applies to TASK.md execution too; strict cross-family
 pass deferred to owner-triggered external runner.
 
-**Exception — Rule 20 guardrail work has NO same-family fallback.**
-For a fleet-propagating guardrail SPEC (touch points carried by the
-propagation manifests), cross-family review is REQUIRED with NO waiver:
+**Exception — Rule 20 work has NO same-family fallback.**
+For a change that alters what a gate blocks or allows, touches secrets
+or a security surface, or changes branch/push protection (the Rule 20
+bar since 2026-07-31 — not a manifest-path test), cross-family review is
+REQUIRED with NO waiver:
 if the cross-family lane is unavailable the work HOLDS; a per-case
 override exists only as an explicit owner in-transcript directive, never
 as an agent-initiated proxy (`file://agents/MODEL_ROUTING.md` Rule 20,

@@ -127,19 +127,19 @@ if [[ "$ARTEFACT" == "spec" && "$TYPE" != "fastpath" && $OWNER_SEALED -eq 0 ]]; 
     fi
 fi
 
-# ---------- tracker_ref: form + the >3-slice arm of the Tier 2 trigger ------
-# Schema §1.2 makes tracker_ref CONDITIONAL: REQUIRED on a tracked bundle
-# (OPERATING_MODEL "Work visibility"). Cross-family gate 2 correctly refused
-# the schema-only version of this field as "prose-only" — a guardrail that
-# lint cannot check is a guardrail an author can forget.
+# ---------- tracker_ref: form only ------------------------------------------
+# Schema §1.2 makes tracker_ref CONDITIONAL: REQUIRED only when the OWNER ASKS
+# for a GitHub issue tree. Nothing else triggers it.
 #
-# MECHANICAL SCOPE, stated honestly: only the >3-slice arm of the §7.2 trigger
-# is enforced here, because slice count is objectively countable from the
-# Execution Plan. The "manifest-carried AND >=2 tracked units" arm needs the
-# touch-point expansion that `fleet-track.sh` performs and is NOT yet enforced
-# — it stays advisory until that helper lands (slice 3). Do not read a clean
-# lint as proof a bundle is correctly tracked.
-# Authority: file://specs/2026-07-26-agent-work-tracking-surface/SPEC.md §7.2
+# The former >3-slice arm was deleted 2026-08-05. OPERATING_MODEL "Work
+# visibility" narrowed the Tier 2 trigger to owner-request-only on 2026-07-31
+# ("A GitHub issue tree is REQUIRED only when the owner asks for one. Nothing
+# else triggers it."), but this lint kept enforcing the retired slice-count
+# arm, so a SPEC with four honest slices was refused its own quality gate.
+# Owner-request is not mechanically detectable from the artefact, so nothing
+# replaces it: only the FORM of a supplied value is checked here.
+# Authority: file://agents/OPERATING_MODEL.md "Work visibility";
+#            file://specs/2026-08-05-pocock-v1-2-and-harness-parity/SPEC.md S8
 if [[ "$ARTEFACT" == "spec" && "$TYPE" != "fastpath" ]]; then
     tr_raw="${FM[tracker_ref]:-}"
     tr_raw="${tr_raw%"${tr_raw##*[![:space:]]}"}"   # trim trailing whitespace
@@ -147,29 +147,6 @@ if [[ "$ARTEFACT" == "spec" && "$TYPE" != "fastpath" ]]; then
        && "$tr_raw" != "pending" \
        && ! "$tr_raw" =~ ^https://github\.com/[A-Za-z0-9._-]+/[A-Za-z0-9._-]+/issues/[0-9]+$ ]]; then
         emit_err "front-matter" "$fm_end" "tracker_ref '$tr_raw' must be a GitHub issue URL or the literal 'pending' (schema §1.2)"
-    fi
-    # Count slices under an Execution Plan heading.
-    #
-    # Round-2 review defeated the first version three ways: it counted numbered
-    # lines inside fenced code blocks (false REQUIRE on a SPEC whose plan quotes
-    # a numbered example), it missed plans written as bullets or as `### T-NN`
-    # sub-headings (false PASS), and it missed combined headings like the
-    # unified template's "Reality Check · Interfaces / Files · Execution Plan".
-    # So: strip fenced regions first, match the heading anywhere on the line,
-    # and take the MAX across the three legal shapes rather than summing them
-    # (summing would double-count a plan that numbers AND sub-heads its slices).
-    slice_count=$(awk '
-        /^[[:space:]]*(```|~~~)/ { fence = !fence; next }
-        fence                    { next }
-        /^##+[[:space:]].*Execution Plan/ { inplan=1; next }
-        inplan && /^##+[[:space:]]/       { inplan=0 }
-        inplan && /^[0-9]+\.[[:space:]]/            { num++ }
-        inplan && /^###+[[:space:]]/                { head++ }
-        inplan && /^[-*][[:space:]]+\*\*/           { bul++ }
-        END { m = num; if (head > m) m = head; if (bul > m) m = bul; print m+0 }
-    ' "$TARGET")
-    if [[ "$slice_count" -gt 3 && -z "$tr_raw" && $OWNER_SEALED -eq 0 ]]; then
-        emit_err "front-matter" "$fm_end" "tracker_ref REQUIRED: Execution Plan names $slice_count slices (>3), which is a tracked bundle (OPERATING_MODEL 'Work visibility')"
     fi
 fi
 
@@ -221,7 +198,7 @@ if [[ "$ARTEFACT" == "spec" && "$TYPE" == "fastpath" && $_fp_enforce -eq 1 ]]; t
                           n=length(c)-length(e)
                           if (n>0 && substr(c,n+1)==e && substr(c,n,1)=="/") {found=1; exit} }
                         END{exit(found?0:1)}' "$_mf" 2>/dev/null; then
-                    emit_err "fastpath" "$fm_end" "type: fastpath names a manifest-carried path ('$_cand') — that is Rule-20 guardrail work and fastpath skips BOTH cross-family gates. Escalate to a task/contract/decision SPEC (schema fastpath thresholds)."
+                    emit_err "fastpath" "$fm_end" "type: fastpath names a manifest-carried path ('$_cand') — fastpath skips the review gates entirely, and propagation blast radius disqualifies it. (This is a FASTPATH threshold, not a Rule-20 classification: since 2026-07-31 Rule 20 fires on consequence, not path.) Escalate to a task/contract/decision SPEC."
                     break 2
                 fi
             done

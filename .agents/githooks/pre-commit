@@ -3,19 +3,22 @@
 #
 # WHY THIS EXISTS
 #   The fleet's 14 guardrails live in `.claude/hooks/` and fire through Claude
-#   Code's PreToolUse channel. That channel is CLAUDE-ONLY. Copilot CLI has no
-#   hook mechanism at all — verified 2026-07-31 against `copilot --help` and
-#   `copilot help config`: it exposes tool-permission flags and UX settings,
-#   and nothing that can run repo-defined code before an action.
-#
-#   So a Copilot agent working in a fleet repo was subject to exactly two
-#   checks: Conventional Commit format (commit-msg) and the CI gates on push.
-#   Protected-branch edits, AI attribution, probe residue and stale derived
-#   artefacts were all unenforced for it. A fleet built to govern output
-#   quality cannot enforce on one harness and trust on the other.
+#   Code's PreToolUse channel, which is CLAUDE-ONLY. A Copilot agent in a fleet
+#   repo was therefore subject to exactly two checks: Conventional Commit format
+#   (commit-msg) and the CI gates on push. A fleet built to govern output quality
+#   cannot enforce on one harness and trust on the other.
 #
 #   Git hooks are harness-agnostic: git runs them whoever is driving. This
 #   carries the checks that can be meaningfully evaluated at commit time.
+#
+#   CORRECTED 2026-08-05: this header previously asserted that "Copilot CLI has
+#   no hook mechanism at all — verified 2026-07-31". That is no longer true.
+#   Copilot CLI 1.0.78 documents `hooks` and `disableAllHooks` under
+#   `copilot help config`, keyed by event name, same schema as
+#   `.github/hooks/*.json`. This hook remains the harness-agnostic FLOOR — it
+#   runs for any driver, including one with no agent harness at all — and is not
+#   superseded by either native hook system.
+#   Authority: file://specs/2026-08-05-pocock-v1-2-and-harness-parity/SPEC.md
 #
 # The first-line comment IS the marker — the installer uses it to detect
 # "installed by us" vs a pre-existing user hook. Do not change it without
@@ -84,12 +87,50 @@ check_probe_residue() {
 # --- 3. stale derived artefacts (policy source repo only) -------------------
 # In bes-fleet-policy the manifest lock is generated from manifest-carried
 # files. Committing one without the other ships an inconsistent baseline.
+#
+# "Manifest-carried" is asked of the LOCK, which enumerates every carried file
+# as a `source_path` (agents/**, .claude/hooks/**) or a generated `target_path`
+# (.claude/skills/**, .githooks/**). The lock is generated from the manifests,
+# so this is the single source of truth.
+#
+# It used to prefix-match `^(agents/|.claude/hooks/|.claude/skills/)` instead —
+# a second, wrong definition of carried. Nothing under `agents/` that is NOT in
+# the manifests could be committed at all: `agents/governance/**` is
+# deliberately non-propagating, so no lock change ever existed to stage, and the
+# remedy this hook prints (`fleet-selfcheck.sh --fix`) was a verified no-op.
+# The repo authoring the rule was the only one it deadlocked.
+# Authority: file://specs/2026-08-05-pocock-v1-2-and-harness-parity/SPEC.md S0
+#
+# A file newly ADDED to a manifest but not yet expanded into the lock would read
+# as not-carried from the lock alone, so the MANIFESTS are consulted too — they
+# are the source the lock is generated from. Renames count: --diff-filter
+# includes R, and `--name-only` prints both sides of one.
+# Both gaps found by the cross-family reviewer on this SPEC's execution diff
+# (specs/2026-08-05-pocock-v1-2-and-harness-parity/reviews/, finding 3).
 check_stale_lock() {
-    [ -f "$repo_root/agents/scripts/fleet-selfcheck.sh" ] || return 0
+    local lockfile="$repo_root/agents/fleet-manifest.lock.json"
+    [ -f "$lockfile" ] || return 0
+    local ff="$repo_root/agents/scripts/fleet-files.txt"
+    local fh="$repo_root/agents/scripts/fleet-hooks.txt"
+    local fs="$repo_root/agents/scripts/fleet-skills.txt"
+    _is_carried() {
+        local p="$1" rel
+        grep -qF -e "\"source_path\": \"$p\"" -e "\"target_path\": \"$p\"" "$lockfile" && return 0
+        case "$p" in
+            agents/*)         rel="${p#agents/}";        grep -qxF -- "$rel" "$ff" 2>/dev/null && return 0 ;;
+            .claude/hooks/*)  rel="${p#.claude/hooks/}"; grep -qxF -- "$rel" "$fh" 2>/dev/null && return 0 ;;
+            .claude/skills/*) rel="${p#.claude/skills/}"; rel="${rel%%/*}"
+                              grep -qxF -- "$rel" "$fs" 2>/dev/null && return 0 ;;
+        esac
+        return 1
+    }
     local carried lock
-    carried=$(git diff --cached --name-only --diff-filter=ACMD 2>/dev/null \
-        | grep -cE '^(agents/|\.claude/hooks/|\.claude/skills/)' ) || carried=0
-    [ "$carried" = "0" ] && return 0
+    carried=$(git diff --cached --name-only --diff-filter=ACMDR 2>/dev/null \
+        | while IFS= read -r p; do
+              [ -n "$p" ] || continue
+              _is_carried "$p" && printf 'x\n'
+          done | wc -l)
+    [ "$carried" -eq 0 ] && return 0
     lock=$(git diff --cached --name-only 2>/dev/null | grep -c 'fleet-manifest.lock.json') || lock=0
     [ "$lock" != "0" ] && return 0
     fail "staged $carried manifest-carried file(s) without agents/fleet-manifest.lock.json. Run: bash agents/scripts/fleet-selfcheck.sh --fix"
@@ -129,6 +170,23 @@ if [ "$SELF_TEST" = "--self-test" ]; then
 
     d=$(mk); ( cd "$d" && git checkout -qb feat && printf 'clean line\n' >> f.txt && git add f.txt )
     ck "clean staged content allows" 0 "$(run "$d")"; rm -rf "$d"
+
+    # --- manifest-carried is asked of the lock, not guessed from a prefix ---
+    # Fixture lock carries exactly one path. A sibling under agents/ that the
+    # lock does not name must commit freely; the named one must still block.
+    mklock() { mkdir -p "$1/agents"
+        printf '{\n  "entries": [\n    {\n      "source_path": "agents/OPERATING_MODEL.md",\n      "target_path": ".agents/OPERATING_MODEL.md"\n    }\n  ]\n}\n' \
+            > "$1/agents/fleet-manifest.lock.json"
+        ( cd "$1" && git add agents/fleet-manifest.lock.json && git commit -qm lock ); }
+
+    d=$(mk); ( cd "$d" && git checkout -qb feat ); mklock "$d"
+    mkdir -p "$d/agents/governance"
+    ( cd "$d" && printf 'note\n' > agents/governance/note.md && git add agents/governance/note.md )
+    ck "non-carried agents/ file needs no lock update" 0 "$(run "$d")"; rm -rf "$d"
+
+    d=$(mk); ( cd "$d" && git checkout -qb feat ); mklock "$d"
+    ( cd "$d" && printf 'edit\n' > agents/OPERATING_MODEL.md && git add agents/OPERATING_MODEL.md )
+    ck "carried file without staged lock still blocks" 1 "$(run "$d")"; rm -rf "$d"
 
     printf '\n=== pre-commit self-test: %d pass / %d fail ===\n' "$P" "$F"
     [ "$F" -eq 0 ]; exit $?

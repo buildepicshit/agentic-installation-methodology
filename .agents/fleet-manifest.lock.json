@@ -1,9 +1,9 @@
 {
   "schema_version": 1,
-  "generated_at": "2026-08-01T02:56:35.524Z",
+  "generated_at": "2026-08-05T22:29:25.070Z",
   "source": {
     "repo": "bes-fleet-policy",
-    "commit": "e4205887b63c64d80099d2911e9060985fadcd12",
+    "commit": "1e0cf401b721ef0be6cd484f5d1f0f0881229c9d",
     "dirty": true
   },
   "manifests": {
@@ -224,8 +224,8 @@
       "kind": "agents-file",
       "source_path": "agents/githooks/pre-commit",
       "target_path": ".agents/githooks/pre-commit",
-      "sha256": "292fb28a110f796fbe6c382be99b870ffb5ecd93ab970996ce72e034f12a98e6",
-      "bytes": 6684
+      "sha256": "a95065193fdb9b0141d1cad85f65aeeb8fe410af6939555ea937e70a7a1b73f8",
+      "bytes": 10488
     },
     {
       "kind": "agents-file",
@@ -259,15 +259,15 @@
       "kind": "agents-file",
       "source_path": "agents/MODEL_ROUTING.md",
       "target_path": ".agents/MODEL_ROUTING.md",
-      "sha256": "1c815dde560f58ece334c6d8f975378cbe89cfc69a9cf65f074abe0dad416d59",
-      "bytes": 52728
+      "sha256": "3ae1c4642710ef6a6dee5a4a13f939278c826dd00711150efb49c52f84c40d4f",
+      "bytes": 53357
     },
     {
       "kind": "agents-file",
       "source_path": "agents/OPERATING_MODEL.md",
       "target_path": ".agents/OPERATING_MODEL.md",
-      "sha256": "53b6fb2daa2bb16927cf52d95a926f85ad7390780e70bb815ccd016645feb62a",
-      "bytes": 33149
+      "sha256": "c83fdcc20db5c598548f91c49802ac3c7dd661d625dfda54499b27ea0290b9e6",
+      "bytes": 36485
     },
     {
       "kind": "agents-file",
@@ -504,8 +504,8 @@
       "kind": "agents-file",
       "source_path": "agents/scripts/fleet-track.sh",
       "target_path": ".agents/scripts/fleet-track.sh",
-      "sha256": "666f5ea8b9719894d3777d5e7df03cb74ae4b9bda5f96c76b003a160b387a94d",
-      "bytes": 19272
+      "sha256": "9121d108e752efc9be33a0a01953874e573ff1ffff792811b42cebd5c5e61627",
+      "bytes": 19798
     },
     {
       "kind": "agents-file",
@@ -539,8 +539,8 @@
       "kind": "agents-file",
       "source_path": "agents/scripts/lint-spec-fixtures/bad-untracked-bundle.md",
       "target_path": ".agents/scripts/lint-spec-fixtures/bad-untracked-bundle.md",
-      "sha256": "544abc64caae5de35880a1fdd8a1819cb10dbb6fc4a5d1ec511e903375237014",
-      "bytes": 3311
+      "sha256": "152b9550451b489add762c8e1768d5821eca3de40adf25bda024f0ac513cadd6",
+      "bytes": 3467
     },
     {
       "kind": "agents-file",
@@ -553,15 +553,15 @@
       "kind": "agents-file",
       "source_path": "agents/scripts/lint-spec-fixtures/README.md",
       "target_path": ".agents/scripts/lint-spec-fixtures/README.md",
-      "sha256": "2210a071ff801d6d5b91460545bb1f9aa16603b488757508ca94ed4fdfa1e82f",
-      "bytes": 1293
+      "sha256": "1042f96a204f820d3d21a1cde4acc957081375339189a31b537d4445401ef89f",
+      "bytes": 1465
     },
     {
       "kind": "agents-file",
       "source_path": "agents/scripts/lint-spec.sh",
       "target_path": ".agents/scripts/lint-spec.sh",
-      "sha256": "5efd126dd09aa6efef1dfd133ffda274e15fa80fc9d5177fd920aa85e36d1bac",
-      "bytes": 17513
+      "sha256": "14b1730f16d540cea892cadbbc03a4aabf5f1d9102d0216c2bfd2da117e534a4",
+      "bytes": 16137
     },
     {
       "kind": "agents-file",
@@ -595,15 +595,15 @@
       "kind": "agents-file",
       "source_path": "agents/scripts/validate-cli-invocation.sh",
       "target_path": ".agents/scripts/validate-cli-invocation.sh",
-      "sha256": "0ea81f57c6899127084544625ae02d196204b92ee3751fe49b02f012301bbd76",
-      "bytes": 33372
+      "sha256": "47a10a35293a5fb3b9d6929a3472b968de9409d4e9ff65f7b8ea9dd87a5432d0",
+      "bytes": 34351
     },
     {
       "kind": "agents-file",
       "source_path": "agents/scripts/validate-deps-declaration.sh",
       "target_path": ".agents/scripts/validate-deps-declaration.sh",
-      "sha256": "9536d27eda4f0bcf37151c3763012a9c5b535bebf23080701347c9a5ca7db174",
-      "bytes": 12997
+      "sha256": "e8659fd3891ed065fd1101473c6c3d6feb39f1a6de2a2b04ec929b5972e42f2a",
+      "bytes": 14154
     },
     {
       "kind": "agents-file",
@@ -637,8 +637,8 @@
       "kind": "agents-file",
       "source_path": "agents/SKILL_AUTHORING.md",
       "target_path": ".agents/SKILL_AUTHORING.md",
-      "sha256": "bd48950fd9873171dd01a1d3e55cb271946db6f87f199aec3085eec3e1985c88",
-      "bytes": 5076
+      "sha256": "6fda1170ffa8a84f0ff82037bbaef75cfb670e89f2fdebd7f617ef78c2c25259",
+      "bytes": 8767
     },
     {
       "kind": "agents-file",
@@ -665,8 +665,8 @@
       "kind": "agents-file",
       "source_path": "agents/skills/author-spec/SKILL.md",
       "target_path": ".agents/skills/author-spec/SKILL.md",
-      "sha256": "307f575aaaeac925f1fee0a047b406865675c64789e99780d92e701ccaea5abb",
-      "bytes": 16957
+      "sha256": "e04b353fd4eb9ff7e6cf8216307c59bb2077cdb5ff32f12b706de90c73690830",
+      "bytes": 19156
     },
     {
       "kind": "agents-file",
@@ -679,8 +679,8 @@
       "kind": "agents-file",
       "source_path": "agents/skills/cross-agent-cli-invocation/known-good/copilot.txt",
       "target_path": ".agents/skills/cross-agent-cli-invocation/known-good/copilot.txt",
-      "sha256": "c5dfa6440cd79ac99b8a78728d1f6426a6b277a33f34472a1e301eb10644f05f",
-      "bytes": 1386
+      "sha256": "57321bf3517ebca1a4ba93b995294dde14666c4633ba4373877dcace48de57c4",
+      "bytes": 1332
     },
     {
       "kind": "agents-file",
@@ -700,15 +700,15 @@
       "kind": "agents-file",
       "source_path": "agents/skills/decompose-approved-spec/references/cross-validation-lanes.md",
       "target_path": ".agents/skills/decompose-approved-spec/references/cross-validation-lanes.md",
-      "sha256": "81d0729bb0561674b3998a238bd3df32fb5cbfc2a1a730cf42d756f787ad8b47",
-      "bytes": 2544
+      "sha256": "d62d7721693c4aa4ba9f49033c8162101de04663236b5673add05df6b8e585d2",
+      "bytes": 2720
     },
     {
       "kind": "agents-file",
       "source_path": "agents/skills/decompose-approved-spec/SKILL.md",
       "target_path": ".agents/skills/decompose-approved-spec/SKILL.md",
-      "sha256": "8dd74b5426b7b42e5843ae5d737bc43b38d73c1f97db81f1fe7a3b628fd9bf1b",
-      "bytes": 11957
+      "sha256": "ed8991deb0009ec64a64b62c3a724117be9b4d0b4589083c9dca7cf68259e597",
+      "bytes": 12682
     },
     {
       "kind": "agents-file",
@@ -749,8 +749,8 @@
       "kind": "agents-file",
       "source_path": "agents/skills/idea-capture/SKILL.md",
       "target_path": ".agents/skills/idea-capture/SKILL.md",
-      "sha256": "d093221eff12e61ff20a84f5765619a8c16de8ca39336a5bffa3ce84495ed3a0",
-      "bytes": 3762
+      "sha256": "b05ea2311e584775caf5138426dbb1d42383a7bc8fb5e66874c4d4abb3ceba5c",
+      "bytes": 4144
     },
     {
       "kind": "agents-file",
@@ -770,8 +770,8 @@
       "kind": "agents-file",
       "source_path": "agents/skills/review-diff/SKILL.md",
       "target_path": ".agents/skills/review-diff/SKILL.md",
-      "sha256": "2168887080af94480ba3e7af467973603db22a82dfe838d57c0cf2c42ea74017",
-      "bytes": 10432
+      "sha256": "a56e0457554dadc694fd70ff37fac94d09e070c773c735e0f23e26c7a11dab0f",
+      "bytes": 10704
     },
     {
       "kind": "agents-file",
@@ -854,22 +854,22 @@
       "kind": "agents-file",
       "source_path": "agents/specs/SPEC.schema.md",
       "target_path": ".agents/specs/SPEC.schema.md",
-      "sha256": "9b64473e0606ca4983b1090f3aa6a5aac345de3cd3c56373d805018febaa231c",
-      "bytes": 20690
+      "sha256": "d72b2b12bd013a818963987f992a559f6cfc6095865ab7287394c7e0a29af0d3",
+      "bytes": 23533
     },
     {
       "kind": "agents-file",
       "source_path": "agents/specs/SPEC.template.md",
       "target_path": ".agents/specs/SPEC.template.md",
-      "sha256": "84a268081458bf433b86407adb7a84df324b0ffc4e7d671c724261407bbd38d9",
-      "bytes": 3278
+      "sha256": "fc6d2ff24ce480ef3bc8537276608ba0fc9d6040b3c4f8213cb280ee42dbaed0",
+      "bytes": 3390
     },
     {
       "kind": "agents-file",
       "source_path": "agents/specs/TASK.template.md",
       "target_path": ".agents/specs/TASK.template.md",
-      "sha256": "b828595c194212f43700fd9ea915ffe467f69e12311df086cb08f9eab8903e11",
-      "bytes": 3716
+      "sha256": "5baa1f57ddcd713da6fa37e985d934ebd220c2e7154d665cfcec3b913db519bb",
+      "bytes": 3848
     },
     {
       "kind": "agents-file",
@@ -910,8 +910,8 @@
       "kind": "agents-file",
       "source_path": "agents/templates/WORKFLOW.body.md",
       "target_path": ".agents/templates/WORKFLOW.body.md",
-      "sha256": "3e2581a32260490d85de73595cdad1c15dd868d48f754b2ec9994a7e59ad36b9",
-      "bytes": 13057
+      "sha256": "d1f17562871569be2dfa7bcdd992b42c41fc1b2b896c34a0d3234ff5875d43bb",
+      "bytes": 13780
     },
     {
       "kind": "agents-file",
@@ -1113,8 +1113,8 @@
       "kind": "harness",
       "source_path": ".claude/hooks/tests/run-tests.sh",
       "target_path": ".claude/hooks/tests/run-tests.sh",
-      "sha256": "e68d409aea0843c8d9ff08278556220c538fa0d08aee201f32a0ad01d520c7bb",
-      "bytes": 63672
+      "sha256": "b4cd3f1a49bb9fd08bdf42f2111ef5936c464dd618e83455df9c82f3ca3cd079",
+      "bytes": 66189
     },
     {
       "kind": "hook",
@@ -1169,8 +1169,8 @@
       "kind": "skill",
       "source_path": "agents/skills/author-spec/SKILL.md",
       "target_path": ".claude/skills/author-spec/SKILL.md",
-      "sha256": "307f575aaaeac925f1fee0a047b406865675c64789e99780d92e701ccaea5abb",
-      "bytes": 16957
+      "sha256": "e04b353fd4eb9ff7e6cf8216307c59bb2077cdb5ff32f12b706de90c73690830",
+      "bytes": 19156
     },
     {
       "kind": "skill",
@@ -1183,15 +1183,15 @@
       "kind": "skill-reference",
       "source_path": "agents/skills/decompose-approved-spec/references/cross-validation-lanes.md",
       "target_path": ".claude/skills/decompose-approved-spec/references/cross-validation-lanes.md",
-      "sha256": "81d0729bb0561674b3998a238bd3df32fb5cbfc2a1a730cf42d756f787ad8b47",
-      "bytes": 2544
+      "sha256": "d62d7721693c4aa4ba9f49033c8162101de04663236b5673add05df6b8e585d2",
+      "bytes": 2720
     },
     {
       "kind": "skill",
       "source_path": "agents/skills/decompose-approved-spec/SKILL.md",
       "target_path": ".claude/skills/decompose-approved-spec/SKILL.md",
-      "sha256": "8dd74b5426b7b42e5843ae5d737bc43b38d73c1f97db81f1fe7a3b628fd9bf1b",
-      "bytes": 11957
+      "sha256": "ed8991deb0009ec64a64b62c3a724117be9b4d0b4589083c9dca7cf68259e597",
+      "bytes": 12682
     },
     {
       "kind": "skill",
@@ -1232,8 +1232,8 @@
       "kind": "skill",
       "source_path": "agents/skills/idea-capture/SKILL.md",
       "target_path": ".claude/skills/idea-capture/SKILL.md",
-      "sha256": "d093221eff12e61ff20a84f5765619a8c16de8ca39336a5bffa3ce84495ed3a0",
-      "bytes": 3762
+      "sha256": "b05ea2311e584775caf5138426dbb1d42383a7bc8fb5e66874c4d4abb3ceba5c",
+      "bytes": 4144
     },
     {
       "kind": "skill",
@@ -1253,8 +1253,8 @@
       "kind": "skill",
       "source_path": "agents/skills/review-diff/SKILL.md",
       "target_path": ".claude/skills/review-diff/SKILL.md",
-      "sha256": "2168887080af94480ba3e7af467973603db22a82dfe838d57c0cf2c42ea74017",
-      "bytes": 10432
+      "sha256": "a56e0457554dadc694fd70ff37fac94d09e070c773c735e0f23e26c7a11dab0f",
+      "bytes": 10704
     },
     {
       "kind": "skill-reference",

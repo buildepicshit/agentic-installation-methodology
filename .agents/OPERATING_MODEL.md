@@ -213,9 +213,13 @@ cross-validation; lands at `status: closed` in same commit as work.
 
 Widened 2026-07-24 from ≤ 1 file / ≤ 50 lines; the
 explicit-owner-directive precondition is REMOVED (`file://specs/2026-07-24-lifecycle-lean-execution/SPEC.md` §1).
-Fastpath does NOT override Rule 20 — a ≤ 5-file change touching a
-manifest-carried path is still a fleet-propagating guardrail SPEC
-requiring cross-family review. See
+Fastpath does NOT override Rule 20. Note the two are separate bars: Rule 20
+fires on CONSEQUENCE (does the change alter a gate's verdict, touch secrets,
+change branch protection), while the manifest-carried exclusion below is a
+FASTPATH threshold in its own right — fastpath skips the review gates
+entirely, so propagation blast radius disqualifies it regardless of Rule 20.
+A manifest-carried path is NOT by itself Rule-20 work ("Path is not risk",
+narrowed 2026-07-31); it is simply not fastpath-eligible. See
 `file://agents/specs/SPEC.fastpath.template.md` for the retained
 template and thresholds.
 If ANY threshold fails, escalate to task/contract/decision.
@@ -480,6 +484,63 @@ Step 5; `file://agents/skills/orient/SKILL.md` Step 3.
 
 Append-only. Owner alone archives entries older than 90 days to
 `SESSION_JOURNAL.archive.md`.
+
+## Phase boundaries (what to do with the context you built)
+
+A **phase** is a chunk of work inside a session — the grilling, the
+implementation, the verification. The definition is fuzzy on purpose: a
+phase ends when you think *"right, that's done"*.
+
+The **phase boundary** is the gap between two of them, and it is the only
+place this decision belongs. Mid-phase there is nothing to decide —
+continue, or split what is left into sub-agents. Compacting mid-phase
+makes the agent lose the thread.
+
+At a boundary, work these in order. **The first yes wins.**
+
+1. **Continue.** Can you stay in this session? Yes if the next phase needs
+   this one as a **primary source**, or you have enough window left for it
+   to fit. Grill → execute is the standard yes: execution wants the
+   reasoning verbatim, not a summary of it. Continue costs nothing and
+   loses nothing, so rule it out before anything else.
+2. **Clear.** Is everything here — the exploration, the decisions, the
+   dead ends — disposable for what comes next? Then clear. It is the
+   cheapest move available and hands back the whole window. The cost of
+   getting this one wrong is one-way: clear a *relevant* context and you
+   lose the **why** behind what you built, and re-reading the diff never
+   returns it.
+3. **Hand off.** Write a portable file. Narrow, and this list is the whole
+   clause: a **new harness**, a **new directory or repo**, a **colleague**,
+   or a side task forked **mid-phase**. What it buys is portability. If
+   nothing is travelling, you do not need it.
+4. **Sub-agent.** Is the task scoped tightly enough to run unattended?
+   Send it to its own window and leave this session untouched. Automated
+   review is the standard case.
+5. **Compact.** Relevant context, same harness, same directory, and you
+   need to stay in the loop. This is where the tree lands, and it lands
+   here often.
+
+**Compaction is the default, not the first reach.** It sits last because
+the four questions above it are all cheaper or more precise. Starting
+there produces a session that is confidently wrong about whatever the
+summary flattened. Pass it an instruction so the summary keeps what the
+next phase needs.
+
+**Why the order.** Every move except Continue turns a **primary source** —
+the session as it happened — into a **secondary source**, a summary of it.
+Secondary is lossy and quieter; primary is complete and noisy. You pay the
+lossiness only when staying costs more than it saves, which is why
+question 1 comes first.
+
+These are judgement calls, not a formula; the same boundary can go two
+ways on two days. The value is in asking them **in order**, at the
+boundary rather than in the middle of the work.
+
+Adopted 2026-08-05 from `mattpocock/skills`
+`skills/engineering/ask-matt/PHASE-BOUNDARIES.md` @ `8b36d4f` (v1.2.2) per
+`file://specs/2026-08-05-pocock-v1-2-and-harness-parity/SPEC.md` S3. The
+fleet had no rule governing mid-session context decisions, which are paid
+by every long session.
 
 ## Cross-Repo Enforcement (fleet-directives)
 

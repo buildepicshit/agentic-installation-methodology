@@ -10,7 +10,7 @@ mode: HITL
 deps: []
 write_scope: disjoint
 acceptance_commands: []
-tracker_ref: pending   # slice sub-issue URL; delete this line if the parent bundle is untracked
+# tracker_ref: <issue-url>   # ONLY when the parent SPEC carries one; delete otherwise
 ---
 
 <!--
@@ -22,9 +22,10 @@ carries the slice's executable scope, model lanes, verification
 commands, and evidence trail.
 
 Front-matter contract: `file://agents/specs/SPEC.schema.md` §1.4.
-`cross_validation_lane` is REQUIRED only on Rule-20 guardrail slices
-(manifest-carried touch points) and, when present, MUST be a different
-model family from `model_route`; owner alone sets `status: done`.
+`cross_validation_lane` is REQUIRED only on Rule-20 slices — those that
+alter what a gate blocks or allows, touch secrets or a security surface, or
+change branch/push protection — and, when present, MUST be a different model
+family from `model_route`; owner alone sets `status: done`.
 
 Citation discipline applies: every factual claim in §3 (Scope), §4
 (Read context), and §6 (Evidence) MUST carry a citation prefix per
@@ -102,9 +103,10 @@ Filled by the executor before `in-review`:
 - Files changed: [list].
 - Commands run + exit codes: [list].
 - Cross-validation findings: [summary; full report linked from PR].
-- Cross-validation receipt (REQUIRED — see code-review SKILL
-  "Tool-Receipt Block"): [lane + model pin / invocation or validator
-  output / session-log id / wall clock / tokens where exposed].
+- Cross-validation receipt (REQUIRED only when this TASK declares a
+  `cross_validation_lane` — see `review-diff` SKILL "Tool-Receipt
+  Block"): [lane + model pin / invocation or validator output /
+  session-log id / wall clock / tokens where exposed].
 - PR (when opened): [URL].
 - Residual risk: [if any].
 

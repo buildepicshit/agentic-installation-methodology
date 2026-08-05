@@ -185,14 +185,18 @@ receipt:
   maintainability, or repo contracts.
 - **Cross-family review for TASK.md execution.** The TASK.md
   `cross_validation_lane` names the expected reviewing family
-  (different from `model_route`). For diffs executing a
-  **fleet-propagating guardrail SPEC**, cross-family diff review is
-  REQUIRED before the parent SPEC flips to `verified` — the
-  same-family escape hatch does not apply. For non-guardrail work,
-  if only same-family review is available, record
-  `same-family-review: <model>` in the output and surface as a
-  residual risk. Canonical semantics and guardrail-class
-  definition: `file://agents/MODEL_ROUTING.md` Rule 20.
+  (different from `model_route`). Cross-family diff review is
+  REQUIRED before the parent SPEC flips to `verified` when the diff
+  meets the Rule 20 bar — it alters what a gate blocks or allows,
+  touches secrets or a security surface, or changes branch/push
+  protection — and there the same-family escape hatch does not
+  apply. Everywhere else, if only same-family review is available,
+  record `same-family-review: <model>` in the output and surface as
+  a residual risk. Canonical semantics and the classification test:
+  `file://agents/MODEL_ROUTING.md` Rule 20 — cite it, do not
+  restate it. (This bullet said "fleet-propagating guardrail SPEC",
+  a PATH test, until 2026-08-05; Rule 20 replaced path with
+  consequence on 2026-07-31.)
 - **Destructive sync over subset-owned mirrors.** When a sync owns
   only a subset of a directory, such as `SKILL.md` plus references
   in a mixed mirror, it MUST NOT `rm -rf` and rebuild the whole

@@ -9,6 +9,7 @@ risk: low
 requires_network: false
 requires_secrets: []
 ideated_in: agents/scripts/lint-spec-fixtures/IDEA-good-task.md
+tracker_ref: not-a-github-issue-url
 acceptance_commands:
   - test -f agents/scripts/lint-spec-fixtures/good-task.md
 ---
@@ -109,9 +110,11 @@ To be filled on execution.
 
 ## 9. Execution Plan
 
-Four slices, no `tracker_ref` in front-matter. Per OPERATING_MODEL
-"Work visibility" this is a tracked bundle and MUST carry one, so
-`lint-spec.sh` MUST reject this fixture with exit 1.
+Four slices and a MALFORMED `tracker_ref`. Tier 2 tracking is
+owner-request-only, so slice count alone requires nothing; but when the
+owner HAS asked and a value is present, it MUST be a GitHub issue URL or
+the literal `pending` (`agents/specs/SPEC.schema.md` §1.2), so the lint
+rejects this one on FORM.
 
 1. First slice.
 2. Second slice.
