@@ -100,6 +100,23 @@ fi
 # Standing grounding norm (research-first / no-speculation).
 printf 'Norm: on any load-bearing knowledge gap, research it from primary sources before answering — do not speculate or answer from memory. Be frugal on process churn, never on research. (execution-discipline-cluster practice 4)\n\n'
 
+# Copilot guardrail parity is PER-MACHINE and cannot propagate: Copilot CLI does
+# not load repo-level hooks, so the fleet's only working path is a user-level
+# file an installer must place. A machine that never ran it is silently ungated
+# for 9 of 14 guardrails, and silence is the failure mode this whole gate exists
+# to prevent — so it is REPORTED here, where every entering agent reads it.
+# Quiet when healthy: only the broken states speak.
+# Authority: file://specs/2026-08-06-copilot-guardrail-parity/SPEC.md S3
+for _ich in "${CLAUDE_PROJECT_DIR:-.}/agents/scripts/install-copilot-hooks.sh" \
+            "${CLAUDE_PROJECT_DIR:-.}/.agents/scripts/install-copilot-hooks.sh"; do
+    if [ -f "$_ich" ]; then
+        if ! bash "$_ich" --check >/dev/null 2>&1; then
+            printf 'WARNING — Copilot guardrails are NOT installed on this machine. Copilot agents in fleet repos run under the git hooks only; 9 of 14 guardrails do not fire for them. Claude Code is unaffected. Fix: `bash agents/scripts/install-copilot-hooks.sh`\n\n'
+        fi
+        break
+    fi
+done
+
 # Hint to read the full state if it changes the agent's plan.
 printf 'For full state read `STATUS.md` and `AGENTS.md`. For active SPEC read its body and §17 Completion Report.\n'
 
