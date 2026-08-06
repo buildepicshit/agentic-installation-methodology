@@ -715,6 +715,24 @@ function validateToolPresence() {
   else warn("gh copilot --version did not run; copilot checks may fail later");
 }
 
+// Copilot guardrail parity is PER-MACHINE: Copilot CLI does not load repo-level
+// hooks, so the fleet's only working path is a user-level file an installer
+// places. That means a machine can be silently ungated for 9 of 14 guardrails.
+// The SessionStart warning cannot be the only detector — it lives INSIDE the
+// file that is missing when uninstalled, so a Copilot-only session on an
+// un-installed machine would never see it (cross-family review, 2026-08-06).
+// Preflight is independent of that file, so it reports here too.
+// Authority: file://specs/2026-08-06-copilot-guardrail-parity/SPEC.md S3
+function validateCopilotHookParity() {
+  const installer = ["agents/scripts/install-copilot-hooks.sh",
+                     ".agents/scripts/install-copilot-hooks.sh"].find(exists);
+  if (!installer) return;                       // not a fleet layout that ships it
+  const r = spawnSync("bash", [installer, "--check"], { encoding: "utf8" });
+  if (r.status === 0) { pass("copilot guardrails installed and current"); return; }
+  if (r.status === 2) { warn("copilot guardrail check could not run; parity unverified on this machine"); return; }
+  warn("copilot guardrails NOT installed/current — Copilot agents in fleet repos run under git hooks only (9 of 14 guardrails do not fire). Claude Code is unaffected. Fix: bash agents/scripts/install-copilot-hooks.sh");
+}
+
 validateEntrypoints();
 validateWorkspaceLayout();
 validateSkillFrontmatter();
@@ -725,6 +743,7 @@ validateMcpExamples();
 validateLocalMcpConfig();
 validateGitIgnorePolicy();
 validateToolPresence();
+validateCopilotHookParity();
 
 for (const message of passed) console.log(`ok: ${message}`);
 for (const message of warnings) console.warn(`warn: ${message}`);
