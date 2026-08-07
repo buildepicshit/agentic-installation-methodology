@@ -730,7 +730,11 @@ function validateCopilotHookParity() {
   const r = spawnSync("bash", [installer, "--check"], { encoding: "utf8" });
   if (r.status === 0) { pass("copilot guardrails installed and current"); return; }
   if (r.status === 2) { warn("copilot guardrail check could not run; parity unverified on this machine"); return; }
-  warn("copilot guardrails NOT installed/current — Copilot agents in fleet repos run under git hooks only (9 of 14 guardrails do not fire). Claude Code is unaffected. Fix: bash agents/scripts/install-copilot-hooks.sh");
+  // Print the installer path we ALREADY resolved, never a hardcoded one: the
+  // canonical path is `agents/scripts/` here and `.agents/scripts/` in every
+  // child, so a fixed string is un-runnable wherever it is most needed
+  // (file://specs/2026-08-06-copilot-allowlist-caller-derived/SPEC.md AC-7).
+  warn(`copilot guardrails NOT installed/current — Copilot agents in fleet repos run under git hooks only (9 of 14 guardrails do not fire). Claude Code is unaffected. Fix: bash ${installer}`);
 }
 
 validateEntrypoints();
