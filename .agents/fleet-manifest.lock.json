@@ -1,9 +1,9 @@
 {
   "schema_version": 1,
-  "generated_at": "2026-08-06T00:53:08.006Z",
+  "generated_at": "2026-08-07T00:52:59.594Z",
   "source": {
     "repo": "bes-fleet-policy",
-    "commit": "c8d120c292f45c79df2a36850044a8b2b2bd7ca8",
+    "commit": "f39728b6b586d9943d8c9e844b86e3e5f5dd26c9",
     "dirty": true
   },
   "manifests": {
@@ -529,8 +529,8 @@
       "kind": "agents-file",
       "source_path": "agents/scripts/install-copilot-hooks.sh",
       "target_path": ".agents/scripts/install-copilot-hooks.sh",
-      "sha256": "118f5d373ebbc2f1b7328909abe192dae59b5996829c174aa0a29fee7f2ef873",
-      "bytes": 6005
+      "sha256": "f3a2f9994dd11e1e61af5eae0e657207f5ce2491b9c9c6458a2e869deccda846",
+      "bytes": 13756
     },
     {
       "kind": "agents-file",
@@ -606,8 +606,8 @@
       "kind": "agents-file",
       "source_path": "agents/scripts/preflight.mjs",
       "target_path": ".agents/scripts/preflight.mjs",
-      "sha256": "2c6ba1737ed97ab5937a07410866232ef61e5fd5548ea09506f8c85df77ef6aa",
-      "bytes": 29455
+      "sha256": "8dcd8b4f806af1a1fb4a982c12b37688f3a61267f1f382d9bdf16ec56606f4fc",
+      "bytes": 29734
     },
     {
       "kind": "agents-file",
@@ -1124,8 +1124,8 @@
       "kind": "hook",
       "source_path": ".claude/hooks/session-start-context.sh",
       "target_path": ".claude/hooks/session-start-context.sh",
-      "sha256": "0939141191f7772cbfced937f2839cb5b2a45e16929807aefcc861ef73f70419",
-      "bytes": 6063
+      "sha256": "e800367d5f9403f2a14f4ef55b51c238b3771e2571fd7336c4e6d2e3eb3d4773",
+      "bytes": 6397
     },
     {
       "kind": "hook-fixture",

@@ -111,7 +111,12 @@ for _ich in "${CLAUDE_PROJECT_DIR:-.}/agents/scripts/install-copilot-hooks.sh" \
             "${CLAUDE_PROJECT_DIR:-.}/.agents/scripts/install-copilot-hooks.sh"; do
     if [ -f "$_ich" ]; then
         if ! bash "$_ich" --check >/dev/null 2>&1; then
-            printf 'WARNING — Copilot guardrails are NOT installed on this machine. Copilot agents in fleet repos run under the git hooks only; 9 of 14 guardrails do not fire for them. Claude Code is unaffected. Fix: `bash agents/scripts/install-copilot-hooks.sh`\n\n'
+            # Print the path we ALREADY resolved, never a hardcoded one: the
+            # canonical path is `agents/scripts/` in the policy repo and
+            # `.agents/scripts/` in every child, so a fixed string is
+            # un-runnable exactly where it matters most
+            # (file://specs/2026-08-06-copilot-allowlist-caller-derived/SPEC.md AC-7).
+            printf 'WARNING — Copilot guardrails are NOT installed on this machine. Copilot agents in fleet repos run under the git hooks only; 9 of 14 guardrails do not fire for them. Claude Code is unaffected. Fix: `bash %s`\n\n' "$_ich"
         fi
         break
     fi
