@@ -261,19 +261,24 @@ the schema §1.3 forbids without owner action.)
 - Lint exit 1 on a Contract SPEC is blocking even if the gate
   otherwise passes. Lint exit 2 is advisory.
 - **Cross-family review.** Semantics are stated once in
-  `file://agents/MODEL_ROUTING.md` Rule 20: the review-spec pass
-  SHOULD be cross-family, and for **fleet-propagating guardrail
-  SPECs** (class defined there) cross-family review is REQUIRED —
-  the artefact MUST NOT transition to `approved-pending-owner` on
-  a same-family-only pass. For non-guardrail work, if the only
-  available reviewer is from the same family as the author, record
-  this in the Quality Gate Result `evidence` field as
+  `file://agents/MODEL_ROUTING.md` Rule 20 — cite it, do not restate
+  it. Rule 20 fires on CONSEQUENCE, and it is ONE gate, on the
+  **execution diff**, before the work lands. It does NOT gate this
+  skill's transition: a SPEC MAY reach `approved-pending-owner` on a
+  same-family pass no matter what it touches. The review-spec pass
+  SHOULD still be cross-family; when only a same-family reviewer is
+  available, record it in the Quality Gate Result `evidence` field as
   `same-family-review: <model>` and surface it as an `advisory`
   finding. Every cross-family review ARTIFACT MUST carry the
   Tool-Receipt Block (canonical definition:
   `file://agents/skills/review-diff/SKILL.md` "Tool-Receipt Block");
   a no-receipt review is INVALID for gate purposes — treated as
-  not-run.
+  not-run. (This bullet said "fleet-propagating guardrail SPECs" and
+  forbade the transition on a same-family pass, a PATH test, until
+  2026-08-06; Rule 20 replaced path with consequence on 2026-07-31 and
+  the 2026-08-05 drift sweep corrected `review-diff` but missed this
+  file. Found by a SPEC that had to pass through this very transition:
+  `file://specs/2026-08-06-journal-gate-insertion-trap/SPEC.md` AC-15.)
 
 ## Output to caller
 
