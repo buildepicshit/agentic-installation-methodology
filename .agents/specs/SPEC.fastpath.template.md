@@ -16,20 +16,52 @@ ideated_in: null
 Fast-path SPEC template. Use ONLY when ALL fast-path thresholds are
 met: <= 5 files changed, <= 300 insert/delete lines, one component, no
 public-contract impact, no persisted-state impact, reversible in one
-commit, no cross-session compounding risk, and **NO manifest-carried
-touch points**. If your work exceeds any threshold, escalate to a full
-task / contract / decision SPEC via the standard `/idea-capture` ->
+commit, no cross-session compounding risk, and **NO Rule 20
+consequence** (below). If your work exceeds any threshold, escalate to a
+full task / contract / decision SPEC via the standard `/idea-capture` ->
 `/author-spec` flow.
 
-The manifest-carried threshold is LOAD-BEARING, not hygiene. Fastpath
-lands at `status: closed` and so passes through NEITHER Rule 20 gate
-(`approved-pending-owner` and `verified`). Without this threshold a
-fleet-propagating guardrail change could reach every child repo with no
-cross-family review at all. Grep the touch points against
-`agents/scripts/fleet-{files,hooks,skills,commands}.txt`: any hit means
-this template is the wrong template. Added 2026-07-24 after a
-cross-family reviewer traced the bypass
-(`file://specs/2026-07-24-lifecycle-lean-execution/SPEC.md` §8).
+The consequence threshold is LOAD-BEARING, not hygiene. Fastpath lands
+at `status: closed` and so passes through NEITHER Rule 20 gate
+(`approved-pending-owner` and `verified`), which makes it the one lane
+where a guardrail change would reach production unreviewed. So fastpath
+is BARRED for any change that:
+
+- **alters what a gate blocks or allows** — a hook, a lint, a CI gate,
+  a validator, a permission rule; or
+- **touches secrets or a security surface**; or
+- **changes branch or push protection**.
+
+That is the Rule 20 test verbatim (`file://agents/MODEL_ROUTING.md`
+Rule 20), and it is the right one because fastpath's exposure is
+precisely the review Rule 20 exists to require.
+
+**This threshold was a manifest-PATH test until 2026-08-06** — "any hit
+against `fleet-{files,hooks,skills}.txt` means this is the wrong
+template". Path is a proxy for risk, and after Rule 20 narrowed to
+consequence on 2026-07-31 (*"Path is not risk"*) that proxy failed in
+BOTH directions. It barred a typo fix in a propagating doc, which can
+change no verdict. Worse, it ADMITTED the changes that matter most:
+`.github/workflows/ci.yml`, a repo-local `.claude/hooks/<guard>.sh` and
+`.github/hooks/*.json` are in no propagation manifest, so removing a CI
+gate was fastpath-eligible. Swapping path for consequence is therefore
+net-TIGHTENING (`file://specs/2026-08-06-guardrail-proxies-to-consequence/SPEC.md` S1).
+
+A manifest hit remains a useful ADVISORY signal — propagating work is
+often consequential — but it no longer decides the question on its own.
+Original bypass trace:
+`file://specs/2026-07-24-lifecycle-lean-execution/SPEC.md` §8.
+
+**MENTION IS NOT CHANGE (2026-08-07).** The lint reads §2 "Files
+changed" for the consequence test, and the body MINUS §5 "Completion
+Report" for the secrets test. Naming a gate elsewhere — in §1 to say
+what surfaced the problem, or in §5.2 to say you considered it and
+DECLINED to touch it — does not trip either test. Write that sentence.
+Until 2026-08-07 both tests scanned the whole document, so an honest
+residual-risk paragraph was punished and an omitted one was not
+(`file://specs/2026-08-07-lint-spec-mention-immunity/SPEC.md`). §2 is
+the declaration the rule is asking about; keep it accurate and the
+rest of the SPEC can say anything true.
 
 Fast-path SPECs use the **capture-after** pattern by default
 (`file://agents/skills/spec-driven-development/SKILL.md`

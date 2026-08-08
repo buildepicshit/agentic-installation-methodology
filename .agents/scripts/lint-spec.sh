@@ -127,14 +127,51 @@ if [[ "$ARTEFACT" == "spec" && "$TYPE" != "fastpath" && $OWNER_SEALED -eq 0 ]]; 
     fi
 fi
 
-# ---------- Fastpath may NEVER carry guardrail paths (mechanical) ----------
+# ---------- tracker_ref: form only ------------------------------------------
+# Schema §1.2 makes tracker_ref CONDITIONAL: REQUIRED only when the OWNER ASKS
+# for a GitHub issue tree. Nothing else triggers it.
+#
+# The former >3-slice arm was deleted 2026-08-05. OPERATING_MODEL "Work
+# visibility" narrowed the Tier 2 trigger to owner-request-only on 2026-07-31
+# ("A GitHub issue tree is REQUIRED only when the owner asks for one. Nothing
+# else triggers it."), but this lint kept enforcing the retired slice-count
+# arm, so a SPEC with four honest slices was refused its own quality gate.
+# Owner-request is not mechanically detectable from the artefact, so nothing
+# replaces it: only the FORM of a supplied value is checked here.
+# Authority: file://agents/OPERATING_MODEL.md "Work visibility";
+#            file://specs/2026-08-05-pocock-v1-2-and-harness-parity/SPEC.md S8
+if [[ "$ARTEFACT" == "spec" && "$TYPE" != "fastpath" ]]; then
+    tr_raw="${FM[tracker_ref]:-}"
+    tr_raw="${tr_raw%"${tr_raw##*[![:space:]]}"}"   # trim trailing whitespace
+    if [[ -n "$tr_raw" \
+       && "$tr_raw" != "pending" \
+       && ! "$tr_raw" =~ ^https://github\.com/[A-Za-z0-9._-]+/[A-Za-z0-9._-]+/issues/[0-9]+$ ]]; then
+        emit_err "front-matter" "$fm_end" "tracker_ref '$tr_raw' must be a GitHub issue URL or the literal 'pending' (schema §1.2)"
+    fi
+fi
+
+strip_section_number() {
+    local t="$1"
+    if [[ "$t" =~ ^[0-9]+(\.[0-9]+)*[.][[:space:]]+(.*)$ ]]; then printf '%s' "${BASH_REMATCH[2]}"; else printf '%s' "$t"; fi
+}
+
+# ---------- Fastpath may NEVER carry a Rule 20 CONSEQUENCE (mechanical) -----
 # Fastpath lands at `status: closed`, so it passes through NEITHER Rule 20 gate
-# (`approved-pending-owner`, `verified`). Prose alone therefore cannot hold this
-# line: an author who misclassifies touch points would land a fleet-propagating
-# change with no cross-family review at all. So it is enforced here, on the
-# declared file list, as an ERROR rather than an advisory.
-# Found by the r2 cross-family reviewer after the prose-only version shipped
+# (`approved-pending-owner`, `verified`). It is the one lane where a guardrail
+# change reaches production unreviewed, so the bar is enforced here as an ERROR
+# rather than left to prose
 # (`file://specs/2026-07-24-lifecycle-lean-execution/SPEC.md` §9).
+#
+# WHAT CHANGED 2026-08-06: the test was manifest-PATH membership — any hit
+# against fleet-{files,hooks,skills}.txt. Path is a proxy for risk, and after
+# Rule 20 narrowed to consequence on 2026-07-31 ("Path is not risk") the proxy
+# failed BOTH ways: it barred a typo fix in a propagating doc, and it ADMITTED
+# `.github/workflows/ci.yml`, a repo-local `.claude/hooks/<guard>.sh` and
+# `.github/hooks/*.json` — none manifest-carried — so removing a CI gate was
+# fastpath-eligible. Now the ENFORCEMENT SURFACE blocks and the manifest hit
+# only advises. Net-tightening.
+# Authority: file://specs/2026-08-06-guardrail-proxies-to-consequence/SPEC.md S1
+#
 # The rule has an EPOCH. Ten fastpath SPECs landed before 2026-07-24 naming
 # manifest-carried paths, which was permitted then; policy forbids editing a
 # landed record to satisfy a later rule (OPERATING_MODEL "Capture-after"), so
@@ -150,36 +187,194 @@ if [[ "${FM[id]:-}" =~ ^([0-9]{4})-([0-9]{2})-([0-9]{2})- ]]; then
     _fp_date="${BASH_REMATCH[1]}${BASH_REMATCH[2]}${BASH_REMATCH[3]}"
     (( _fp_date < _FP_EPOCH )) && _fp_enforce=0
 fi
+
+# Paths that ARE an enforcement surface: changing one alters what is blocked or
+# allowed, which is Rule 20's first test. Deliberately independent of the
+# propagation manifests — a repo-local guard is exactly the case the old test
+# missed.
+# Broadened 2026-08-06 after the cross-family reviewer probed it: the first
+# draft MISSED fleet-selfcheck.sh, tools/policy-check.sh, a guardrail outside
+# .claude/hooks/, and — found here — `agents/githooks/pre-commit`, this fleet's
+# OWN git hook, because the pattern demanded a literal dot on `.githooks`.
+_FP_CONSEQUENCE_RE='(^|/)\.?githooks/|(^|/)\.github/workflows/|(^|/)hooks?/|(^|/)ci/gates?/|(^|/)(block|warn)-[A-Za-z0-9_.-]+\.(sh|mjs)$|(^|/)(lint|validate|audit|verify|guard)[-_][A-Za-z0-9_.-]+\.(sh|mjs)$|[-_](check|selfcheck|verify|guard|guardrail|policy)\.(sh|mjs)$|(^|/)(settings|permissions)\.json$|guardrail'
+# Secrets / branch-protection are Rule 20's other two tests; they are claimed in
+# prose rather than by path, so they are matched on the BODY only.
+# Scoped and tightened after the first draft matched every SPEC alive: the
+# front-matter field `requires_secrets:` tripped `secrets?`, and a bare `token`
+# tripped the citation-grammar phrase "source token". A guardrail that fires on
+# every artefact is a guardrail nobody reads.
+# Broadened 2026-08-06: the tightened draft missed "rotate personal access
+# tokens", "the GitHub PAT", and "an SSH private key" — all plainly Rule 20
+# secrets work. Each alternative is anchored so the citation-grammar phrase
+# "source token" and the front-matter key `requires_secrets` still do not match.
+_FP_SECRET_RE='(credential|password|passphrase|private key|ssh key|api[_ -]?key|access[_ -]?tokens?|personal access tokens?|auth[_ -]?tokens?|bearer tokens?|github pat|\bPAT\b|\.env\b|branch[ -]protection|push[ -]protection|required reviewers|rotat(e|ing|ion)[a-z ]*(secret|token|key|credential)|secrets?[ -](handling|management|rotation)|handling secrets|a secret\b|secrets?\.(json|ya?ml))'
+
+# MENTION IS NOT CHANGE (2026-08-07). Both tests below used to read the WHOLE
+# document. Rule 20 asks what this SPEC *changes*; a SPEC that names a gate in
+# order to say "I looked at this and did not touch it" changes nothing, and §5.2
+# Residual risk is exactly where an honest author writes that sentence. So the
+# guard fired on the disclosure and stayed silent on the omission — it taxed
+# honesty and caught nothing. Observed live: a SPEC whose §2 named three
+# documents and no guard was blocked because §5.2 explained a guard it had
+# DECLINED to change.
+#
+# The fleet has ruled on this class once already: heredoc/quoted-string
+# "mention immunity" for the dependency validator
+# (`file://specs/2026-06-05-dep-validator-mention-immunity/SPEC.md`). This is
+# the same defect in a different guard, so it gets the same answer.
+#
+# The fix is SCOPE, not a waiver. `file://specs/2026-07-02-rule20-strict-no-waiver/SPEC.md`
+# forbids a suppression marker here — a `lint-ok:` escape would let an agent
+# silence a Rule 20 guard on its own authority — so no marker is offered. Each
+# test now reads the region that DECLARES the change:
+#
+#   (a) consequence  -> the "Files changed" section only. That list IS the
+#                       change set; the fastpath template makes it §2 and all
+#                       11 landed fastpath SPECs carry it.
+#   (b) secrets      -> the body MINUS the Completion Report subtree. Secrets
+#                       work is claimed in prose, not by path, so this one
+#                       cannot narrow to §2 — but §5 is retrospective narration
+#                       ("no credentials were touched"), never a scope claim.
+#
+# The two grammars stay distinct and that is the point: a bare backticked path
+# in §2 DECLARES a change; `file://path:lines` CITES evidence (schema §2). The
+# guard reads declarations. See the extractor comment for the measured reason
+# citations are excluded even inside §2.
+#
+# Deleting §2 does NOT disable the guard: with no such section the scan falls
+# back to the whole body and the error says so.
+# Authority: owner directive `owner://transcript-2026-08-07`;
+#            file://specs/2026-08-07-lint-spec-mention-immunity/SPEC.md
 if [[ "$ARTEFACT" == "spec" && "$TYPE" == "fastpath" && $_fp_enforce -eq 1 ]]; then
-    _mf_root="$(cd "$(dirname "$(readlink -f "$0")")/.." && pwd)"
-    _manifests=()
-    for _m in fleet-files.txt fleet-hooks.txt fleet-skills.txt; do
-        [[ -f "$_mf_root/scripts/$_m" ]] && _manifests+=("$_mf_root/scripts/$_m")
+    # Split the body once: the change-set DECLARATION, and the forward-looking
+    # body (everything the Completion Report does not narrate).
+    #
+    # FENCE TRACKING IS LOAD-BEARING, not tidiness. A `##` line inside a fenced
+    # code block is sample text, not a section, and treating it as one is
+    # directly exploitable — both bypasses below were built and confirmed by
+    # the cross-family reviewer (gpt-5.6-sol) against the first draft:
+    #
+    #   1. A fenced `## Files` set _fp_declared_found=1, which SUPPRESSED the
+    #      whole-body fallback, while the document's real declaration lived
+    #      under a section named "Change set". `.github/workflows/ci.yml`
+    #      declared there was never read. Lint clean; the pre-fix whole-document
+    #      scan had caught it.
+    #   2. A fenced `## Completion Report` inside §1 opened the CR exemption
+    #      early, so the rest of §1 — "Rotate the GitHub PAT used by CI" —
+    #      was cut out of _fp_forward and the secrets test never saw it.
+    #
+    # Both are the SAME defect the fix exists to remove, one level down: the
+    # scanner believed a mention of a heading was a heading.
+    _fp_declared=""; _fp_declared_found=0; _fp_dec_depth=0; _fp_in_dec=0
+    _fp_forward="";  _fp_in_cr=0; _fp_cr_depth=0
+    _fp_fence=""
+    for ((i=fm_end; i<total_lines; i++)); do
+        _fl="${LINES[$i]}"
+        # CommonMark fences: ``` or ~~~ (3+), up to 3 leading spaces. A fence
+        # closes only on the same marker CHARACTER at the same length or longer,
+        # so a ``` inside a ~~~~ block does not close it.
+        if [[ "$_fl" =~ ^[[:space:]]{0,3}(\`{3,}|~{3,}) ]]; then
+            _fm="${BASH_REMATCH[1]}"
+            if [[ -z "$_fp_fence" ]]; then
+                _fp_fence="$_fm"
+            elif [[ "${_fm:0:1}" == "${_fp_fence:0:1}" && ${#_fm} -ge ${#_fp_fence} ]]; then
+                _fp_fence=""
+            fi
+        elif [[ -z "$_fp_fence" && "$_fl" =~ ^(#{1,6})[[:space:]]+(.*)$ ]]; then
+            _fh_depth=${#BASH_REMATCH[1]}
+            _fh_title="$(strip_section_number "${BASH_REMATCH[2]}")"
+            _fh_title="${_fh_title,,}"
+            # A section ends at the next heading of equal-or-shallower depth.
+            (( _fp_in_dec && _fh_depth <= _fp_dec_depth )) && _fp_in_dec=0
+            (( _fp_in_cr  && _fh_depth <= _fp_cr_depth  )) && _fp_in_cr=0
+            # "Files changed", "Files", "Interfaces / Files" — the word, not a
+            # substring: `Profiles` must not match. NOT recognised inside the
+            # Completion Report: a declaration nested in retrospective narration
+            # is not a declaration, and allowing it there let an empty decoy
+            # `### Files` suppress the fallback.
+            if (( _fp_in_cr == 0 )) && [[ "$_fh_title" =~ (^|[^a-z])files([^a-z]|$) ]]; then
+                _fp_in_dec=1; _fp_dec_depth=$_fh_depth; _fp_declared_found=1
+            fi
+            # ANCHORED. Unanchored, any heading merely containing the phrase
+            # ("Notes on Completion Report format") opened the exemption.
+            [[ "$_fh_title" =~ ^completion[[:space:]]+reports?$ ]] && { _fp_in_cr=1; _fp_cr_depth=$_fh_depth; }
+        fi
+        # Fenced lines are still CONTENT — only heading detection is suppressed.
+        (( _fp_in_dec )) && _fp_declared+="$_fl"$'\n'
+        (( _fp_in_cr )) || _fp_forward+="$_fl"$'\n'
     done
-    if (( ${#_manifests[@]} > 0 )); then
-        # Collect backticked paths from the whole SPEC body: the declared file
-        # list lives in "## 2. Files changed" but authors also name paths inline,
-        # and over-collecting is the fail-safe direction here.
-        while read -r _cand; do
-            [[ -z "$_cand" ]] && continue
-            # Match ONLY "a manifest entry is a path-boundary suffix of the
-            # candidate". The reverse direction over-rejects: a bare `README.md`
-            # matched the manifest's scripts/audit-entry-docs-fixtures/README.md
-            # and blocked an innocent fastpath. Caught by this check's own
-            # false-positive test row, not by review.
-            for _mf in "${_manifests[@]}"; do
-                if awk -v c="$_cand" '
-                        /^[[:space:]]*(#|$)/ {next}
-                        { e=$1
-                          if (c==e) {found=1; exit}
-                          n=length(c)-length(e)
-                          if (n>0 && substr(c,n+1)==e && substr(c,n,1)=="/") {found=1; exit} }
-                        END{exit(found?0:1)}' "$_mf" 2>/dev/null; then
-                    emit_err "fastpath" "$fm_end" "type: fastpath names a manifest-carried path ('$_cand') — that is Rule-20 guardrail work and fastpath skips BOTH cross-family gates. Escalate to a task/contract/decision SPEC (schema fastpath thresholds)."
-                    break 2
-                fi
-            done
-        done < <(grep -oE '`[A-Za-z0-9_./-]+\.(md|sh|json|mjs|txt|ya?ml)`' "$TARGET" | tr -d '`' | sort -u)
+    # Fail SAFE: no declaration section means the guard has nothing authoritative
+    # to read, so it reads everything rather than going quiet.
+    _fp_scope_note=""
+    if (( _fp_declared_found == 0 )); then
+        _fp_declared="$(tail -n +$((fm_end + 1)) "$TARGET")"
+        _fp_scope_note=" (no '## Files changed' section found, so the WHOLE document was scanned — add the section to scope this check to your actual change set)"
+    fi
+
+    # DECLARATION grammar only: a bare backticked path, which is how the
+    # fastpath template writes §2. `file://path` and `file://path:12-20` are
+    # CITATION grammar (schema §2) — evidence for a claim, not a claim of
+    # change — so they are deliberately NOT extracted even inside §2. Tested:
+    # extracting them re-created this very bug one level down, blocking
+    # `good-fastpath-propagating-doc.md` because its §2 cites
+    # `file://specs/2026-08-06-guardrail-proxies-to-consequence/SPEC.md`, whose
+    # id contains "guardrail" and so hits _FP_CONSEQUENCE_RE. A citation is a
+    # mention. Same rule, one level down.
+    _fp_paths="$(printf '%s' "$_fp_declared" \
+        | grep -oE '`[A-Za-z0-9_./-]+\.(md|sh|json|mjs|txt|ya?ml)`' | tr -d '`' | sort -u)"
+
+    # A declaration section that names no path leaves the consequence test with
+    # nothing to read. That is not an error — §2 may legitimately be prose — but
+    # it MUST be visible, because it is also the shape an empty decoy section
+    # would take to suppress the fallback.
+    if (( _fp_declared_found == 1 )) && [[ -z "$_fp_paths" ]]; then
+        emit_warn "fastpath" "$fm_end" "the 'Files changed' section names no backticked path, so the Rule 20 consequence check had nothing to read. List each changed file as \`path/to/file.ext\`."
+    fi
+
+    # (a) BLOCKING — an enforcement surface, as DECLARED in the change set.
+    _fp_hit=""
+    while read -r _cand; do
+        [[ -z "$_cand" ]] && continue
+        if printf '%s' "$_cand" | grep -qE "$_FP_CONSEQUENCE_RE"; then _fp_hit="$_cand"; break; fi
+    done <<< "$_fp_paths"
+    if [[ -n "$_fp_hit" ]]; then
+        emit_err "fastpath" "$fm_end" "type: fastpath DECLARES a change to an enforcement surface ('$_fp_hit') — that alters what a gate blocks or allows, which is the Rule 20 bar, and fastpath skips both review gates. Escalate to a task/contract/decision SPEC.${_fp_scope_note}"
+    fi
+
+    # (b) BLOCKING — secrets or branch/push protection, claimed in prose.
+    if printf '%s' "$_fp_forward" | grep -qiE "$_FP_SECRET_RE"; then
+        emit_err "fastpath" "$fm_end" "type: fastpath claims secrets, credentials or branch/push protection work — both are Rule 20 tests, and fastpath skips both review gates. Escalate to a task/contract/decision SPEC. (The Completion Report is exempt: saying there afterwards that no secret was touched is not a claim that one was.)"
+    fi
+
+    # (c) ADVISORY — manifest-carried, but no consequence detected. Propagating
+    # work correlates with risk without defining it, so this nudges, never blocks.
+    if [[ -z "$_fp_hit" ]]; then
+        _mf_root="$(cd "$(dirname "$(readlink -f "$0")")/.." && pwd)"
+        _manifests=()
+        for _m in fleet-files.txt fleet-hooks.txt fleet-skills.txt; do
+            [[ -f "$_mf_root/scripts/$_m" ]] && _manifests+=("$_mf_root/scripts/$_m")
+        done
+        if (( ${#_manifests[@]} > 0 )); then
+            while read -r _cand; do
+                [[ -z "$_cand" ]] && continue
+                # Match ONLY "a manifest entry is a path-boundary suffix of the
+                # candidate". The reverse direction over-rejects: a bare
+                # `README.md` matched scripts/audit-entry-docs-fixtures/README.md
+                # and blocked an innocent fastpath.
+                for _mf in "${_manifests[@]}"; do
+                    if awk -v c="$_cand" '
+                            /^[[:space:]]*(#|$)/ {next}
+                            { e=$1
+                              if (c==e) {found=1; exit}
+                              n=length(c)-length(e)
+                              if (n>0 && substr(c,n+1)==e && substr(c,n,1)=="/") {found=1; exit} }
+                            END{exit(found?0:1)}' "$_mf" 2>/dev/null; then
+                        emit_warn "fastpath" "$fm_end" "type: fastpath names a manifest-carried path ('$_cand'). Not blocking — path is not risk (Rule 20, narrowed 2026-07-31) — but propagating work often IS consequential: confirm it alters no gate verdict, no secret, no branch protection."
+                        break 2
+                    fi
+                done
+            done <<< "$_fp_paths"
+        fi
     fi
 fi
 
@@ -196,11 +391,6 @@ elif [[ "$TYPE" == "fastpath" ]]; then
 else
     required_sections=( "Problem" "Acceptance Criteria" "Completion Report" )
 fi
-
-strip_section_number() {
-    local t="$1"
-    if [[ "$t" =~ ^[0-9]+(\.[0-9]+)*[.][[:space:]]+(.*)$ ]]; then printf '%s' "${BASH_REMATCH[2]}"; else printf '%s' "$t"; fi
-}
 
 observed_titles=(); observed_title_lines=()
 for ((i=fm_end; i<total_lines; i++)); do

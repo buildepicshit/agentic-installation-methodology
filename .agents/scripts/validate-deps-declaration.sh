@@ -32,6 +32,21 @@ INSTALL_REGEX='(npm[[:space:]]+(install|i|add)|pnpm[[:space:]]+(install|add)|yar
 # commands elsewhere in a compound line still match.
 BUILD_CMD_REGEX='(cargo[[:space:]]+(build|run|test|check|clippy|fmt|doc|bench)|go[[:space:]]+(build|run|test|vet|generate))[^;&|]*'
 
+# READ commands that merely NAME a manifest are not edits either. `grep
+# '"version"' package.json` in a throwaway clone was hard-blocked
+# 2026-08-05 — a read, in a directory that was not even the fleet repo.
+# Same span-stripping pattern as BUILD_CMD_REGEX, with one difference
+# that matters: the span stops at `>` as well as `;&|`, so a REDIRECTION
+# into a manifest (`cat > package.json`, `jq ... > package.json`) leaves
+# the manifest name behind and is still detected as the edit it is.
+# Install commands elsewhere in a compound line still match, because
+# INSTALL_REGEX is tested against the UNSTRIPPED input.
+# The span also stops at `$`, a backtick and parentheses. Without that, a
+# read command's span swallowed a COMMAND SUBSTITUTION containing a real
+# edit — `cat package.json $(sed -i s/foo/bar/ package.json)` passed while
+# the bare `sed -i` was blocked. Cross-family reviewer, finding 1.
+READ_CMD_REGEX='(grep|rg|egrep|fgrep|cat|head|tail|less|more|wc|jq|diff|stat|file|md5sum|sha256sum|git[[:space:]]+(diff|show|log|blame|status))[^;&|>$`()]*'
+
 # Detection noise: heredoc bodies and quoted strings merely
 # MENTIONING a manifest are not edits (same immunity pattern as
 # validate-cli-invocation.sh; this validator blocked a heredoc that
@@ -64,6 +79,7 @@ detect_manifest_edit() {
     input="$(printf '%s' "$input" | strip_detection_noise)"
     local stripped
     stripped="$(printf '%s' "$input" | sed -E "s/${BUILD_CMD_REGEX}//g")"
+    stripped="$(printf '%s' "$stripped" | sed -E "s/${READ_CMD_REGEX}//g")"
     if printf '%s' "$stripped" | grep -qE "$MANIFEST_REGEX"; then
         return 0
     fi
@@ -98,7 +114,7 @@ find_active_spec() {
         for sd in "$current/specs" "$current/.agents/specs"; do
             [ -d "$sd" ] || continue
             candidate="$(find "$sd" -maxdepth 3 -name 'SPEC.md' -print0 2>/dev/null \
-                | xargs -0 grep -l -E '^status:[[:space:]]+(approved|in-execution)' 2>/dev/null \
+                | xargs -0 grep -l -E '^status:[[:space:]]+(approved|decomposed|in-execution)' 2>/dev/null \
                 | xargs -r ls -t 2>/dev/null \
                 | head -n1)"
             if [ -n "$candidate" ]; then

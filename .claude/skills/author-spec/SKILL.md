@@ -61,27 +61,56 @@ Do not use this skill for:
 ## Grill Before IDEA
 
 For non-trivial IDEA capture, sharpen the owner conversation before
-writing the artefact:
+writing the artefact. Map it as a **design tree**: every decision branches
+into the decisions that hang off it. Work the tree in **rounds**.
 
 1. **Facts vs. decisions.** Split each open question before asking the
    owner anything: if the answer *can be found by exploring the codebase
-   or docs*, it is a **fact** — look it up yourself, do not ask. If it is
-   the owner's call — a trade-off, a scope boundary, a preference the code
-   cannot reveal — it is a **decision**; put it to the owner and wait for
-   the answer (step 2 carries the one-at-a-time pacing). Never spend an
-   owner turn on a fact you could have grepped.
-2. Ask one owner question at a time.
-3. Prefer concrete trade-offs over broad methodology debate.
-4. When the design space is ambiguous, present 2-3 viable approaches
+   or docs*, it is a **fact** — find it yourself. If it is the owner's
+   call — a trade-off, a scope boundary, a preference the code cannot
+   reveal — it is a **decision**; put it to the owner and wait. Never
+   spend an owner turn on a fact you could have grepped.
+
+   Finding facts is your job, never the owner's. When a frontier question
+   needs one, dispatch a sub-agent and **keep going**: a running lookup is
+   an unsettled prerequisite, so only the questions downstream of it wait.
+   Ask the rest of the frontier now.
+2. **Ask the whole frontier, a round at a time.** The **frontier** is
+   every decision whose prerequisites are already settled — the questions
+   answerable *now*, without guessing at answers you have not heard. Ask
+   all of them in one numbered round, each carrying your recommended
+   answer. Then wait.
+
+   Each round of answers reshapes the tree: settled decisions push the
+   frontier outward and unblock what depended on them. Recompute and ask
+   the next round. A question whose answer depends on another still open
+   in this round belongs to a **later** round, not this one.
+
+   In this fleet a round is normally ONE `AskUserQuestion` call (up to 4
+   questions). When the frontier exceeds four, split it by dependency
+   depth — shallowest first — rather than by arbitrary batching, so the
+   round the owner answers is still a true frontier.
+3. **Emit every question in one shape**, so the owner can answer by
+   number instead of quoting questions back:
+
+   ```
+   ❓ **Q1** — **<title>**: <body; may be prose or named options>
+
+   ➡️ <your recommended answer>
+   ```
+4. Prefer concrete trade-offs over broad methodology debate.
+5. When the design space is ambiguous, present 2-3 viable approaches
    with fit, cost, and risk.
-5. Recommend one approach only after the constraints are clear.
-6. Capture owner validation as verbatim `owner://transcript-<date>`
+6. Recommend one approach only after the constraints are clear.
+7. Capture owner validation as verbatim `owner://transcript-<date>`
    quotes in IDEA.md.
-7. Batch disposition is valid: once the candidate space is fully
+8. Batch disposition is valid: once the candidate space is fully
    articulated, a SINGLE binding owner directive MAY resolve
    multiple open questions at once — capture the verbatim once and
    cite it per resolved item
    (`file://specs/2026-05-18-agentic-installation-methodology/SPEC.md` §14.5).
+9. **The grill is done when the frontier is empty** — every branch of the
+   design tree visited, nothing left silently assumed.
 
 Do not let grilling become a new approval gate. It is a clarification
 tactic that feeds the existing IDEA -> SPEC procedure.
@@ -92,11 +121,25 @@ understanding of the design. This is a **comprehension checkpoint, not an
 approval** — approval remains the owner-only `approved` status flip
 (`file://agents/specs/SPEC.schema.md` §1.3); it adds no status and asks no
 "do you approve?". It only prevents authoring a well-formed artefact on a
-misread of intent. (The facts-vs-decisions split above and this
-comprehension checkpoint were adapted 2026-07-08 from `mattpocock/skills`
+misread of intent.
+
+Provenance: the facts-vs-decisions split and the comprehension checkpoint
+were adapted 2026-07-08 from `mattpocock/skills`
 `skills/productivity/grilling` @ `d574778` (v1.1.0) per
-`file://specs/2026-07-08-pocock-v1.1-alignment-rebaseline/SPEC.md` §11 T3 —
-the primitive our 2026-06-30 +docs absorption did not reach.)
+`file://specs/2026-07-08-pocock-v1.1-alignment-rebaseline/SPEC.md` §11 T3.
+The **frontier rounds**, the emission shape and the non-blocking sub-agent
+fact lookup were adopted 2026-08-05 from the same primitive @ `8b36d4f`
+(v1.2.2) per
+`file://specs/2026-08-05-pocock-v1-2-and-harness-parity/SPEC.md` S1.
+
+That second adoption **reversed** what this section used to say. Step 2
+read *"Ask one owner question at a time"* and cited the v1.1 primitive,
+which had said asking several at once *"is bewildering"*. Upstream deleted
+that line in `a4b2009` and replaced it with the frontier round — so the
+fleet was carrying a rule its own cited author had reversed, with the
+citation making it look verified
+(`file://agents/governance/pocock-watch/triage-2026-08-05.md` §2). The
+comprehension checkpoint above is untouched upstream and stands.
 
 ### The +docs Layer: Structured Options Cited To Docs
 

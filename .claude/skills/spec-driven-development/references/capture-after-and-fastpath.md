@@ -26,9 +26,12 @@ order is the default. There is one recognized exception:
 SPEC type** for small, single-component, reversible owner-directed
 work (see `file://agents/specs/SPEC.fastpath.template.md` for
 thresholds). Use fastpath when ALL fast-path thresholds hold
-(≤ 5 files, ≤ 300 lines, single component, no manifest-carried touch points, no public contract
-impact, no cross-session compounding risk, explicit owner
-directive). Fastpath SPECs land at `status: closed` in the same
+(≤ 5 files, ≤ 300 lines, single component, **no Rule 20 consequence** —
+nothing that alters what a gate blocks or allows, touches secrets or a
+security surface, or changes branch/push protection — no public contract
+impact, no cross-session compounding risk, explicit owner directive).
+The consequence test replaced a manifest-path test on 2026-08-06
+(`file://specs/2026-08-06-guardrail-proxies-to-consequence/SPEC.md` S1). Fastpath SPECs land at `status: closed` in the same
 commit as the work; no IDEA, no review gate, no decomposition.
 
 Capture-after on task/contract/decision SPECs (work landed before

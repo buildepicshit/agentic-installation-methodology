@@ -14,3 +14,4 @@ warn-subagent-routing.sh
 block-fleet-commit-sweep.sh
 lib/log-decision.sh
 .gitignore
+block-journal-skip.sh

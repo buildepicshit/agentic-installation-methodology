@@ -312,11 +312,44 @@ EOF_DEPSPEC
 # helper uses the fixture.
 export CLAUDE_PROJECT_DIR="$HOOK_DIR/../.."
 export ACTIVE_SPEC_DIR="$SANDBOX/specs/active"
+# S2 (2026-08-06): the hook is now registered ONCE and UN-GATED, so it must be
+# correct on shapes the nine `if` gates only ever admitted incidentally. These
+# are simple commands with no $(), backtick or $VAR — precisely the ones the
+# gate DID filter, and therefore the ones un-gating newly exposes.
+run "simple npm install blocked, no gate"   block-undeclared-deps.sh 2 "$(J 'npm install ghost-pkg')"
+run "simple pip install blocked, no gate"   block-undeclared-deps.sh 2 "$(J 'pip install ghost-pkg')"
+run "simple cargo add blocked, no gate"     block-undeclared-deps.sh 2 "$(J 'cargo add ghost-pkg')"
+run "unrelated simple command allowed"      block-undeclared-deps.sh 0 "$(J 'ls -la src')"
+run "declared install still allowed"        block-undeclared-deps.sh 0 "$(J 'npm install allowed-pkg')"
 run "undeclared npm install blocked"        block-undeclared-deps.sh 2 "$(J 'npm install not-declared')"
 run "declared npm install allowed"          block-undeclared-deps.sh 0 "$(J 'npm install allowed-pkg')"
 run "non-manifest bash allowed"             block-undeclared-deps.sh 0 "$(J 'git status')"
 run "undeclared pip install blocked"        block-undeclared-deps.sh 2 "$(J 'pip install ghost-pkg')"
 run "cargo build manifest-path allowed"     block-undeclared-deps.sh 0 "$(J 'cargo build --manifest-path spike/Cargo.toml')"
+# S5 regression: READ commands naming a manifest are not edits. A grep over
+# package.json in a throwaway clone was hard-blocked 2026-08-05.
+run "grep over a manifest allowed"          block-undeclared-deps.sh 0 "$(J 'grep version package.json')"
+run "cat of a manifest allowed"             block-undeclared-deps.sh 0 "$(J 'cat package.json')"
+run "git show of a manifest allowed"        block-undeclared-deps.sh 0 "$(J 'git show HEAD:package.json')"
+run "read then install still blocked"       block-undeclared-deps.sh 2 "$(J 'grep x package.json && npm install ghost')"
+# ...but a REDIRECTION into one is still the edit it looks like. Detection is
+# what the READ_CMD_REGEX change could have broken, and detection only shows as
+# a block when NO active SPEC authorises manifest work — so point the resolver
+# at an empty dir for these two, then restore the fixture.
+mkdir -p "$SANDBOX/specs/none"
+export ACTIVE_SPEC_DIR="$SANDBOX/specs/none"
+run "redirect into a manifest blocked"      block-undeclared-deps.sh 2 "$(J 'cat > package.json')"
+run "jq redirect into a manifest blocked"   block-undeclared-deps.sh 2 "$(J 'jq . x.json > package.json')"
+run "pure read still allowed, no SPEC"      block-undeclared-deps.sh 0 "$(J 'grep version package.json')"
+# S2: a bare in-place edit of a manifest is detected on its own, with no
+# package-manager prefix to gate on. Lives here because detection is only
+# observable where no active SPEC authorises manifest work.
+run "simple sed -i on manifest blocked"     block-undeclared-deps.sh 2 "$(J 'sed -i s/a/b/ package.json')"
+# Cross-family reviewer finding 1: a read span must not swallow a command
+# substitution carrying a real edit.
+run "read span cannot hide \$() edit"        block-undeclared-deps.sh 2 "$(J 'cat package.json $(sed -i s/foo/bar/ package.json)')"
+run "read span cannot hide backtick edit"    block-undeclared-deps.sh 2 "$(J 'cat package.json `sed -i s/a/b/ package.json`')"
+export ACTIVE_SPEC_DIR="$SANDBOX/specs/active"
 unset CLAUDE_PROJECT_DIR
 unset ACTIVE_SPEC_DIR
 
@@ -325,6 +358,15 @@ unset ACTIVE_SPEC_DIR
 # fleet-policy root so the helper + known-good are found.
 export CLAUDE_PROJECT_DIR="$HOOK_DIR/../.."
 run "claude --print prompt allowed"                 block-bad-cli-invocation.sh 0 "$(J 'claude --print "p"')"
+# S5 regression: copilot admin subcommands and --help anywhere in the span are
+# metadata queries, not sessions. `copilot skill --help` was blocked 2026-08-05.
+run "copilot skill --help allowed"                  block-bad-cli-invocation.sh 0 "$(J 'copilot skill --help')"
+run "copilot skill list allowed"                    block-bad-cli-invocation.sh 0 "$(J 'copilot skill list')"
+run "copilot prompt-less session still blocked"     block-bad-cli-invocation.sh 2 "$(J 'copilot --model gpt-5.6-sol')"
+# Cross-family reviewer finding 2: --help must be read from argv, never from
+# quoted PROMPT TEXT. Matching the raw span let a non-GPT model skip the
+# family check entirely.
+run "quoted --help does not exempt a session"      block-bad-cli-invocation.sh 2 "$(J 'gh copilot -- --model claude-opus-5 -p \"review --help please\" --allow-all')"
 run "claude --bogus blocked"                        block-bad-cli-invocation.sh 2 "$(J 'claude --bogus "p"')"
 run "claude --output-format without --print blocked" block-bad-cli-invocation.sh 2 "$(J 'claude --output-format json "p"')"
 run "claude --version is admin-allowed"             block-bad-cli-invocation.sh 0 "$(J 'claude --version')"
@@ -370,8 +412,12 @@ run_settings_absent() {
 # it self-classifies (greps for claude/copilot, fail-opens otherwise) and must
 # see wrapped invocations (timeout/env/VAR=val prefixes) a name-prefixed matcher
 # would miss (prefilter breadth >= classifier breadth; 2026-07-10 hygiene sweep).
-# block-undeclared-deps.sh stays GATED on package-manager prefixes — un-gating it
-# false-positived on manifest strings in quoted Bash args (reverted after review).
+# block-undeclared-deps.sh is ALSO un-gated as of 2026-08-06. It was gated on
+# nine package-manager prefixes, but the `if` filter is best-effort by vendor
+# documentation — it runs the hook anyway on $(), backticks or $VAR — so it was
+# already un-gated for most real commands while costing nine executions per
+# call. Scoping moved into the hook, where it is testable
+# (specs/2026-08-06-guardrail-proxies-to-consequence/SPEC.md S2).
 assert_ungated_bash() {
     local name="$1" hook_suffix="$2"
     local settings="$HOOK_DIR/../settings.json"
@@ -381,6 +427,19 @@ assert_ungated_bash() {
         PASS=$((PASS+1)); printf 'PASS %-50s [settings.json]\n' "$name"
     else
         FAIL=$((FAIL+1)); FAILURES+=("$name [settings.json]: expected $hook_suffix wired un-gated (no if) on Bash matcher"); printf 'FAIL %-50s [settings.json]\n' "$name"
+    fi
+}
+# S2: nine identical registrations produced nine identical verdicts per call.
+# Assert the exact count so a future re-expansion is caught, not just the shape.
+assert_bash_entry_count() {
+    local name="$1" hook_suffix="$2" want="$3"
+    local settings="$HOOK_DIR/../settings.json"
+    local count
+    count="$(jq -r --arg suf "$hook_suffix" '[.hooks.PreToolUse[]? | select(.matcher=="Bash") | .hooks[]? | select(.command | endswith($suf))] | length' "$settings")"
+    if [ "$count" = "$want" ]; then
+        PASS=$((PASS+1)); printf 'PASS %-50s [settings.json]\n' "$name"
+    else
+        FAIL=$((FAIL+1)); FAILURES+=("$name [settings.json]: expected $want $hook_suffix entr(y|ies) on Bash, found $count"); printf 'FAIL %-50s [settings.json]\n' "$name"
     fi
 }
 assert_gated_bash() {
@@ -395,9 +454,8 @@ assert_gated_bash() {
     fi
 }
 assert_ungated_bash "bad-cli-invocation wired un-gated on Bash" "block-bad-cli-invocation.sh"
-# undeclared-deps stays GATED on package-manager prefixes (un-gating it
-# false-positived on manifest strings in quoted args — 2026-07-10 review).
-assert_gated_bash "undeclared-deps gated on Bash(npm *)" "block-undeclared-deps.sh" "Bash(npm *)"
+assert_ungated_bash "undeclared-deps wired un-gated on Bash" "block-undeclared-deps.sh"
+assert_bash_entry_count "undeclared-deps registered exactly once on Bash" "block-undeclared-deps.sh" 1
 retired_matcher="$(printf 'Bash(co%s *)' 'dex')"
 run_settings_absent "settings removed retired CLI matcher" "$retired_matcher"
 unset CLAUDE_PROJECT_DIR
@@ -833,6 +891,120 @@ assert_log "instrumentation: ALLOW writes exactly one record" 1 ALLOW
 printf '%s' '{"tool_name":"Task","tool_input":{"subagent_type":"general-purpose","prompt":"x"}}' \
   | BES_LOG_FILE="$LOGTEST/decisions.log" "$HOOK_DIR/warn-subagent-routing.sh" >/dev/null 2>&1
 assert_log "instrumentation: advisory records WARN not ALLOW" 1 WARN
+
+# --- instrumentation: cleanup registry (specs/2026-07-31-hook-decision-log-integrity) ---
+# The defect this guards against: a hook that installs its own `trap ... EXIT`
+# replaces the logging trap, and every decision it reaches thereafter goes
+# unrecorded. block-journal-skip.sh did exactly that from 2026-07-27 until
+# 2026-07-31 — four of its five blocking paths, and every post-lock allow, were
+# invisible, including a gate that blocked a real session. Nothing caught it
+# because every test asserted exit codes, and the verdicts were always correct.
+# These cases assert that the DECISION REACHES THE LOG, which is the property
+# that was silently false.
+: > "$LOGTEST/decisions.log"; rm -f "$LOGTEST/cleanup-ran"
+( source "$HOOK_DIR/lib/log-decision.sh" 2>/dev/null
+  BES_LOG_FILE="$LOGTEST/decisions.log"
+  bes_log_install_trap "probe-cleanup.sh"
+  probe_cleanup() { : > "$LOGTEST/cleanup-ran"; exit 9; }
+  bes_log_add_cleanup probe_cleanup
+  exit 2 ) >/dev/null 2>&1
+assert_log "instrumentation: cleanup cannot suppress record" 1 BLOCK
+
+if [ -f "$LOGTEST/cleanup-ran" ]; then
+    PASS=$((PASS+1)); printf 'PASS %-50s [%s]\n' "instrumentation: registered cleanup runs" "log-decision.sh"
+else
+    FAIL=$((FAIL+1))
+    FAILURES+=("instrumentation: registered cleanup runs [log-decision.sh]: cleanup did not execute")
+    printf 'FAIL %-50s [%s]\n' "instrumentation: registered cleanup runs" "log-decision.sh"
+fi
+
+# A cleanup that simply RETURNS non-zero must also leave the verdict and the
+# record intact — the common case, distinct from the `exit` case above.
+: > "$LOGTEST/decisions.log"
+( source "$HOOK_DIR/lib/log-decision.sh" 2>/dev/null
+  BES_LOG_FILE="$LOGTEST/decisions.log"
+  bes_log_install_trap "probe-cleanup.sh"
+  probe_ret1() { return 1; }
+  bes_log_add_cleanup probe_ret1
+  exit 0 ) >/dev/null 2>&1
+assert_log "instrumentation: cleanup returning 1 is harmless" 1 ALLOW
+
+# And a hook that registers nothing behaves exactly as before.
+: > "$LOGTEST/decisions.log"
+( source "$HOOK_DIR/lib/log-decision.sh" 2>/dev/null
+  BES_LOG_FILE="$LOGTEST/decisions.log"
+  bes_log_install_trap "probe-cleanup.sh"
+  exit 2 ) >/dev/null 2>&1
+assert_log "instrumentation: no cleanup registered" 1 BLOCK
+
+# The registry is process-local: an INHERITED BES_LOG_CLEANUPS must not seed
+# it. Exporting the runner's own name recursed inside the trap and hung the
+# gate — exit 124, no verdict, no record. (Cross-family review, gate 2 HIGH-1.)
+: > "$LOGTEST/decisions.log"
+cat > "$LOGTEST/inherit.sh" <<INHERIT
+source "$HOOK_DIR/lib/log-decision.sh" 2>/dev/null
+bes_log_install_trap "probe-cleanup.sh"
+exit 2
+INHERIT
+BES_LOG_CLEANUPS=bes_log_run_cleanups BES_LOG_FILE="$LOGTEST/decisions.log" \
+    timeout 10 bash "$LOGTEST/inherit.sh" >/dev/null 2>&1
+inherit_rc=$?
+if [ "$inherit_rc" = "2" ]; then
+    PASS=$((PASS+1)); printf 'PASS %-50s [%s]\n' "instrumentation: inherited registry ignored" "log-decision.sh"
+else
+    FAIL=$((FAIL+1))
+    FAILURES+=("instrumentation: inherited registry ignored [log-decision.sh]: gate exited $inherit_rc (124 = hung)")
+    printf 'FAIL %-50s [%s]\n' "instrumentation: inherited registry ignored" "log-decision.sh"
+fi
+assert_log "instrumentation: inherited registry still records" 1 BLOCK
+
+# A BLOCKING cleanup must not hang the gate. Validation cannot prevent this —
+# a legitimately registered cleanup can block just as easily as an injected one
+# — so the runner bounds each cleanup instead. Measured before the bound: a
+# registered `sleep 30` held the trap and no verdict was ever delivered.
+: > "$LOGTEST/decisions.log"
+cat > "$LOGTEST/hang.sh" <<HANG
+source "$HOOK_DIR/lib/log-decision.sh" 2>/dev/null
+bes_log_install_trap "probe-cleanup.sh"
+probe_slow() { sleep 30; }
+bes_log_add_cleanup probe_slow
+exit 2
+HANG
+BES_LOG_CLEANUP_TIMEOUT=2 BES_LOG_FILE="$LOGTEST/decisions.log" \
+    timeout 15 bash "$LOGTEST/hang.sh" >/dev/null 2>&1
+hang_rc=$?
+if [ "$hang_rc" = "2" ]; then
+    PASS=$((PASS+1)); printf 'PASS %-50s [%s]\n' "instrumentation: blocking cleanup is bounded" "log-decision.sh"
+else
+    FAIL=$((FAIL+1))
+    FAILURES+=("instrumentation: blocking cleanup is bounded [log-decision.sh]: gate exited $hang_rc (124 = hung)")
+    printf 'FAIL %-50s [%s]\n' "instrumentation: blocking cleanup is bounded" "log-decision.sh"
+fi
+assert_log "instrumentation: bounded cleanup still records" 1 BLOCK
+
+# A cleanup registered as a command STRING must be rejected, not eval'd: a
+# string containing `exit` would terminate the trap before the write and
+# reintroduce the defect. Names only. (Cross-family review, gate 1 BLOCKING-2.)
+: > "$LOGTEST/decisions.log"
+( source "$HOOK_DIR/lib/log-decision.sh" 2>/dev/null
+  BES_LOG_FILE="$LOGTEST/decisions.log"
+  bes_log_install_trap "probe-cleanup.sh"
+  bes_log_add_cleanup 'rm -f /nonexistent; exit 9'
+  exit 2 ) >/dev/null 2>&1
+assert_log "instrumentation: command string not eval'd" 1 BLOCK
+
+# Structural guard: no hook may install a competing single-line EXIT trap
+# without the fallback marker. Scoped to what the scanner recognises —
+# multiline traps are out of reach of a line-oriented grep.
+trapscan=$(grep -nE '^[[:space:]]*trap .*(EXIT|[[:space:]]0)([[:space:]]|$)' "$HOOK_DIR"/*.sh 2>/dev/null \
+             | grep -v 'bes-log-cleanup-fallback' || true)
+if [ -z "$trapscan" ]; then
+    PASS=$((PASS+1)); printf 'PASS %-50s [%s]\n' "instrumentation: no unmarked competing EXIT trap" "hook corpus"
+else
+    FAIL=$((FAIL+1))
+    FAILURES+=("instrumentation: no unmarked competing EXIT trap [hook corpus]: $trapscan")
+    printf 'FAIL %-50s [%s]\n' "instrumentation: no unmarked competing EXIT trap" "hook corpus"
+fi
 
 # TSV integrity: a tab or newline in ANY field must not shift columns.
 # INJ must be built as a VARIABLE: `$(printf '\n')` strips the trailing

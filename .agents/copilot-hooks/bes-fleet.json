@@ -1,0 +1,111 @@
+{
+  "version": 1,
+  "$comment": "BES fleet guardrails for GitHub Copilot CLI. TEMPLATE — @@FLEET_ROOTS@@ is substituted at install time with this machine's fleet repo roots. Canonical source: agents/copilot-hooks/bes-fleet.json; install with agents/scripts/install-copilot-hooks.sh. USER-LEVEL by necessity: repo-level .github/hooks/*.json does not load on CLI 1.0.78 (measured), so this cannot travel via fleet-sync.sh and is per-machine setup. TRUST BOUNDARY: these hooks are machine-wide, so membership is decided by an explicit ROOT ALLOWLIST, never by a file existing — presence-only guarding let an untrusted repo's .claude/hooks script execute (cross-family review, 2026-08-06). The root is resolved with git rev-parse so a session started in a subdirectory is still gated. PascalCase events deliver Claude's payload and matcher semantics, so the scripts run unmodified; preToolUse is fail-closed on exit 2. Authority: specs/2026-08-06-copilot-guardrail-parity/SPEC.md",
+  "hooks": {
+    "SessionStart": [
+      {
+        "type": "command",
+        "bash": "root=$(git rev-parse --show-toplevel 2>/dev/null) || exit 0; [ -n \"$root\" ] || exit 0; case \"$root\" in @@FLEET_ROOTS@@) ;; *) exit 0 ;; esac; [ -f \"$root/.claude/hooks/session-start-context.sh\" ] || exit 0; CLAUDE_PROJECT_DIR=\"$root\" bash \"$root/.claude/hooks/session-start-context.sh\"",
+        "timeoutSec": 20
+      }
+    ],
+    "PreToolUse": [
+      {
+        "type": "command",
+        "bash": "root=$(git rev-parse --show-toplevel 2>/dev/null) || exit 0; [ -n \"$root\" ] || exit 0; case \"$root\" in @@FLEET_ROOTS@@) ;; *) exit 0 ;; esac; [ -f \"$root/.claude/hooks/block-git-add-all.sh\" ] || exit 0; CLAUDE_PROJECT_DIR=\"$root\" bash \"$root/.claude/hooks/block-git-add-all.sh\"",
+        "timeoutSec": 20,
+        "matcher": "Bash"
+      },
+      {
+        "type": "command",
+        "bash": "root=$(git rev-parse --show-toplevel 2>/dev/null) || exit 0; [ -n \"$root\" ] || exit 0; case \"$root\" in @@FLEET_ROOTS@@) ;; *) exit 0 ;; esac; [ -f \"$root/.claude/hooks/block-push-to-main.sh\" ] || exit 0; CLAUDE_PROJECT_DIR=\"$root\" bash \"$root/.claude/hooks/block-push-to-main.sh\"",
+        "timeoutSec": 20,
+        "matcher": "Bash"
+      },
+      {
+        "type": "command",
+        "bash": "root=$(git rev-parse --show-toplevel 2>/dev/null) || exit 0; [ -n \"$root\" ] || exit 0; case \"$root\" in @@FLEET_ROOTS@@) ;; *) exit 0 ;; esac; [ -f \"$root/.claude/hooks/block-ai-attribution.sh\" ] || exit 0; CLAUDE_PROJECT_DIR=\"$root\" bash \"$root/.claude/hooks/block-ai-attribution.sh\"",
+        "timeoutSec": 20,
+        "matcher": "Bash"
+      },
+      {
+        "type": "command",
+        "bash": "root=$(git rev-parse --show-toplevel 2>/dev/null) || exit 0; [ -n \"$root\" ] || exit 0; case \"$root\" in @@FLEET_ROOTS@@) ;; *) exit 0 ;; esac; [ -f \"$root/.claude/hooks/block-verify-bypass.sh\" ] || exit 0; CLAUDE_PROJECT_DIR=\"$root\" bash \"$root/.claude/hooks/block-verify-bypass.sh\"",
+        "timeoutSec": 20,
+        "matcher": "Bash"
+      },
+      {
+        "type": "command",
+        "bash": "root=$(git rev-parse --show-toplevel 2>/dev/null) || exit 0; [ -n \"$root\" ] || exit 0; case \"$root\" in @@FLEET_ROOTS@@) ;; *) exit 0 ;; esac; [ -f \"$root/.claude/hooks/block-probe-residue.sh\" ] || exit 0; CLAUDE_PROJECT_DIR=\"$root\" bash \"$root/.claude/hooks/block-probe-residue.sh\"",
+        "timeoutSec": 20,
+        "matcher": "Bash"
+      },
+      {
+        "type": "command",
+        "bash": "root=$(git rev-parse --show-toplevel 2>/dev/null) || exit 0; [ -n \"$root\" ] || exit 0; case \"$root\" in @@FLEET_ROOTS@@) ;; *) exit 0 ;; esac; [ -f \"$root/.claude/hooks/block-fleet-commit-sweep.sh\" ] || exit 0; CLAUDE_PROJECT_DIR=\"$root\" bash \"$root/.claude/hooks/block-fleet-commit-sweep.sh\"",
+        "timeoutSec": 20,
+        "matcher": "Bash"
+      },
+      {
+        "type": "command",
+        "bash": "root=$(git rev-parse --show-toplevel 2>/dev/null) || exit 0; [ -n \"$root\" ] || exit 0; case \"$root\" in @@FLEET_ROOTS@@) ;; *) exit 0 ;; esac; [ -f \"$root/.claude/hooks/block-stale-derived-artifacts.sh\" ] || exit 0; CLAUDE_PROJECT_DIR=\"$root\" bash \"$root/.claude/hooks/block-stale-derived-artifacts.sh\"",
+        "timeoutSec": 20,
+        "matcher": "Bash"
+      },
+      {
+        "type": "command",
+        "bash": "root=$(git rev-parse --show-toplevel 2>/dev/null) || exit 0; [ -n \"$root\" ] || exit 0; case \"$root\" in @@FLEET_ROOTS@@) ;; *) exit 0 ;; esac; [ -f \"$root/.claude/hooks/block-bad-cli-invocation.sh\" ] || exit 0; CLAUDE_PROJECT_DIR=\"$root\" bash \"$root/.claude/hooks/block-bad-cli-invocation.sh\"",
+        "timeoutSec": 20,
+        "matcher": "Bash"
+      },
+      {
+        "type": "command",
+        "bash": "root=$(git rev-parse --show-toplevel 2>/dev/null) || exit 0; [ -n \"$root\" ] || exit 0; case \"$root\" in @@FLEET_ROOTS@@) ;; *) exit 0 ;; esac; [ -f \"$root/.claude/hooks/block-undeclared-deps.sh\" ] || exit 0; CLAUDE_PROJECT_DIR=\"$root\" bash \"$root/.claude/hooks/block-undeclared-deps.sh\"",
+        "timeoutSec": 20,
+        "matcher": "Bash"
+      },
+      {
+        "type": "command",
+        "bash": "root=$(git rev-parse --show-toplevel 2>/dev/null) || exit 0; [ -n \"$root\" ] || exit 0; case \"$root\" in @@FLEET_ROOTS@@) ;; *) exit 0 ;; esac; [ -f \"$root/.claude/hooks/warn-security-surface.sh\" ] || exit 0; CLAUDE_PROJECT_DIR=\"$root\" bash \"$root/.claude/hooks/warn-security-surface.sh\"",
+        "timeoutSec": 20,
+        "matcher": "Bash"
+      },
+      {
+        "type": "command",
+        "bash": "root=$(git rev-parse --show-toplevel 2>/dev/null) || exit 0; [ -n \"$root\" ] || exit 0; case \"$root\" in @@FLEET_ROOTS@@) ;; *) exit 0 ;; esac; [ -f \"$root/.claude/hooks/block-edit-on-main.sh\" ] || exit 0; CLAUDE_PROJECT_DIR=\"$root\" bash \"$root/.claude/hooks/block-edit-on-main.sh\"",
+        "timeoutSec": 20,
+        "matcher": "Edit|Write"
+      },
+      {
+        "type": "command",
+        "bash": "root=$(git rev-parse --show-toplevel 2>/dev/null) || exit 0; [ -n \"$root\" ] || exit 0; case \"$root\" in @@FLEET_ROOTS@@) ;; *) exit 0 ;; esac; [ -f \"$root/.claude/hooks/block-undeclared-deps.sh\" ] || exit 0; CLAUDE_PROJECT_DIR=\"$root\" bash \"$root/.claude/hooks/block-undeclared-deps.sh\"",
+        "timeoutSec": 20,
+        "matcher": "Edit|Write"
+      },
+      {
+        "type": "command",
+        "bash": "root=$(git rev-parse --show-toplevel 2>/dev/null) || exit 0; [ -n \"$root\" ] || exit 0; case \"$root\" in @@FLEET_ROOTS@@) ;; *) exit 0 ;; esac; [ -f \"$root/.claude/hooks/warn-security-surface.sh\" ] || exit 0; CLAUDE_PROJECT_DIR=\"$root\" bash \"$root/.claude/hooks/warn-security-surface.sh\"",
+        "timeoutSec": 20,
+        "matcher": "Edit|Write"
+      },
+      {
+        "type": "command",
+        "bash": "root=$(git rev-parse --show-toplevel 2>/dev/null) || exit 0; [ -n \"$root\" ] || exit 0; case \"$root\" in @@FLEET_ROOTS@@) ;; *) exit 0 ;; esac; [ -f \"$root/.claude/hooks/warn-subagent-routing.sh\" ] || exit 0; CLAUDE_PROJECT_DIR=\"$root\" bash \"$root/.claude/hooks/warn-subagent-routing.sh\"",
+        "timeoutSec": 20,
+        "matcher": "Task|Agent"
+      }
+    ],
+    "Stop": [
+      {
+        "type": "command",
+        "bash": "root=$(git rev-parse --show-toplevel 2>/dev/null) || exit 0; [ -n \"$root\" ] || exit 0; case \"$root\" in @@FLEET_ROOTS@@) ;; *) exit 0 ;; esac; [ -f \"$root/.claude/hooks/verify-reminder.sh\" ] || exit 0; CLAUDE_PROJECT_DIR=\"$root\" bash \"$root/.claude/hooks/verify-reminder.sh\"",
+        "timeoutSec": 20
+      },
+      {
+        "type": "command",
+        "bash": "root=$(git rev-parse --show-toplevel 2>/dev/null) || exit 0; [ -n \"$root\" ] || exit 0; case \"$root\" in @@FLEET_ROOTS@@) ;; *) exit 0 ;; esac; [ -f \"$root/.claude/hooks/block-journal-skip.sh\" ] || exit 0; CLAUDE_PROJECT_DIR=\"$root\" bash \"$root/.claude/hooks/block-journal-skip.sh\"",
+        "timeoutSec": 20
+      }
+    ]
+  }
+}

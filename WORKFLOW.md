@@ -1,44 +1,11 @@
 ---
-tracker:
-  kind: linear
-  endpoint: https://api.linear.app/graphql
-  api_key: $LINEAR_API_KEY
-  project_slug: agentic-installation-methodology
-  active_states:
-    - Todo
-    - In Progress
-    - In Review
-  terminal_states:
-    - Done
-    - Canceled
-    - Duplicate
-polling:
-  interval_ms: 30000
-workspace:
-  root: /var/home/hasnobeef/buildepicshit/.symphony/workspaces/agentic-installation-methodology
-hooks:
-  after_create: |
-    git clone git@github.com:buildepicshit/agentic-installation-methodology.git .
-  before_run: null
-  after_run: null
-  before_remove: null
-  timeout_ms: 60000
-agent:
-  max_concurrent_agents: 1
-  max_turns: 20
-  max_retry_backoff_ms: 300000
-codex:
-  command: codex app-server
-  approval_policy: on-request
-  thread_sandbox: workspace-write
-  turn_timeout_ms: 3600000
-  read_timeout_ms: 5000
-  stall_timeout_ms: 300000
-bes:
-  repo: agentic-installation-methodology
-  posture: oss-public
-  default_branch: main
+# Per-repo engagement config — intentionally empty. The fleet uses no
+# external dispatcher; per-repo customization lives in the intro
+# paragraph below this block. Purged of dispatcher-era config by
+# bes-fleet-policy specs/2026-07-30-workflow-yaml-dispatcher-purge.
 ---
+
+
 
 
 
@@ -79,8 +46,13 @@ this body; the body itself is fleet-uniform.
 This file is the **per-repo engagement contract**, not a setup
 checklist. It applies to every agent operating in this repo
 regardless of dispatch surface; Section 1 below is the whole
-contract. **The fleet uses no external tracker or dispatcher — do
-not install one; none is configured.** Use the v1 SPEC procedure via
+contract. **The fleet uses no external DISPATCHER — nothing may own
+scheduling or assignment of fleet work; do not install one.** Tracking
+is different and is REQUIRED: keep the harness task list current during
+every `execute-spec` run (fastpath and trivial work are exempt), and
+carry a GitHub issue tree ONLY when the owner asks for one — nothing
+else triggers it (`.agents/OPERATING_MODEL.md` "Work visibility",
+narrowed 2026-07-31). Do not hold execution state only in context. Use the v1 SPEC procedure via
 the `/idea-capture`, `/author-spec`, `/review-spec`, `/execute-spec`,
 `/verify-spec` slash-commands (see
 `.agents/skills/spec-driven-development/SKILL.md`). For small
@@ -192,14 +164,16 @@ Three minutes of reading, no edits:
 ## Step 1 — Pick the procedure
 
 - **Tiny non-trivial work under explicit owner directive**
-  (≤ 5 files, ≤ 300 lines, single component, reversible, no manifest-carried paths,
+  (≤ 5 files, ≤ 300 lines, single component, reversible, no Rule 20
+  consequence — nothing that alters a gate's verdict, touches secrets, or
+  changes branch/push protection,
   owner-cited): produce a fastpath SPEC from
   `.agents/specs/SPEC.fastpath.template.md` at `status: closed`.
   No IDEA, no review gate, no decomposition.
-- **Non-trivial work otherwise**: run the v1 lifecycle:
-  IDEA → SPEC → review → owner approves → decompose (Contract/Task
-  with ≥ 2 slices) → execute → cross-validate → verify → owner
-  closes. See `.agents/skills/spec-driven-development/SKILL.md`.
+- **Non-trivial work otherwise**: run the v1 lifecycle, 5-gate default:
+  IDEA → SPEC → review → owner approves → execute → verify → owner
+  closes. Decomposition and per-task cross-validation are the
+  high-risk / multi-agent EXCEPTION, not a step every SPEC takes. See `.agents/skills/spec-driven-development/SKILL.md`.
 - **Trivial work** (typo, link, formatting; no behavior change):
   edit directly. Hooks still apply.
 
@@ -268,11 +242,21 @@ boundaries. Use the fleet-enforce skill
 (`.agents/skills/fleet-enforce/SKILL.md`) or open a tracked
 follow-up in the target repo.
 
-## Step 3 — Cross-family cross-validation (BLOCKING when TASK.md is in scope)
+## Step 3 — Cross-family cross-validation (BLOCKING at the Rule 20 bar)
 
-Before flipping a TASK.md to `in-review` (or before submitting a
-PR for owner-led work), dispatch a review agent on a different
-model family than the implementer. The reviewer:
+This is REQUIRED when the change meets the Rule 20 bar — it alters
+what a gate blocks or allows, touches secrets or a security
+surface, or changes branch/push protection. Otherwise it is
+RECOMMENDED, and the `same-family-review` escape hatch applies.
+The canonical rule and its classification test live in
+`.agents/MODEL_ROUTING.md` Rule 20; read it there rather than
+inferring the bar from this step. (This step was BLOCKING on ANY
+TASK.md until 2026-08-05, which outlived the 2026-07-31 narrowing
+that replaced path with consequence.)
+
+When it applies: before flipping a TASK.md to `in-review` (or
+before submitting a PR for owner-led work), dispatch a review agent
+on a different model family than the implementer. The reviewer:
 
 - Runs read-only against the diff and parent SPEC. (Mutation
   probes, if the review uses them, run only in isolated worktrees
@@ -290,9 +274,11 @@ unavailable.
 
 ## Step 4 — Decomposition gap recovery
 
-If a TASK.md is missing for an active dispatched issue, or you're
-working against an `approved` SPEC with ≥ 2 slices and no
-`tasks/` directory:
+Decomposition is the EXCEPTION path, so a SPEC with no `tasks/`
+directory is normally correct — the 5-gate default never emits one.
+This step applies only when a TASK.md is MISSING for work that was
+already decomposed, or the owner directed decomposition for
+high-risk / multi-agent execution:
 
 1. Stop coding.
 2. Run `/decompose-approved-spec <parent_spec_id>` (see

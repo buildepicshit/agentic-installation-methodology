@@ -314,10 +314,12 @@ Refresh discipline: re-baseline this matrix on (a) an AA index
 version bump (a v4 → v5 bump is a deliberate re-baselining event
 with owner-visible diff, never a silent number swap), (b) a new
 stable-model GA, or (c) a needs-probe resolution. A refresh that
-meets every fastpath threshold (≤5 files, ≤300 lines, reversible, no
-manifest-carried touch points) MAY land via `SPEC.fastpath.template.md`;
-otherwise it is a Task SPEC. NOTE: this guide IS manifest-carried, so a
-refresh of it can never be fastpath.
+meets every fastpath threshold (≤5 files, ≤300 lines, reversible, no Rule 20
+consequence) MAY land via `SPEC.fastpath.template.md`; otherwise it is a Task
+SPEC. NOTE: a refresh of this guide changes routing DEFAULTS, not what any gate
+blocks, so it is fastpath-eligible on consequence — the previous note barred it
+because the guide is manifest-carried, which was the path proxy retired
+2026-08-06.
 Update the Snapshot line on every refresh.
 
 ## Version-Forward Proviso
@@ -644,14 +646,18 @@ changes, integration, research, and final calls.
     approved files. In non-interactive runs it can deny `Write` and `Bash`.
     Use a writer-capable mode with strict allowed files, or make the Claude run
     return full markdown and have the root fleet manager write it.
-20. Rule 20: Cross-family review is REQUIRED — not merely recommended — on any
-    **fleet-propagating guardrail SPEC**: a SPEC whose touch points include
-    paths carried by the propagation manifests
-    (`agents/scripts/fleet-files.txt`, `fleet-hooks.txt`,
-    `fleet-skills.txt`). REQUIRED at two gates: before the artefact
-    transitions to `approved-pending-owner` (spec review) and before the
-    parent SPEC flips to `verified` (execution diff review). The
-    `same-family-review` escape hatch applies only to non-guardrail work.
+20. Rule 20: Cross-family review is REQUIRED — not merely recommended — on a
+    change that **alters what a gate blocks or allows**, touches **secrets or
+    a security surface**, or changes **branch/push protection**. One gate, on
+    the execution diff, before the work lands.
+
+    **Narrowed 2026-07-31 (owner-directed).** It formerly fired on any SPEC
+    touching a path in the propagation manifests, at TWO gates, each up to two
+    rounds — so a logging fix that could not change any verdict drew four
+    review rounds. Path is not risk. If the change cannot alter a decision the
+    fleet makes, no cross-family review is required; run the gates and land it.
+
+    The `same-family-review` escape hatch applies to everything below that bar.
     Adopted 2026-06-10 after four consecutive guardrail SPECs where
     cross-family review caught defects same-family work missed
     (`specs/2026-06-09-mutation-probe-isolation-discipline/SPEC_EVIDENCE.md`
@@ -660,8 +666,7 @@ changes, integration, research, and final calls.
     `file://specs/2026-06-30-operating-model-lean-down/SPEC.md` §7); the
     review-spec, review-diff, and verify-spec skills cite it rather than
     restating it.
-    Classification check (2026-07-02): classify by grepping
-    the diff's touch points against the propagation manifests — the class
+
     **STOP RULE (added 2026-07-24, owner-directed).** Rule 20 requires
     review AT the gate; it does not require iterating until a reviewer stops
     producing observations, which it never will — an adversarial reviewer has
@@ -678,21 +683,34 @@ changes, integration, research, and final calls.
         reviewers have produced demonstrably wrong counts and refuted-then-
         reproposed fixes.
     Evidence: `file://specs/2026-07-24-capture-after-lint-declaration/SPEC.md`
-    §8 (SE-F). The classification rule below is UNCHANGED — the stop rule
-    bounds review DEPTH, never review SCOPE.
-    Classification check (2026-07-02): classify by grepping the diff's
-    touch points against the propagation manifests — the class is
-    touch-point-defined, and intent framing ("machinery", "just docs") is
-    not an exemption; three same-day misclassifications each hid real
-    review-caught defects
+    §8 (SE-F). The stop rule bounds review DEPTH, never review SCOPE.
+
+    **Classification (2026-07-31).** Classify by CONSEQUENCE, using the
+    three tests in the rule head: does the change alter what a gate blocks
+    or allows, touch secrets or a security surface, or change branch/push
+    protection? Intent framing ("machinery", "just docs") is not an
+    exemption — say what the change can and cannot alter, and check it
+    against those three.
+
+    The former test was path-based: grep the diff's touch points against
+    the propagation manifests, class is touch-point-defined. That was
+    retired by the 2026-07-31 narrowing above — *"Path is not risk"* — and
+    a truncated duplicate of it survived here until 2026-08-05, so this
+    rule contradicted its own narrowing four lines apart
+    (`file://specs/2026-08-05-pocock-v1-2-and-harness-parity/SPEC.md` S9).
+    The evidence behind the old test still stands on its own terms — three
+    same-day misclassifications each hid real review-caught defects
     (`file://specs/2026-07-01-propagation-machinery-fixes/SPEC_EVIDENCE.md`
-    SE-5). There is deliberately NO waiver mechanism (owner-affirmed
-    2026-07-02 against a recorded-waiver alternative: every waived or
-    misclassified review that week hid real defects, while the rule's one
-    hard stop proved correct). If the cross-family lane is unavailable,
-    the work HOLDS; a per-case owner override remains possible only as an
-    explicit in-transcript directive — an owner action, not a rule
-    feature.
+    SE-5) — which is why intent framing remains a non-exemption. What
+    changed is the trigger, not the rigour.
+
+    There is deliberately NO waiver mechanism for a change that DOES meet
+    the bar (owner-affirmed 2026-07-02 against a recorded-waiver
+    alternative: every waived or misclassified review that week hid real
+    defects, while the rule's one hard stop proved correct). If the
+    cross-family lane is unavailable for such a change, the work HOLDS; a
+    per-case owner override remains possible only as an explicit
+    in-transcript directive — an owner action, not a rule feature.
 
 ## Standard Prompts
 

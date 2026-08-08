@@ -6,6 +6,16 @@ set -euo pipefail
 msg_file="$1"
 msg=$(head -1 "$msg_file")
 
+# No AI attribution. Authority: AGENTS.md "Engineering standards".
+# Checked HERE, not only in .claude/hooks/block-ai-attribution.sh: that hook
+# fires through Claude Code's PreToolUse channel, which is Claude-only, so a
+# Copilot agent was never subject to this rule. Copilot CLI has no hook
+# mechanism (verified 2026-07-31), and git hooks are harness-agnostic.
+if grep -qiE 'co[-_ ]?authored[-_ ]?by' "$msg_file"; then
+  printf 'commit-msg: studio rule — no AI attribution in commits.\n' >&2
+  exit 1
+fi
+
 # Allow merge/revert commits (standard git).
 if [[ "$msg" =~ ^(Merge|Revert)[[:space:]] ]]; then
   exit 0

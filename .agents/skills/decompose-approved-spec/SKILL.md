@@ -1,6 +1,6 @@
 ---
 name: decompose-approved-spec
-description: "BLOCKING. Use after a SPEC.md is approved and before in-execution to emit one TASK.md per executable slice into specs/<id>/tasks/. Each TASK.md carries primary/cross-validation/verification model lanes and gates the parent SPEC's transition approved -> decomposed -> in-execution. Tasks are the source-of-truth dispatchable units that agents execute directly; no external tracker (Linear) or dispatcher (Symphony) is required."
+description: "EXCEPTION PATH, not the default. Use after a SPEC.md is approved ONLY for high-risk or multi-agent work, to emit one TASK.md per executable slice into specs/<id>/tasks/. The 5-gate default goes approved -> in-execution with no decomposition. Each TASK.md carries primary/cross-validation/verification model lanes and gates the parent SPEC's transition approved -> decomposed -> in-execution. Tasks are the source-of-truth dispatchable units that agents execute directly; no external tracker (Linear) or dispatcher (Symphony) is required."
 license: internal-only
 compatibility:
   - copilot
@@ -43,9 +43,12 @@ slice.
 
 ## When to use
 
-- A SPEC.md has front-matter `status: approved` and contains an
-  Execution Plan (or Interfaces / Implementation) section
-  Checklist (Contract SPEC) that names ≥ 2 distinct slices, OR
+- The work is HIGH-RISK or MULTI-AGENT and the owner wants it split
+  into independently dispatchable slices. Slice count alone does NOT
+  trigger decomposition: the full 13-phase path is the exception, not
+  the 5-gate default (`file://agents/skills/spec-driven-development/SKILL.md`;
+  `file://agents/OPERATING_MODEL.md` "Required Work Model"). A SPEC
+  with nine slices and one executing agent takes the default path. OR
 - The owner has directed decomposition for parallel execution per
   `file://agents/MODEL_ROUTING.md` "Routing Matrix" (multi-agent
   coding row).
@@ -97,9 +100,11 @@ file/line citation. Do NOT emit TASK.md files.
      slice's `task_class` (research, implementation, code-review,
      verification, docs, planning). Lane defaults per task class
      live in MODEL_ROUTING.md, not here.
-   - `cross_validation_lane` — REQUIRED only on Rule-20 guardrail
-     slices (touch points hitting manifest-carried paths); OPTIONAL
-     elsewhere. When present it MUST be a DIFFERENT model family from
+   - `cross_validation_lane` — REQUIRED only on Rule-20 slices: those
+     that alter what a gate blocks or allows, touch secrets or a
+     security surface, or change branch/push protection. OPTIONAL
+     elsewhere. (Was a PATH test until 2026-08-05; Rule 20 replaced
+     path with consequence on 2026-07-31.) When present it MUST be a DIFFERENT model family from
      `model_route`; pick the counterpart family's lane from the
      Routing Matrix.
    - `verification_lane` — same family as primary for mechanical
@@ -157,9 +162,10 @@ Mark a task `AFK` only when ALL of:
 - `acceptance_commands` are explicit and mechanically verifiable.
 - No mid-slice owner judgment is required.
 - Agent can stop safely on ambiguity (escalate to workpad blocker).
-- On a Rule-20 guardrail slice: the cross-validation lane is configured
-  and a different family from primary. On other slices this criterion
-  does not apply.
+- On a Rule-20 slice (one that alters a gate's verdict, touches secrets
+  or a security surface, or changes branch/push protection): the
+  cross-validation lane is configured and a different family from
+  primary. On other slices this criterion does not apply.
 
 Otherwise mark `HITL`.
 
@@ -225,9 +231,11 @@ cross-family dispatch is unavailable:
 
 - Do not decompose unapproved specs.
 - Emit `cross_validation_lane` (a DIFFERENT model family) on any TASK
-  whose touch points include manifest-carried paths — that is Rule-20
-  guardrail work. On other TASKs it is OPTIONAL; omit it rather than
-  assigning a reviewer the rule does not require (scoped 2026-07-24).
+  that meets the Rule 20 bar — it alters what a gate blocks or allows,
+  touches secrets or a security surface, or changes branch/push
+  protection. On other TASKs it is OPTIONAL; omit it rather than
+  assigning a reviewer the rule does not require (scoped 2026-07-24;
+  reclassified from a manifest-path test 2026-08-05).
 - Do not assign overlapping `write_scope` to parallel `AFK` tasks
   without root-manager integration control and serial integration
   order.

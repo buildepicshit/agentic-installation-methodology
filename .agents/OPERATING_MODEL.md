@@ -132,16 +132,30 @@ if it changes one of:
 
 - a public contract, API, or published interface
 - persisted state, a data model, or a migration
-- a guardrail: a hook, a lint, or any manifest-carried policy path
-- CI, release, or propagation machinery
+- a guardrail change that alters WHAT IS BLOCKED OR ALLOWED — a new
+  gate, a removed gate, or a changed verdict
 - a security surface or secrets handling
-- an internal architecture or operational-workflow replacement, even
-  with no public-interface or persisted-state change
-- fleet-propagating policy (see "Fleet Rule Origination")
+- an architecture or operational-workflow replacement
+- a fleet-propagating policy RULE (what agents must or must not do)
 
 Everything else — ordinary implementation, refactors, tests, bug fixes,
 repo-local docs — takes the light lane. Inverted from an open-ended list
 2026-07-24; rationale in `file://specs/2026-07-24-lifecycle-lean-execution/SPEC.md` §1.
+
+**Narrowed 2026-07-31 (owner-directed) to price work by CONSEQUENCE, not
+by PATH.** The former list said "a guardrail: a hook, a lint, or any
+manifest-carried policy path", which meant editing a comment in a hook
+cost exactly as much as changing a security boundary. Measured instance:
+a six-line fix to a logging helper — which could not change any gate's
+verdict — drew a 500-line SPEC, four cross-family review rounds, a
+twelve-issue tracker tree and a seven-repo propagation wave. That is the
+regrowth mechanism `file://specs/2026-07-24-ceremony-weight-audit/SPEC.md`
+§5 named, arriving through the trigger rather than through volume.
+
+So: **touching a manifest-carried file is NOT by itself a trigger.** Fix
+the bug, run the gates, propagate, done. Ask "if this is wrong, what
+breaks?" If the answer is "a log line is inaccurate" or "a comment is
+stale", it is light-lane work no matter which file it lives in.
 
 The DEFAULT lifecycle is a 5-gate flow
 (`file://specs/2026-06-30-operating-model-lean-down/SPEC.md` §7):
@@ -181,8 +195,10 @@ The DEFAULT lifecycle is a 5-gate flow
    silently.
 5. **Verify**: run the spec acceptance commands and the repo's normal
    gate. Write a completion report with changed files, verification
-   output, residual risk, and spec evidence candidates; capture
-   durable lessons as spec evidence candidates. Do not write
+   output and residual risk. **Do NOT harvest spec evidence as a routine
+   step** — that is opt-in, on owner request or when you are about to
+   propose a rule change (narrowed 2026-07-31; the routine harvest
+   accumulated 54 untriaged candidates with no consumer). Do not write
    cross-project instructions directly from an agent session.
 
 The full 13-phase path (adding decompose / dispatch / cross-validate)
@@ -197,9 +213,19 @@ cross-validation; lands at `status: closed` in same commit as work.
 
 Widened 2026-07-24 from ≤ 1 file / ≤ 50 lines; the
 explicit-owner-directive precondition is REMOVED (`file://specs/2026-07-24-lifecycle-lean-execution/SPEC.md` §1).
-Fastpath does NOT override Rule 20 — a ≤ 5-file change touching a
-manifest-carried path is still a fleet-propagating guardrail SPEC
-requiring cross-family review. See
+Fastpath does NOT override Rule 20 — it is barred by the SAME test. Fastpath
+skips both review gates, so the thing that must never take it is exactly the
+thing Rule 20 exists to catch: a change that alters what a gate blocks or
+allows, touches secrets or a security surface, or changes branch/push
+protection.
+
+**Realigned 2026-08-06.** This paragraph previously kept a manifest-carried
+exclusion as "a FASTPATH threshold in its own right". Path is a proxy for risk
+and it failed both ways — barring a typo fix in a propagating doc, while
+admitting `.github/workflows/ci.yml` and repo-local guardrails, which are in no
+manifest. Swapping it for the consequence test is net-tightening
+(`file://specs/2026-08-06-guardrail-proxies-to-consequence/SPEC.md` S1). A
+manifest hit is now an ADVISORY signal, not a bar. See
 `file://agents/specs/SPEC.fastpath.template.md` for the retained
 template and thresholds.
 If ANY threshold fails, escalate to task/contract/decision.
@@ -320,6 +346,45 @@ Those responsibilities belong to the runner, OS sandbox, GitHub,
 CI, Copilot / Claude, worktree tooling, or future approved systems. BES may define how agents interact with those tools,
 but it MUST NOT claim to provide those capabilities itself.
 
+**Not implementing a tracker is not the same as not using one.** BES
+builds no issue-tracker; it DOES define how agents record work in
+GitHub's (see "Work visibility" below). The earlier reading — that the
+fleet must not use any tracker at all — contradicted this very list,
+which delegates tracking to GitHub, and is retired
+(`file://specs/2026-07-26-agent-work-tracking-surface/SPEC.md` §1).
+
+## Work visibility (the two tiers)
+
+Agents MUST NOT hold in-flight execution state only in context. Memory
+is not evidence (see "Memory Policy"), and state that lives nowhere else
+is state the owner cannot see and the next session cannot inherit.
+
+- **Tier 1 — in-session.** Work that enters `execute-spec` MUST
+  maintain the harness's native task list, one item per Execution Plan
+  step, kept current as work proceeds. Ephemeral is correct here: it is
+  visible while it matters. **Fastpath and trivial work are exempt** —
+  they do not enter `execute-spec` and get no tier at all.
+- **Tier 2 — durable.** A GitHub issue tree is REQUIRED only when the
+  **owner asks for one**. Nothing else triggers it.
+
+  **Narrowed 2026-07-31 (owner-directed).** The former trigger —
+  manifest-carried AND ≥2 tracked units or >3 slices — fired on routine
+  fleet changes and produced twelve GitHub issues for a four-file fix,
+  all of which then had to be closed by hand. The task list plus the
+  SPEC's own Completion Report already carry the state; the issue tree
+  added a second ledger to maintain and nothing else.
+
+Work that enters `execute-spec` but misses the Tier 2 trigger gets
+Tier 1 only. Fastpath and trivial work get neither. This is a floor on
+visibility, not a licence to add ceremony: the trigger is deliberately
+narrow and mechanically checkable
+(`file://specs/2026-07-26-agent-work-tracking-surface/SPEC.md` §7.2).
+
+**What remains forbidden is a DISPATCHER** — any system that owns
+scheduling or assignment of fleet work. A list the owner can read is
+not a dispatcher. Lock L1 is preserved in substance
+(`file://agents/skills/decompose-approved-spec/SKILL.md`).
+
 ## Exhaustive Spec Rule
 
 Agents do not deliver opinions as implementation authority. An executable
@@ -406,8 +471,9 @@ changes — accepted changes flow through the normal SPEC procedure
 
 The fleet's alignment posture toward Pocock is
 **adopt-closely-with-caveats**: Pocock v1.1 is the alignment standard and
-the fleet diverges only with recorded cause, holding the tracker-free
-substrate, owner-only gates, and the 15-skill corpus constant
+the fleet diverges only with recorded cause, holding the
+dispatcher-free substrate (NOT tracker-free — see "Work visibility"),
+owner-only gates, and the 15-skill corpus constant
 (`file://specs/2026-07-08-pocock-v1.1-alignment-rebaseline/SPEC.md`).
 
 ## Session Continuity (universal workpad)
@@ -424,6 +490,63 @@ Step 5; `file://agents/skills/orient/SKILL.md` Step 3.
 
 Append-only. Owner alone archives entries older than 90 days to
 `SESSION_JOURNAL.archive.md`.
+
+## Phase boundaries (what to do with the context you built)
+
+A **phase** is a chunk of work inside a session — the grilling, the
+implementation, the verification. The definition is fuzzy on purpose: a
+phase ends when you think *"right, that's done"*.
+
+The **phase boundary** is the gap between two of them, and it is the only
+place this decision belongs. Mid-phase there is nothing to decide —
+continue, or split what is left into sub-agents. Compacting mid-phase
+makes the agent lose the thread.
+
+At a boundary, work these in order. **The first yes wins.**
+
+1. **Continue.** Can you stay in this session? Yes if the next phase needs
+   this one as a **primary source**, or you have enough window left for it
+   to fit. Grill → execute is the standard yes: execution wants the
+   reasoning verbatim, not a summary of it. Continue costs nothing and
+   loses nothing, so rule it out before anything else.
+2. **Clear.** Is everything here — the exploration, the decisions, the
+   dead ends — disposable for what comes next? Then clear. It is the
+   cheapest move available and hands back the whole window. The cost of
+   getting this one wrong is one-way: clear a *relevant* context and you
+   lose the **why** behind what you built, and re-reading the diff never
+   returns it.
+3. **Hand off.** Write a portable file. Narrow, and this list is the whole
+   clause: a **new harness**, a **new directory or repo**, a **colleague**,
+   or a side task forked **mid-phase**. What it buys is portability. If
+   nothing is travelling, you do not need it.
+4. **Sub-agent.** Is the task scoped tightly enough to run unattended?
+   Send it to its own window and leave this session untouched. Automated
+   review is the standard case.
+5. **Compact.** Relevant context, same harness, same directory, and you
+   need to stay in the loop. This is where the tree lands, and it lands
+   here often.
+
+**Compaction is the default, not the first reach.** It sits last because
+the four questions above it are all cheaper or more precise. Starting
+there produces a session that is confidently wrong about whatever the
+summary flattened. Pass it an instruction so the summary keeps what the
+next phase needs.
+
+**Why the order.** Every move except Continue turns a **primary source** —
+the session as it happened — into a **secondary source**, a summary of it.
+Secondary is lossy and quieter; primary is complete and noisy. You pay the
+lossiness only when staying costs more than it saves, which is why
+question 1 comes first.
+
+These are judgement calls, not a formula; the same boundary can go two
+ways on two days. The value is in asking them **in order**, at the
+boundary rather than in the middle of the work.
+
+Adopted 2026-08-05 from `mattpocock/skills`
+`skills/engineering/ask-matt/PHASE-BOUNDARIES.md` @ `8b36d4f` (v1.2.2) per
+`file://specs/2026-08-05-pocock-v1-2-and-harness-parity/SPEC.md` S3. The
+fleet had no rule governing mid-session context decisions, which are paid
+by every long session.
 
 ## Cross-Repo Enforcement (fleet-directives)
 

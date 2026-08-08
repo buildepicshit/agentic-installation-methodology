@@ -1,0 +1,199 @@
+#!/usr/bin/env bash
+# BES fleet pre-commit hook (managed by install-git-hooks.sh)
+#
+# WHY THIS EXISTS
+#   The fleet's 14 guardrails live in `.claude/hooks/` and fire through Claude
+#   Code's PreToolUse channel, which is CLAUDE-ONLY. A Copilot agent in a fleet
+#   repo was therefore subject to exactly two checks: Conventional Commit format
+#   (commit-msg) and the CI gates on push. A fleet built to govern output quality
+#   cannot enforce on one harness and trust on the other.
+#
+#   Git hooks are harness-agnostic: git runs them whoever is driving. This
+#   carries the checks that can be meaningfully evaluated at commit time.
+#
+#   CORRECTED 2026-08-05: this header previously asserted that "Copilot CLI has
+#   no hook mechanism at all — verified 2026-07-31". That is no longer true.
+#   Copilot CLI 1.0.78 documents `hooks` and `disableAllHooks` under
+#   `copilot help config`, keyed by event name, same schema as
+#   `.github/hooks/*.json`. This hook remains the harness-agnostic FLOOR — it
+#   runs for any driver, including one with no agent harness at all — and is not
+#   superseded by either native hook system.
+#   Authority: file://specs/2026-08-05-pocock-v1-2-and-harness-parity/SPEC.md
+#
+# The first-line comment IS the marker — the installer uses it to detect
+# "installed by us" vs a pre-existing user hook. Do not change it without
+# updating the installer.
+#
+# EXIT: 0 allow | 1 block (git's convention for hooks)
+
+set -uo pipefail
+
+# --self-test runs the cases below against throwaway repos and exits.
+SELF_TEST="${1:-}"
+
+repo_root=$(git rev-parse --show-toplevel 2>/dev/null) || exit 0
+branch=$(git symbolic-ref --quiet --short HEAD 2>/dev/null || printf '')
+
+fail() { printf 'pre-commit: %s\n' "$1" >&2; exit 1; }
+
+# --- 1. protected-branch commit --------------------------------------------
+# Mirrors .claude/hooks/block-edit-on-main.sh exactly, including the
+# main-direct allow-path: a SPEC at approved/decomposed/in-execution/verified/
+# closed declaring `branch_policy: main-direct` permits commits on main.
+check_protected_branch() {
+    [ "$branch" = "main" ] || return 0
+    # No remote means no protected branch to protect. bes-fleet-runtime has no
+    # remote and has always committed on main locally; blocking that is pure
+    # friction with nothing on the other side of it.
+    git remote get-url origin >/dev/null 2>&1 || return 0
+    local d f st bp
+    for d in "$repo_root/.agents/specs" "$repo_root/specs"; do
+        [ -d "$d" ] || continue
+        for f in "$d"/*/SPEC.md; do
+            [ -f "$f" ] || continue
+            st=$(awk 'BEGIN{c=0} /^---/{c++; if(c==2)exit} /^status:/{gsub(/^status:[[:space:]]*/,""); print; exit}' "$f")
+            case "$st" in
+                approved|decomposed|in-execution|verified|closed)
+                    bp=$(awk 'BEGIN{c=0} /^---/{c++; if(c==2)exit} /^branch_policy:/{gsub(/^branch_policy:[[:space:]]*/,""); print; exit}' "$f")
+                    [ "$bp" = "main-direct" ] && return 0
+                    ;;
+            esac
+        done
+    done
+    fail "committing on protected branch 'main' and no active SPEC declares branch_policy: main-direct. Create a feature branch first."
+}
+
+# --- 2. mutation-probe residue in staged content ----------------------------
+# A probe marker reaching a commit means a deliberately-broken fixture was
+# left in the tree. Scans staged CONTENT, not filenames.
+# Exclusions mirror .claude/hooks/block-probe-residue.sh: docs, spec corpora,
+# test suites and the hooks that define the convention all legitimately QUOTE
+# the marker. Without them this hook blocks its own self-test fixture — which
+# it did, on its first live run.
+check_probe_residue() {
+    local hits
+    hits=$(git diff --cached -U0 --diff-filter=ACM \
+        -- ':!*.md' ':!specs' ':!.agents/specs' ':!.claude/hooks/tests' \
+           ':!.claude/hooks/block-probe-residue.sh' \
+           ':!.githooks/pre-commit' ':!agents/githooks/pre-commit' \
+           ':!.agents/githooks/pre-commit' 2>/dev/null \
+        | grep -nE '^\+.*\[(DEBUG|PROBE)-[A-Za-z0-9_-]+\]' | head -3) || true
+    [ -z "$hits" ] && return 0
+    printf 'pre-commit: mutation-probe residue in staged content:\n' >&2
+    printf '%s\n' "$hits" >&2
+    fail "remove probe markers before committing."
+}
+
+# --- 3. stale derived artefacts (policy source repo only) -------------------
+# In bes-fleet-policy the manifest lock is generated from manifest-carried
+# files. Committing one without the other ships an inconsistent baseline.
+#
+# "Manifest-carried" is asked of the LOCK, which enumerates every carried file
+# as a `source_path` (agents/**, .claude/hooks/**) or a generated `target_path`
+# (.claude/skills/**, .githooks/**). The lock is generated from the manifests,
+# so this is the single source of truth.
+#
+# It used to prefix-match `^(agents/|.claude/hooks/|.claude/skills/)` instead —
+# a second, wrong definition of carried. Nothing under `agents/` that is NOT in
+# the manifests could be committed at all: `agents/governance/**` is
+# deliberately non-propagating, so no lock change ever existed to stage, and the
+# remedy this hook prints (`fleet-selfcheck.sh --fix`) was a verified no-op.
+# The repo authoring the rule was the only one it deadlocked.
+# Authority: file://specs/2026-08-05-pocock-v1-2-and-harness-parity/SPEC.md S0
+#
+# A file newly ADDED to a manifest but not yet expanded into the lock would read
+# as not-carried from the lock alone, so the MANIFESTS are consulted too — they
+# are the source the lock is generated from. Renames count: --diff-filter
+# includes R, and `--name-only` prints both sides of one.
+# Both gaps found by the cross-family reviewer on this SPEC's execution diff
+# (specs/2026-08-05-pocock-v1-2-and-harness-parity/reviews/, finding 3).
+check_stale_lock() {
+    local lockfile="$repo_root/agents/fleet-manifest.lock.json"
+    [ -f "$lockfile" ] || return 0
+    local ff="$repo_root/agents/scripts/fleet-files.txt"
+    local fh="$repo_root/agents/scripts/fleet-hooks.txt"
+    local fs="$repo_root/agents/scripts/fleet-skills.txt"
+    _is_carried() {
+        local p="$1" rel
+        grep -qF -e "\"source_path\": \"$p\"" -e "\"target_path\": \"$p\"" "$lockfile" && return 0
+        case "$p" in
+            agents/*)         rel="${p#agents/}";        grep -qxF -- "$rel" "$ff" 2>/dev/null && return 0 ;;
+            .claude/hooks/*)  rel="${p#.claude/hooks/}"; grep -qxF -- "$rel" "$fh" 2>/dev/null && return 0 ;;
+            .claude/skills/*) rel="${p#.claude/skills/}"; rel="${rel%%/*}"
+                              grep -qxF -- "$rel" "$fs" 2>/dev/null && return 0 ;;
+        esac
+        return 1
+    }
+    local carried lock
+    carried=$(git diff --cached --name-only --diff-filter=ACMDR 2>/dev/null \
+        | while IFS= read -r p; do
+              [ -n "$p" ] || continue
+              _is_carried "$p" && printf 'x\n'
+          done | wc -l)
+    [ "$carried" -eq 0 ] && return 0
+    lock=$(git diff --cached --name-only 2>/dev/null | grep -c 'fleet-manifest.lock.json') || lock=0
+    [ "$lock" != "0" ] && return 0
+    fail "staged $carried manifest-carried file(s) without agents/fleet-manifest.lock.json. Run: bash agents/scripts/fleet-selfcheck.sh --fix"
+}
+
+# --- self-test --------------------------------------------------------------
+if [ "$SELF_TEST" = "--self-test" ]; then
+    P=0; F=0
+    HOOK="$(cd "$(dirname "$0")" && pwd)/$(basename "$0")"
+    ck() { if [ "$2" = "$3" ]; then P=$((P+1)); printf 'PASS %s\n' "$1";
+           else F=$((F+1)); printf 'FAIL %s (want %s got %s)\n' "$1" "$2" "$3"; fi; }
+    mk() { d=$(mktemp -d); ( cd "$d"; git init -qb main; git config user.email a@b
+           git config user.name a; git config core.hooksPath /dev/null
+           git remote add origin https://example.invalid/x.git
+           printf 'x\n' > f.txt; git add f.txt; git commit -qm init ); printf '%s' "$d"; }
+    run() { ( cd "$1" && bash "$HOOK" >/dev/null 2>&1; echo $? ); }
+
+    d=$(mk); ( cd "$d" && printf 'y\n' >> f.txt && git add f.txt )
+    ck "commit on main with no SPEC blocks" 1 "$(run "$d")"; rm -rf "$d"
+
+    d=$(mk); ( cd "$d" && git checkout -qb feat && printf 'y\n' >> f.txt && git add f.txt )
+    ck "commit on a feature branch allows" 0 "$(run "$d")"; rm -rf "$d"
+
+    d=$(mk); mkdir -p "$d/specs/s"
+    printf -- '---\nstatus: closed\nbranch_policy: main-direct\n---\n' > "$d/specs/s/SPEC.md"
+    ( cd "$d" && printf 'y\n' >> f.txt && git add f.txt )
+    ck "main-direct SPEC permits main commit" 0 "$(run "$d")"; rm -rf "$d"
+
+    d=$(mk); mkdir -p "$d/specs/s"
+    printf -- '---\nstatus: draft\nbranch_policy: main-direct\n---\n' > "$d/specs/s/SPEC.md"
+    ( cd "$d" && printf 'y\n' >> f.txt && git add f.txt )
+    ck "draft SPEC does NOT permit main commit" 1 "$(run "$d")"; rm -rf "$d"
+
+    d=$(mk); ( cd "$d" && git checkout -qb feat \
+        && printf 'probe %s left behind\n' "[DEBUG""-XY]" >> f.txt && git add f.txt )
+    ck "probe residue blocks" 1 "$(run "$d")"; rm -rf "$d"
+
+    d=$(mk); ( cd "$d" && git checkout -qb feat && printf 'clean line\n' >> f.txt && git add f.txt )
+    ck "clean staged content allows" 0 "$(run "$d")"; rm -rf "$d"
+
+    # --- manifest-carried is asked of the lock, not guessed from a prefix ---
+    # Fixture lock carries exactly one path. A sibling under agents/ that the
+    # lock does not name must commit freely; the named one must still block.
+    mklock() { mkdir -p "$1/agents"
+        printf '{\n  "entries": [\n    {\n      "source_path": "agents/OPERATING_MODEL.md",\n      "target_path": ".agents/OPERATING_MODEL.md"\n    }\n  ]\n}\n' \
+            > "$1/agents/fleet-manifest.lock.json"
+        ( cd "$1" && git add agents/fleet-manifest.lock.json && git commit -qm lock ); }
+
+    d=$(mk); ( cd "$d" && git checkout -qb feat ); mklock "$d"
+    mkdir -p "$d/agents/governance"
+    ( cd "$d" && printf 'note\n' > agents/governance/note.md && git add agents/governance/note.md )
+    ck "non-carried agents/ file needs no lock update" 0 "$(run "$d")"; rm -rf "$d"
+
+    d=$(mk); ( cd "$d" && git checkout -qb feat ); mklock "$d"
+    ( cd "$d" && printf 'edit\n' > agents/OPERATING_MODEL.md && git add agents/OPERATING_MODEL.md )
+    ck "carried file without staged lock still blocks" 1 "$(run "$d")"; rm -rf "$d"
+
+    printf '\n=== pre-commit self-test: %d pass / %d fail ===\n' "$P" "$F"
+    [ "$F" -eq 0 ]; exit $?
+fi
+
+# --- gate -------------------------------------------------------------------
+check_protected_branch
+check_probe_residue
+check_stale_lock
+exit 0

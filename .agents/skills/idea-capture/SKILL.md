@@ -64,11 +64,18 @@ appear as evidence in the artefact — the input-vs-artefact distinction
 
 ## Grill Tactics
 
-Owned jointly with `author-spec`, whose body carries the full pattern:
-`file://agents/skills/author-spec/SKILL.md`. In brief — argue the strongest
-case against your own recommendation before presenting it; name what would
-change your mind; and when an option is cheaper but architecturally worse, say
-so in those terms rather than leading with cost.
+Owned jointly with `author-spec`, whose "Grill Before IDEA" section carries
+the full pattern — the **design tree**, the **frontier** round, the question
+emission shape, and the facts-vs-decisions split:
+`file://agents/skills/author-spec/SKILL.md`. Read it before the first
+question, not after.
+
+In brief: work the tree in rounds, asking the whole frontier at once rather
+than one question per turn; find facts yourself and dispatch a sub-agent when
+the lookup is slow, without blocking the rest of the round; argue the
+strongest case against your own recommendation before presenting it; name what
+would change your mind; and when an option is cheaper but architecturally
+worse, say so in those terms rather than leading with cost.
 
 ## Output
 

@@ -205,11 +205,25 @@ validate_copilot() {
 
     # Admin allowlist: administrative subcommands and flags are
     # exempt (per `gh copilot -- --help` Commands section).
-    if echo "$s" | grep -qE '^copilot[[:space:]]+(login|version|update|help|mcp|plugin|completion|init)(\b|$)'; then
+    if echo "$s" | grep -qE '^copilot[[:space:]]+(login|logout|version|update|help|mcp|plugin|completion|init|skill|skills|config|providers|limits)(\b|$)'; then
         echo "PASS: copilot span is administrative (subcommand)"
         return 0
     fi
-    if echo "$s" | grep -qE '^copilot[[:space:]]+(--version|-v|--help|-h|--remove)([[:space:]]|$)'; then
+    # --help/-h/--version makes a span administrative wherever it appears in
+    # the ARGUMENTS — `copilot skill --help` is a local metadata query, and it
+    # was hard-blocked 2026-08-05 as if it were a prompt-less session.
+    #
+    # It MUST be read from argv only, never from quoted prompt TEXT. Matching
+    # the raw span let a forbidden model through the whole validator:
+    #   gh copilot -- --model claude-opus-5 -p "review --help please"
+    # passed as "administrative" and skipped the GPT-family check below, which
+    # is the Rule 20 lane guard. Found by the cross-family reviewer on this
+    # SPEC's own execution diff (specs/2026-08-05-pocock-v1-2-and-harness-parity
+    # /reviews/, finding 2) — a regression introduced earlier the same day by
+    # the fix for the false positive above. Strip quoted regions first.
+    local s_argv
+    s_argv="$(printf '%s' "$s" | sed -E "s/'[^']*'//g; s/\"[^\"]*\"//g")"
+    if echo "$s_argv" | grep -qE -- '(^|[[:space:]])(--help|-h|--version|-v|--remove)([[:space:]]|$)'; then
         echo "PASS: copilot span is administrative (flag-triggered)"
         return 0
     fi
