@@ -23,6 +23,7 @@
     "IKTO",
     "Mimir",
     "SESSION_JOURNAL.md",
+    "SurvivalResearch",
     "TimeStrats",
     "UsefulIdiots",
     "Wick",
@@ -47,6 +48,7 @@
   "productRepoAllowedTopLevel": {
     "bes-fleet-runtime": ["README.md", "bin", "package.json", "src", "test"],
     "IKTO": ["unity"],
+    "SurvivalResearch": ["README.md", "research", "sources"],
     "TimeStrats": ["README.md"]
   }
 }

@@ -17,6 +17,7 @@ MAY operate.
 | `ACTOCCATUD` | INTERNAL | `.agents/` committed; full fleet baseline | Permitted |
 | `Floom` | INTERNAL | `.agents/` committed; full fleet baseline | Permitted |
 | `IKTO` | INTERNAL | `.agents/` committed; full fleet baseline | Permitted |
+| `SurvivalResearch` | INTERNAL | `.agents/` committed; full fleet baseline | Permitted |
 | `TimeStrats` | INTERNAL | `.agents/` committed; full fleet baseline | Permitted |
 | `UsefulIdiots` | INTERNAL | `.agents/` committed; full fleet baseline | Permitted |
 | `bes-fleet-runtime` | INTERNAL | `.agents/` committed; full fleet baseline | Permitted |

@@ -13,13 +13,128 @@ set -uo pipefail
 # the fleet sets core.hooksPath=.githooks, LFS's own hook under
 # .git/hooks never fires — without this chain LFS objects are never
 # uploaded and GitHub hard-rejects the first asset push (GH008).
-# No-op where git-lfs is absent or no refs are LFS-tracked. Gated on
-# $# so a MANUAL no-arg invocation still reaches the CI gates —
-# no-arg `git lfs pre-push` aborts with exit 1 (r1 cross-family
+# Gated on $# so a MANUAL no-arg invocation still reaches the CI gates
+# — no-arg `git lfs pre-push` aborts with exit 1 (r1 cross-family
 # catch); git itself always passes <remote> <url>.
 # Per specs/2026-07-01-pre-push-lfs-chaining/SPEC.md.
+#
+# Two further gates, per specs/2026-08-08-pre-push-lfs-hang/SPEC.md:
+# the chain runs only when a ref BEING PUSHED actually carries LFS
+# content, and when it does run it cannot block. `git lfs pre-push`
+# contacts the LFS endpoint even in a repo with zero LFS objects; on a
+# cold credential cache that reaches a prompt and hangs a
+# non-interactive push forever (owner reproduced 8/8 in ACTOCCATUD).
+
+# Non-interactive credential posture for every git/ssh call below: no
+# terminal prompt, no git askpass helper, no ssh askpass. All three are
+# needed — git tries GIT_ASKPASS / core.askPass / SSH_ASKPASS before
+# the terminal, and ssh has its own askpass path, so suppressing only
+# the terminal still leaves a GUI dialog able to block the hook.
+lfs_noninteractive() {
+    GIT_TERMINAL_PROMPT=0 GIT_ASKPASS=/bin/false SSH_ASKPASS_REQUIRE=never "$@"
+}
+
+lfs_probe_ls_files() {   # $1 = revision; stdout = ls-files output, rc = probe rc
+    if [ "$lfs_have_timeout" = "1" ]; then
+        lfs_noninteractive timeout 30 git lfs ls-files "$1" 2>/dev/null
+    else
+        lfs_noninteractive git lfs ls-files "$1" 2>/dev/null
+    fi
+}
+
+# Does any ref being pushed carry LFS content? Fails CLOSED: if the
+# probe cannot answer, assume it does, so a broken probe degrades to
+# the 2026-07-01 behaviour (chain runs, now bounded) rather than
+# silently skipping a required upload and hitting GH008.
+# MUST be fed by redirection, never a pipeline: under pipefail an early
+# `return 0` can leave the writer with SIGPIPE and make the whole
+# pipeline 141, inverting the gate on large ref lists (measured at
+# 268,900 bytes — cross-family review r1, finding H1).
+lfs_push_carries_content() {
+    local lref lsha rref rsha probe prc
+    # `|| [ -n "$lref" ]`: a final line with no trailing newline makes
+    # `read` return non-zero even though it populated the fields, so a
+    # plain loop DROPS it — for a single-ref push that means seeing no
+    # refs at all and skipping a required upload.
+    while read -r lref lsha rref rsha || [ -n "$lref" ]; do
+        # ONE aggregate deadline for the whole gate. The per-probe bound
+        # is per REF, so a --mirror push of thousands of refs could let
+        # individually-bounded probes add up to hours — a slower version
+        # of the hang this hook exists to remove (cross-family review
+        # r2). Expiry fails CLOSED, like a failed probe.
+        if [ "$SECONDS" -ge "$lfs_gate_deadline" ]; then
+            echo "BES pre-push: LFS content gate exceeded ${lfs_gate_budget}s — running the LFS chain to stay safe." >&2
+            return 0
+        fi
+        case "$lsha" in
+            "" | *[!0-9a-f]*) continue ;;   # blank or malformed
+            *[!0]*) ;;                      # a real sha — probe it
+            *) continue ;;                  # all-zero: ref deletion
+        esac
+        probe="$(lfs_probe_ls_files "$lsha")"
+        prc=$?
+        if [ "$prc" -ne 0 ]; then
+            echo "BES pre-push: could not determine LFS content at $lsha (rc=$prc) — running the LFS chain to stay safe." >&2
+            return 0
+        fi
+        [ -n "$probe" ] && return 0
+    done
+    return 1
+}
+
 if [ "$#" -gt 0 ] && command -v git-lfs >/dev/null 2>&1; then
-    git lfs pre-push "$@" || exit $?
+    # Spool the ref list to a file rather than a shell variable: `$(cat)`
+    # strips ALL trailing newlines and a here-string adds exactly one
+    # back, so a list with no final newline — or more than one — would
+    # not reach `git lfs pre-push` byte-identically (cross-family review
+    # r2). A file is byte-exact and both consumers read from it.
+    lfs_refs_file="$(mktemp "${TMPDIR:-/tmp}/bes-prepush-refs.XXXXXX")" || {
+        echo "BES pre-push: could not create a temp file for the ref list — refusing the push." >&2
+        exit 1
+    }
+    trap 'rm -f "$lfs_refs_file"' EXIT
+    cat >"$lfs_refs_file"
+
+    if command -v timeout >/dev/null 2>&1; then
+        lfs_have_timeout=1
+    else
+        lfs_have_timeout=0
+        echo "BES pre-push: 'timeout' not found — the git-lfs chain runs unbounded on this box." >&2
+    fi
+
+    # Positive integer seconds only: `timeout 0` disables the bound
+    # entirely, so a zero or garbage override is rejected, not honoured.
+    # The numeric test is separate from the digit test because a string
+    # match against "0" alone lets "00" through — all digits, not equal
+    # to "0", and still zero to `timeout`.
+    lfs_timeout="${BES_LFS_PREPUSH_TIMEOUT:-1800}"
+    case "$lfs_timeout" in
+        "" | *[!0-9]*) lfs_timeout_ok=0 ;;
+        *) [ "$lfs_timeout" -gt 0 ] && lfs_timeout_ok=1 || lfs_timeout_ok=0 ;;
+    esac
+    if [ "$lfs_timeout_ok" = "0" ]; then
+        echo "BES pre-push: ignoring BES_LFS_PREPUSH_TIMEOUT='$lfs_timeout' (want positive integer seconds); using 1800." >&2
+        lfs_timeout=1800
+    fi
+
+    # Wall-clock budget for the CONTENT GATE as a whole (not the upload).
+    lfs_gate_budget=120
+    lfs_gate_deadline=$(( SECONDS + lfs_gate_budget ))
+
+    if [ -s "$lfs_refs_file" ] && lfs_push_carries_content <"$lfs_refs_file"; then
+        if [ "$lfs_have_timeout" = "1" ]; then
+            lfs_noninteractive timeout "$lfs_timeout" git lfs pre-push "$@" <"$lfs_refs_file"
+            lfs_rc=$?
+            if [ "$lfs_rc" -eq 124 ]; then
+                echo "BES pre-push: 'git lfs pre-push' hit the ${lfs_timeout}s bound (or exited 124 itself) — refusing the push." >&2
+                echo "  Raise BES_LFS_PREPUSH_TIMEOUT for a large LFS upload, or check LFS endpoint reachability." >&2
+            fi
+        else
+            lfs_noninteractive git lfs pre-push "$@" <"$lfs_refs_file"
+            lfs_rc=$?
+        fi
+        [ "$lfs_rc" -eq 0 ] || exit "$lfs_rc"
+    fi
 fi
 
 # Fleet-aware resolution: try .agents/ (propagated layout) then

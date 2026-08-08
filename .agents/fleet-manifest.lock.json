@@ -1,9 +1,9 @@
 {
   "schema_version": 1,
-  "generated_at": "2026-08-08T01:24:10.970Z",
+  "generated_at": "2026-08-08T17:27:49.799Z",
   "source": {
     "repo": "bes-fleet-policy",
-    "commit": "ba3ef5a5ae4767e192c24a1c2a1523817311f2dc",
+    "commit": "099359be38bbe7320088f1c434438a5a8853b95d",
     "dirty": true
   },
   "manifests": {
@@ -245,8 +245,8 @@
       "kind": "agents-file",
       "source_path": "agents/githooks/pre-push",
       "target_path": ".agents/githooks/pre-push",
-      "sha256": "2e302f1f5159f4c8ab49d01470fee5c15a219d87525ccc6a4c6a517d970db957",
-      "bytes": 2426
+      "sha256": "d91ddbda8bdd040de200f57775ae6681a37fa18b5a6711bb8789ffbe0efd4b20",
+      "bytes": 7963
     },
     {
       "kind": "agents-file",
@@ -280,8 +280,8 @@
       "kind": "agents-file",
       "source_path": "agents/OPERATING_MODEL.md",
       "target_path": ".agents/OPERATING_MODEL.md",
-      "sha256": "00159dc66169204784420478e77774f56270fe93229bcc48645bbb853ee96afd",
-      "bytes": 36789
+      "sha256": "a36514b03cbb3d1fc6046daf9a00bd6a1a03455d4320bb99f69c74c3047a9384",
+      "bytes": 36879
     },
     {
       "kind": "agents-file",
@@ -476,8 +476,8 @@
       "kind": "agents-file",
       "source_path": "agents/scripts/fleet-internal-repos.txt",
       "target_path": ".agents/scripts/fleet-internal-repos.txt",
-      "sha256": "a00c3fc1e9d3048fffae96a820d35807b8d9954216e5ad7ce1bfabedc94f15c8",
-      "bytes": 97
+      "sha256": "98ce3eac00f9b126f4a1acd91f460de5b62dc2e11b902f1a02daf96ea55b8b48",
+      "bytes": 114
     },
     {
       "kind": "agents-file",
@@ -623,8 +623,8 @@
       "kind": "agents-file",
       "source_path": "agents/scripts/preflight-config.json",
       "target_path": ".agents/scripts/preflight-config.json",
-      "sha256": "403d39ed95d0dc90d4d1f54d1bf6459f3d2428a7fc785185ac4991f2de0055f6",
-      "bytes": 1396
+      "sha256": "30baf21666fab0b68a0ec5774844746c24f6daa1964ea9b260ea23deaeb54e9a",
+      "bytes": 1482
     },
     {
       "kind": "agents-file",
@@ -1386,8 +1386,8 @@
       "kind": "githook",
       "source_path": "agents/githooks/pre-push",
       "target_path": ".githooks/pre-push",
-      "sha256": "2e302f1f5159f4c8ab49d01470fee5c15a219d87525ccc6a4c6a517d970db957",
-      "bytes": 2426
+      "sha256": "d91ddbda8bdd040de200f57775ae6681a37fa18b5a6711bb8789ffbe0efd4b20",
+      "bytes": 7963
     }
   ]
 }
